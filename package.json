@@ -3,13 +3,21 @@
   "version": "1.0.50",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "bun run --watch src/index.ts"
+    "dev": "bun run --watch src/index.ts",
+    "prisma:generate": "bunx prisma generate",
+    "prisma:push": "bunx prisma db push --force-reset",
+    "migrate:auth": "bun run modules/auth/migrations/user.ts",
+    "migrate:project": "bun run modules/project/migrations/project_seed.ts",
+    "migrate:all": "bun run migrate:auth && bun run migrate:project"
   },
   "dependencies": {
-    "elysia": "latest"
+    "@elysiajs/cors": "^1.4.0",
+    "@elysiajs/jwt": "^1.4.0",
+    "@prisma/client": "^6.19.0",
+    "elysia": "latest",
+    "prisma": "^6.19.0"
   },
   "devDependencies": {
     "bun-types": "latest"
-  },
-  "module": "src/index.js"
+  }
 }

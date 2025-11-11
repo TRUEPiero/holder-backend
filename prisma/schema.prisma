@@ -1,0 +1,116 @@
+generator client {
+  provider      = "prisma-client-js"
+  // output   = "../prisma-client"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  admin
+  demo
+}
+
+enum TransactionType {
+  income
+  expense
+}
+
+enum ProjectRole {
+  owner
+  viewer
+  editor
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  login     String
+  password  String
+  role      UserRole    @default(demo)
+
+  telegram  String?  @unique
+
+  OwnedProjects Project[]           @relation("ProjectOwner")
+  projects      ProjectMembership[]
+
+  createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
+
+  @@index([name, login, telegram])
+  @@map("users")
+}
+
+model Project {
+  id    Int    @id @default(autoincrement())
+  title String
+  default Boolean
+
+  ownerId Int  @map("owner_id")
+  owner   User @relation(name: "ProjectOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+
+  cashboxes Cashbox[]
+  members   ProjectMembership[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([id, ownerId])
+  @@map("pr_projects")
+}
+
+model ProjectMembership {
+  id        Int @id @default(autoincrement())
+  projectId Int @map("project_id")
+  userId    Int @map("user_id")
+
+  role ProjectRole
+
+  users    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projects Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  joinedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([id, projectId, userId])
+  @@unique([projectId, userId])
+  @@map("pr_project_membership")
+}
+
+model Cashbox {
+  id    Int    @id @default(autoincrement())
+  title String
+
+  parentId  Int? @map("parent_id")
+  projectId Int  @map("project_id")
+
+  parent  Cashbox? @relation(name: "AccountHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
+  project Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  children     Cashbox[]     @relation(name: "AccountHierarchy")
+  transactions Transaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([id, projectId])
+  @@map("pr_account")
+}
+
+model Transaction {
+  id          Int              @id @default(autoincrement())
+  type        TransactionType
+  amount      Decimal
+  description String?
+
+  cashboxId Int     @map("cashbox_id")
+  cashbox   Cashbox @relation(fields: [cashboxId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([id, type])
+  @@map("pr_transactions")
+}
