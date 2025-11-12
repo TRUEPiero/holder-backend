@@ -1,10 +1,15 @@
 import { PrismaClient } from "@prisma/client";
+import { DirectoryService } from "@shared/DirectoryService";
 
 const db = new PrismaClient();
 
-export class ProjectService {
-    async getUserProjects(user: any, status: any) {
-        if(!user) return status(401, {error: 'Unautorized'})
+export class ProjectService extends DirectoryService<'project'> {
+
+    constructor() {
+        super("project", [])
+    }
+
+    async getUserProjects(user: any) {
         const projects = await db.project.findMany({
             where: {
                 ownerId: user.id
@@ -14,9 +19,7 @@ export class ProjectService {
         return projects
     }
 
-    async getDefaultProject(user: any, status: any) {
-        if(!user) return status(401, {error: 'Unautorized'})
-
+    async getDefaultProject(user: any) {
         const project = await db.project.findFirst({
             where: {
                 AND: [

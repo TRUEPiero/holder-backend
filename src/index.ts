@@ -1,5 +1,5 @@
 import { Elysia } from "elysia";
-import { corsPlugin } from "../plugins/cors";
+import { corsPlugin } from "./plugins/cors";
 import { app as authApp } from "../modules/auth";
 import { app as projectApp } from "../modules/project";
 
@@ -9,7 +9,7 @@ const app = new Elysia()
   .use(projectApp)
   .get("/", () => "Hello Elysia")
 
-  .listen(3030);
+  .listen(3025);
 
 export type App = typeof app
 

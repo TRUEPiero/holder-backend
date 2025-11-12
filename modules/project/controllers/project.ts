@@ -1,4 +1,4 @@
-import {Elysia, status} from 'elysia';
+import {Elysia} from 'elysia';
 import { ProjectService } from '../services/project';
 
 const service = new ProjectService();
@@ -6,9 +6,9 @@ const service = new ProjectService();
 export const ProjectController = new Elysia({
     prefix: '/project'
 })
-.get('/', async({user, status}) => {
-    return await service.getUserProjects(user, status);
+.get('/', async({user}) => {
+    return await service.getUserProjects(user);
 })
-.get('/default', async({user, status}) => {
-    return await service.getDefaultProject(user, status) || {};
+.get('/default', async({user}) => {
+    return await service.getDefaultProject(user) || {};
 })

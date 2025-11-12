@@ -31,11 +31,7 @@ export class AuthService {
         return user;
     }
 
-    async logout(user:any, cookie: any):Promise<boolean> {
-        if(!user) {
-            return false
-        }
-
+    async logout(cookie: any):Promise<boolean> {
         cookie['auth-token'].remove()
 
         return true;
