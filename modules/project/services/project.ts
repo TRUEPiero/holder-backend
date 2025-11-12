@@ -20,9 +20,7 @@ export class ProjectService extends DirectoryService<'project'> {
         return projects
     }
 
-    async getDefaultProject(user: any, status: any) {
-        if(!user) return status(401, {error: 'Unautorized'})
-
+    async getDefaultProject(user: any) {
         const project = await db.project.findFirst({
             where: {
                 AND: [

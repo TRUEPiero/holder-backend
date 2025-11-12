@@ -16,9 +16,8 @@ export const AuthController = new Elysia({
     schema.login
 )
 .post('/logout',
-    async({user, cookie, status}) => {
-        const response = await service.logout(user, cookie);
-        return response || status(401, {error: 'unathorized'});
-    },
-    schema.logout
+    async({cookie}) => {
+        const response = await service.logout(cookie);
+        return response;
+    }
 )
