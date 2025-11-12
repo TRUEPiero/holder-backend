@@ -1,7 +1,7 @@
 import { BaseService } from "./BaseService";
 import type { PrismaModelName } from "../types/type";
 
-export class DirectoryController<modelName extends PrismaModelName> extends BaseService<modelName> {
+export class DirectoryService<modelName extends PrismaModelName> extends BaseService<modelName> {
 
     protected ColumnsToConnect: string[] = [];
 
