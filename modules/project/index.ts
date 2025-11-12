@@ -1,5 +1,5 @@
 import {Elysia} from 'elysia';
-import { deriveUser } from '../../shared/deriveUser';
+import { deriveUser } from '../../src/plugins/deriveUser';
 import { ProjectController } from './controllers/project';
 
 export const app = new Elysia()
