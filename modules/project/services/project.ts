@@ -9,8 +9,7 @@ export class ProjectService extends DirectoryService<'project'> {
         super("project", [])
     }
 
-    async getUserProjects(user: any, status: any) {
-        if(!user) return status(401, {error: 'Unautorized'})
+    async getUserProjects(user: any) {
         const projects = await db.project.findMany({
             where: {
                 ownerId: user.id

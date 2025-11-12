@@ -18,6 +18,9 @@
       "@schemas/*" : [
         "./src/schemas/*"
       ],
+      "@plugins/*": [
+        "./src/plugins/*"
+      ],
       "@prisma/client": [
         "./prisma-client"
       ]

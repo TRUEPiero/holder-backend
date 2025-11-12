@@ -1,5 +1,5 @@
 import {Elysia} from 'elysia';
-import { deriveUser } from '../../src/plugins/deriveUser';
+import { deriveUser } from '@plugins/deriveUser';
 import { ProjectController } from './controllers/project';
 import { CashboxApp } from './controllers/cashbox';
 
