@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  holder_backend:
+    
+
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?lost POSTGRES_USER variable}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?lost POSTGRES_PASSWORD variable}
+      POSTGRES_DB: ${POSTGRES_DB:?lost POSTGRES_DB variable}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - local
+
+  browserless:
+    image: browserless/chrome
+    environment:
+      - MAX_CONCURRENT_SESSIONS=10
+    ports:
+      - "3010:3000"
