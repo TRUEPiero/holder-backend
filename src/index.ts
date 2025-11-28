@@ -9,7 +9,7 @@ const app = new Elysia()
   .use(projectApp)
   .get("/", () => "Hello Elysia")
 
-  .listen(3025);
+  .listen(3000);
 
 export type App = typeof app
 
