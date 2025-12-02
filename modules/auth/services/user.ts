@@ -1,9 +1,10 @@
-import { PrismaClient } from "@prisma/client";
+import { BaseService } from "@shared/BaseService";
 
-const db = new PrismaClient();
+export class UserService extends BaseService<'user'> {
+    
+    async updateUser(userId: number, data: any): Promise<any> {
+        const user = await this.updateByFields({id: userId}, data);
 
-export class UserService {
-     async getUser(userId: number){
-
+        return user;
     }
 }

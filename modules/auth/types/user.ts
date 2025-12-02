@@ -1,6 +1,6 @@
 import { t } from "elysia";
 
-export const ResponseUser = t.Object({
+export const ResponseObject = t.Object({
     id: t.Number(),
     name: t.String(),
     login: t.String(),
