@@ -19,6 +19,9 @@ export const ProjectController = new Elysia({
         pid: t.Number()
     })
 })
+.post('/', async({body}) => {
+    return await service.createItem(body);
+})
 .patch('/:pid', async({params: {pid}, body}) => {
     return await service.updateProject(pid, body);
 })

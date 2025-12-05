@@ -9,23 +9,25 @@ export const CashboxApp = new Elysia({
 })
 
 .get('/', async ({params: {pid}}) => {
-    return await service.getProjectCashboxes(pid);
+    return (await service.getProjectCashboxes(pid)).data;
 },schema.getAll)
 
 .post('/', async({params: {pid}, body}) => {
-    return await service.createCashbox(pid, body)
+    return (await service.createCashbox(pid, body)).data
 }, schema.create)
-.patch('/:cid', async({params: {cid}, body}) => {
+.patch('/:cid', async({params: {pid, cid}, body}) => {
     return await service.updateItem(cid, body);
 }, {
     params: t.Object({
+        pid: t.Number(),
         cid: t.Number()
     })
 })
-.delete('/:cid', async({params: {cid}}) => {
+.delete('/:cid', async({params: {pid, cid}}) => {
     return await service.deleteItem(cid);
 }, {
     params: t.Object({
+        pid: t.Number(),
         cid: t.Number()
     })
 })
