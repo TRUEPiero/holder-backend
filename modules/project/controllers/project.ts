@@ -7,7 +7,7 @@ export const ProjectController = new Elysia({
     prefix: '/project'
 })
 .get('/', async({user}) => {
-    return (await service.getUserProjects(user)).data;
+    return (await service.getUserProjects(user))?.data;
 })
 .get('/default', async({user}) => {
     return await service.getDefaultProject(user);
@@ -24,6 +24,11 @@ export const ProjectController = new Elysia({
 })
 .patch('/:pid', async({params: {pid}, body}) => {
     return await service.updateProject(pid, body);
+},
+{
+    params: t.Object({
+        pid: t.Number()
+    })
 })
 .delete('/:pid', async({params: {pid}}) => {
     return await service.deleteItem(pid)

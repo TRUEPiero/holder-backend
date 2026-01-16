@@ -4,7 +4,7 @@ import { CashboxService } from '../services/cashbox';
 
 const service = new CashboxService();
 
-export const CashboxApp = new Elysia({
+export const CashboxController = new Elysia({
     prefix: '/project/:pid/cashbox'
 })
 
@@ -15,6 +15,7 @@ export const CashboxApp = new Elysia({
 .post('/', async({params: {pid}, body}) => {
     return (await service.createCashbox(pid, body)).data
 }, schema.create)
+
 .patch('/:cid', async({params: {pid, cid}, body}) => {
     return await service.updateItem(cid, body);
 }, {
@@ -23,6 +24,7 @@ export const CashboxApp = new Elysia({
         cid: t.Number()
     })
 })
+
 .delete('/:cid', async({params: {pid, cid}}) => {
     return await service.deleteItem(cid);
 }, {

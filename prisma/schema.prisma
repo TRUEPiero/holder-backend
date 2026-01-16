@@ -14,10 +14,10 @@ enum UserRole {
   demo
 }
 
-enum TransactionType {
-  income
-  expense
-}
+// enum TransactionType {
+//   income
+//   expense
+// }
 
 enum ProjectRole {
   owner
@@ -31,6 +31,7 @@ model User {
   login     String
   password  String
   role      UserRole    @default(demo)
+  email     String   @unique 
 
   telegram  String?  @unique
 
@@ -98,18 +99,19 @@ model Cashbox {
   project Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   children     Cashbox[]     @relation(name: "AccountHierarchy")
-  transactions Transaction[]
+  outgoingTransactions Transaction[] @relation("CashboxOutgoing")
+  incomingTransactions Transaction[] @relation("CashboxIncoming")
+
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([id, projectId])
-  @@map("pr_account")
+  @@map("pr_cashbox")
 }
 
 model Transaction {
   id          Int              @id @default(autoincrement())
-  type        TransactionType
   amount      Decimal
   description String?
 
@@ -119,12 +121,15 @@ model Transaction {
   authorId Int @map("author_id")
   author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
-  cashboxId Int     @map("cashbox_id")
-  cashbox   Cashbox @relation(fields: [cashboxId], references: [id], onDelete: Cascade)
+  cashboxFromId Int     @map("cashbox_from_id")
+  cashboxFrom   Cashbox @relation(name: "CashboxOutgoing", fields: [cashboxFromId], references: [id], onDelete: Cascade)
+  
+  cashboxToId Int     @map("cashbox_to_id")
+  cashboxTo   Cashbox @relation(name: "CashboxIncoming", fields: [cashboxToId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
 
-  @@index([id, type])
+  @@index([id])
   @@map("pr_transactions")
 }
 

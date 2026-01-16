@@ -1,7 +1,7 @@
 import { Elysia, t } from 'elysia'
 import { TransactionService } from '../services/transactions'
 
-const service = new TransactionService('transaction');
+const service = new TransactionService();
 
 export const TransactionController = new Elysia({
     prefix: 'project/:pid/cashbox/:cid/transaction'
@@ -16,20 +16,14 @@ export const TransactionController = new Elysia({
         ]
     })
 })
-.post('/', async({params: {pid, cid}, body}) => {
-    return await service.createItem({cashboxId: cid, ...body});
-}, {
-    body: t.Object({})
-})
-.patch('/transfer', async({params: {pid, cid}, body}) => {
-    return await service.moneyTransfer(pid, cid, body);
+.post('/transfer', async({params: {pid, cid}, body, user}) => {
+    return await service.moneyTransfer(pid, cid, body, user);
 }, {
     params: t.Object({
         pid: t.Number(),
         cid: t.Number()
     }),
     body: t.Object({
-        from: t.Number(),
         to: t.Number(),
         amount: t.Number()
     })
