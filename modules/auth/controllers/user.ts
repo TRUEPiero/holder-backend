@@ -3,7 +3,7 @@ import { schema } from '../schemas/user';
 import { deriveUser } from '@plugins/deriveUser';
 import { UserService } from '../services/user';
 
-const service = new UserService('user');
+const service = new UserService();
 
 export const UserController = new Elysia({
     prefix: '/user'

@@ -1,5 +1,5 @@
 import { errorSchema } from "@schemas/error";
-import { ResponseUser } from "../types/user";
+import { ResponseObject } from "../types/user";
 import { t } from "elysia";
 
 export const schema = {
@@ -13,7 +13,7 @@ export const schema = {
             description: 'Авторизация',
         },
         response: {
-            200: ResponseUser,
+            200: ResponseObject,
             ...errorSchema
         }
     },
