@@ -18,8 +18,26 @@ export const schema = {
         }
     },
     logout: {
+        detail: {
+            description: 'Разавторизация',
+        },
         response:{ 
             200: t.Boolean(),
+            ...errorSchema
+        }
+    },
+    register: {
+        body: t.Object({
+            login: t.String(),
+            email: t.String(),
+            password: t.String(),
+            telegram: t.Optional(t.String())
+        }),
+        detail: {
+            description: 'Регистрация'
+        },
+        response: {
+            200: ResponseObject,
             ...errorSchema
         }
     }

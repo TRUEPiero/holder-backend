@@ -18,18 +18,8 @@ export const CashboxController = new Elysia({
 
 .patch('/:cid', async({params: {pid, cid}, body}) => {
     return await service.updateItem(cid, body);
-}, {
-    params: t.Object({
-        pid: t.Number(),
-        cid: t.Number()
-    })
-})
+}, schema.update)
 
 .delete('/:cid', async({params: {pid, cid}}) => {
     return await service.deleteItem(cid);
-}, {
-    params: t.Object({
-        pid: t.Number(),
-        cid: t.Number()
-    })
-})
+}, schema.delete)

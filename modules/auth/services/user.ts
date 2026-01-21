@@ -6,7 +6,7 @@ export class UserService extends BaseService<'user'> {
         super('user')
     }
 
-    async updateUser(userId: number, data: any): Promise<any> {
+    async updateUser(userId: number, data: any) {
         const user = await this.updateByFields({id: userId}, data);
 
         return user;

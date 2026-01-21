@@ -14,10 +14,10 @@ enum UserRole {
   demo
 }
 
-// enum TransactionType {
-//   income
-//   expense
-// }
+enum TransactionType {
+  income
+  expense
+}
 
 enum ProjectRole {
   owner
@@ -88,7 +88,7 @@ model Cashbox {
   id    Int    @id @default(autoincrement())
   title String
   descriprion String?
-  amount Int @default(0)
+  balance Decimal @default(0)
 
   parameters Json?
 
@@ -99,8 +99,7 @@ model Cashbox {
   project Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   children     Cashbox[]     @relation(name: "AccountHierarchy")
-  outgoingTransactions Transaction[] @relation("CashboxOutgoing")
-  incomingTransactions Transaction[] @relation("CashboxIncoming")
+  transactions Transaction[]
 
 
   createdAt DateTime @default(now())
@@ -115,17 +114,16 @@ model Transaction {
   amount      Decimal
   description String?
 
+  type TransactionType
+
   tagId Int?
   tag TransactionTag? @relation(fields: [tagId], references: [id], onDelete: SetNull)
 
   authorId Int @map("author_id")
   author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
-  cashboxFromId Int     @map("cashbox_from_id")
-  cashboxFrom   Cashbox @relation(name: "CashboxOutgoing", fields: [cashboxFromId], references: [id], onDelete: Cascade)
-  
-  cashboxToId Int     @map("cashbox_to_id")
-  cashboxTo   Cashbox @relation(name: "CashboxIncoming", fields: [cashboxToId], references: [id], onDelete: Cascade)
+  cashboxId Int     @map("cashbox_id")
+  cashbox   Cashbox @relation(fields: [cashboxId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
 

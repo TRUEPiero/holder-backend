@@ -1,12 +1,9 @@
 import { errorSchema } from "@schemas/error";
-import { t } from "elysia";
-import { ResponseObject, ResponseObjects } from "../types/cashbox";
+import {t} from 'elysia';
+import { ResponseObject, ResponseObjects } from "../types/project";
 
 export const schema = {
     getAll: {
-        params: t.Object({
-            pid: t.Number(),
-        }),
         detail: {
             tag: [''],
             description: 'Получить все элементы',
@@ -16,45 +13,61 @@ export const schema = {
             ...errorSchema
         }
     },
-    create: {
-        params: t.Object({
-            pid: t.Number(),
-        }),
-        body: t.Object({
-            title: t.String()
-        }),
+    default: {
         detail: {
             tag: [''],
-            description: 'Создать элемент',
+            description: 'Получить проект по умолчанию',
         },
         response: {
             200: ResponseObject,
             ...errorSchema
         }
     },
-    update: {
+    detail: {
         params: t.Object({
-            pid: t.Number(),
-            cid: t.Number()
+            pid: t.Number()
         }),
+        detail: {
+            tag: [''],
+            description: 'Получить проект по ID',
+        },
+        response: {
+            200: ResponseObject,
+            ...errorSchema
+        }
+    },
+    create: {
         body: t.Any(),
         detail: {
             tag: [''],
-            description: 'Обновить элемент',
+            description: 'Создать проект',
         },
         response: {
             200: ResponseObject,
             ...errorSchema
         }
     }, 
-    delete:  {
+    update: {
         params: t.Object({
-            pid: t.Number(),
-            cid: t.Number()
+            pid: t.Number()
+        }),
+        body: t.Any(),
+        detail: {
+            tag: [''],
+            description: 'Обновить проект'
+        },
+        response: {
+            200: ResponseObject,
+            ...errorSchema
+        }
+    },
+    delete: {
+        params: t.Object({
+            pid: t.Number()
         }),
         detail: {
             tag: [''],
-            description: 'Удалить элемент'
+            description: 'Удалить проект'
         },
         response: {
             200: ResponseObject,

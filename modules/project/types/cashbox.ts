@@ -1,6 +1,6 @@
 import { t } from "elysia";
 
-export const ResponseObject = t.Object({
+export const ResponseCashbox = t.Object({
     id: t.Number(),
     parameters: t.Any(),
     title: t.String(),
@@ -9,3 +9,11 @@ export const ResponseObject = t.Object({
     createdAt: t.Date(),
     updatedAt: t.Date()
 })
+
+export const ResponseObject = t.Record(
+    t.String() , t.Nullable(ResponseCashbox)
+)
+
+export const ResponseObjects = t.Record(
+    t.String(), t.Array(ResponseCashbox)
+)

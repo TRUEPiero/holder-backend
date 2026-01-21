@@ -8,7 +8,18 @@ const cashboxService = new CashboxService();
 export class TransactionService extends DirectoryService<'transaction'> {
 
     constructor() {
-        super('transaction', ['cashboxFrom', 'cashboxTo'])
+        super('transaction', ['cashbox'])
+    }
+
+    public async getTransactions(projectId: number, cashboxId: number) {
+        return await this.getByFields({
+            AND: [
+                {cashboxId},
+                {cashbox: {
+                    projectId
+                }}
+            ]
+        })
     }
 
     public async moneyTransfer(projectId: number, cashboxId: number, request: any, user: any) {
@@ -20,34 +31,57 @@ export class TransactionService extends DirectoryService<'transaction'> {
 
         if(cashboxes.length < 2) return false
 
-        const transfer = await db.$transaction([
-            db.cashbox.update({
-                where: {
-                    id: cashboxId
-                },
-                data: {
-                    amount: cashboxes[0].data.amount - request.amount
+        const transfer = await db.$transaction(async () => {
+            //Откуда
+            const from = await cashboxService.updateByFields(
+                {id: cashboxId},
+                {
+                    balance: {
+                        decrement: request.amount
+                    }
                 }
-            }),
-            db.cashbox.update({
-                where: {
-                    id: request.to
-                },
-                data: {
-                    amount: cashboxes[1].data.amount + request.amount 
-                }
+            )
+
+            if(from.data.balance.toNumber() < 0) {
+                throw new Error(`Error`)
+            }
+            //Куда
+            const to = await cashboxService.updateByFields(
+                {id: request.to},
+                {
+                    balance: {
+                        increment: request.amount
+                    } 
             })
-        ])
+
+            return [from, to]
+        })
 
         if(transfer.length < 2) return false
 
-        const transaction = await this.createItem({
-            cashboxFrom: cashboxId,
-            cashboxTo: request.to,
-            amount: request.amount,
-            authorId: user.id
-        });
+        const transactions = await db.$transaction([
+            db.transaction.create({
+                data: {
+                    cashboxId,
+                    type: "expense",
+                    amount: request.amount,
+                    authorId: user.id
+                }
+                
+            }),
+            db.transaction.create({
+                data: {
+                    cashboxId,
+                    type: "income",
+                    amount: request.amount,
+                    authorId: user.id
+                }
+                
+            }),
+        ])
 
-        return transaction;
+        if(transactions.length < 2) return false
+
+        return true;
     }
 }

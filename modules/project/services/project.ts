@@ -23,10 +23,14 @@ export class ProjectService extends DirectoryService<'project'> {
             ]
         })
 
-        return await this.getDetailProject(project.data.id);
+        return project;
     }
 
     public async updateProject(projectId: number, data: any) {
+        const project = await this.getById(projectId);
+
+        if(!project.data) return {data: null} 
+
         const updatedProject = await this.updateItem(projectId, {...data})
 
         return updatedProject;
@@ -49,21 +53,7 @@ export class ProjectService extends DirectoryService<'project'> {
             }
         })
 
-        if(!detailProject) return null
 
-        const members = detailProject.members.flatMap(member => {
-            return {
-                ...member.users,
-                role: member.role
-            }
-        })
-
-        const amount = detailProject.cashboxes.reduce((sum, item) => sum + item.amount, 0)
-
-        return {
-            ...detailProject,
-            members,
-            amount
-        }
+        return {data: detailProject || null}
     }
 }
