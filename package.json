@@ -4,6 +4,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "bun run --watch src/index.ts",
+    "bot:start": "node --experimental-strip-types --watch modules/bot/index.ts",
     "prisma:generate": "bunx prisma generate",
     "prisma:push": "bunx prisma db push --force-reset",
     "migrate:auth": "bun run modules/auth/migrations/user.ts",
@@ -16,9 +17,11 @@
     "@elysiajs/jwt": "^1.4.0",
     "@prisma/client": "^6.19.0",
     "elysia": "latest",
+    "grammy": "^1.39.3",
     "prisma": "^6.19.0"
   },
   "devDependencies": {
+    "@types/node": "^25.0.9",
     "bun-types": "latest"
   }
 }
