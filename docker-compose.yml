@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  holder_backend:
+    container_name: holder_backend
+    build:
+      context: .
+      dockerfile: ./docker/development.dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - DATABASE_URL=${DATABASE_URL:?lost DATABASE_URL variable}
+    command: sh -c "bun run prisma:push && bun run --watch dev"
+    depends_on:
+      - postgres
+    networks:
+      - local
+      - web
+
+  postgres:
+    image: postgres:15
+    container_name: holder_postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?lost POSTGRES_USER variable}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?lost POSTGRES_PASSWORD variable}
+      POSTGRES_DB: ${POSTGRES_DB:?lost POSTGRES_DB variable}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - local
+
+  browserless:
+    image: browserless/chrome
+    environment:
+      - MAX_CONCURRENT_SESSIONS=10
+    ports:
+      - "3010:3000"
+
+networks:
+  web:
+    driver: bridge
+  local:
+    driver: bridge
+
+volumes:
+  postgres_data:

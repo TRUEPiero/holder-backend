@@ -75,7 +75,7 @@ export class BaseService<ModelName extends PrismaModelName> {
         
         if(!item) throw new Error('Wrong ID')
             
-        return item;
+        return {data: item || null};
     }
 
     async deleteByFields(fields: any) {

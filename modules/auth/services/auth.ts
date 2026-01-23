@@ -1,18 +1,21 @@
-import { PrismaClient } from "@prisma/client";
+import { BaseService } from "@shared/BaseService";
+import { ProjectService } from "../../project/services/project";
 
-const db = new PrismaClient();
+const projectService = new ProjectService;
 
-export class AuthService {
+export class AuthService extends BaseService<'user'>{
+
+    constructor() {
+        super('user')
+    }
+
     async login(login: string, password: string, remember: boolean, jwt: any, cookie: any) {
 
-        const user = await db.user.findFirst({
-            where: {
-                login
-            }
-        })
+        const user = (await this.getFirstByFields({login})).data
 
         if(!user) return null
-        const passwordValid = await Bun.password.verify(password, user.password);
+        
+        const passwordValid = await Bun.password.verify(password, user.password)
         if(!passwordValid) return null
 
         const token = await jwt.sign({
@@ -26,14 +29,41 @@ export class AuthService {
             sameSite: 'lax',
             maxAge: remember ? 60 * 60 * 24 * 7 : undefined,
             path: '/'
-        });
+        })
 
-        return user;
+        return {data: user || null}
     }
 
-    async logout(cookie: any):Promise<boolean> {
-        cookie['auth-token'].remove()
+    async register(body: any, jwt: any, cookie: any) {
 
-        return true;
+        const user = await this.createItem({
+            ...body
+        })
+
+        if(!user.data) return null
+        
+        const projectData = {
+            title: 'Новый проект',
+            default: true,
+            parameters: {},
+            ownerId: user.data.id
+        }
+
+        const project = await projectService.createItem(projectData)
+
+        const token = await jwt.sign({
+            id: user.data.id
+        })
+
+        cookie['auth-token'].set({
+            value: token,
+            httpOnly: true,
+            secure: false,
+            sameSite: 'lax',
+            maxAge: undefined,
+            path: '/'
+        })
+
+        return {data: user.data || null}
     }
 }

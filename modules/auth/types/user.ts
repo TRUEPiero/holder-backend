@@ -7,3 +7,7 @@ export const ResponseUser = t.Object({
     role: t.String(),
     telegram: t.Any()
 })
+
+export const ResponseObject = t.Record(
+    t.String(), t.Nullable(ResponseUser)
+)

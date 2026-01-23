@@ -1,4 +1,5 @@
-import { ResponseUser } from "../types/user"
+import { t } from "elysia"
+import { ResponseObject } from "../types/user"
 import { errorSchema } from "@schemas/error"
 
 export const schema = {
@@ -7,7 +8,26 @@ export const schema = {
             desciption: 'Получить текущего пользователя'
         },
         response: {
-            200: ResponseUser,
+            200: ResponseObject,
+            ...errorSchema
+        }
+    }, 
+    updateUser: {
+        params: t.Object({
+            uid: t.Number()
+        }),
+        body: t.Partial(
+            t.Object({
+                name: t.String(),
+                telegram: t.String(),
+                password: t.String()
+            })
+        ),
+        detail: {
+            description: 'Обновить пользователя'
+        },
+        response: {
+            200: ResponseObject, 
             ...errorSchema
         }
     }

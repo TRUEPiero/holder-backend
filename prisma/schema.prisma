@@ -5,7 +5,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -31,6 +31,7 @@ model User {
   login     String
   password  String
   role      UserRole    @default(demo)
+  email     String   @unique 
 
   telegram  String?  @unique
 
@@ -87,7 +88,7 @@ model Cashbox {
   id    Int    @id @default(autoincrement())
   title String
   descriprion String?
-  amount Decimal @default(0)
+  balance Decimal @default(0)
 
   parameters Json?
 
@@ -100,18 +101,20 @@ model Cashbox {
   children     Cashbox[]     @relation(name: "AccountHierarchy")
   transactions Transaction[]
 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([id, projectId])
-  @@map("pr_account")
+  @@map("pr_cashbox")
 }
 
 model Transaction {
   id          Int              @id @default(autoincrement())
-  type        TransactionType
   amount      Decimal
   description String?
+
+  type TransactionType
 
   tagId Int?
   tag TransactionTag? @relation(fields: [tagId], references: [id], onDelete: SetNull)
@@ -124,7 +127,7 @@ model Transaction {
 
   createdAt DateTime @default(now())
 
-  @@index([id, type])
+  @@index([id])
   @@map("pr_transactions")
 }
 
