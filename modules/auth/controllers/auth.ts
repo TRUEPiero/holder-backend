@@ -15,5 +15,5 @@ export const AuthController = new Elysia({
 }, schema.login)
 
 .post('/register', async({body, jwt, cookie, status}) => {
-    return await service.register(body, jwt, cookie) || status(401, {error: "Invalid 'login' or 'password'"});
+    return await service.register(body, jwt, cookie) || status(500, {error: "Error while register"});
 }, schema.register)

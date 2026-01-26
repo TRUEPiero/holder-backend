@@ -1,7 +1,5 @@
 import { startBot } from "./core/bot";
 
-await startBot()
-
 export class BotController {
 
     static async start() {

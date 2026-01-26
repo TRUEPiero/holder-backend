@@ -5,7 +5,8 @@ import { MenuKeyboard } from "../../keyboards/menu";
 const composer = new Composer<BotContext>();
 
 composer.command('start', async (ctx) => {
-    await ctx.reply('Начало', {reply_markup: await MenuKeyboard.mainMenu()})
+    console.log(ctx.session)
+    await ctx.reply('Начало', {reply_markup: MenuKeyboard.mainMenu()})
 })
 
 export default composer;
