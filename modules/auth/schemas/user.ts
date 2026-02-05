@@ -5,7 +5,8 @@ import { errorSchema } from "@schemas/error"
 export const schema = {
     getUser: {
         detail: {
-            desciption: 'Получить текущего пользователя'
+            description: 'Получить текущего пользователя',
+            tags: ['Пользователи']
         },
         response: {
             200: ResponseObject,
@@ -24,7 +25,8 @@ export const schema = {
             })
         ),
         detail: {
-            description: 'Обновить пользователя'
+            description: 'Обновить пользователя',
+            tags: ['Пользователи']
         },
         response: {
             200: ResponseObject, 

@@ -7,10 +7,11 @@ export const schema = {
         body: t.Object({
             login: t.String(),
             password: t.String(),
-            remember: t.Boolean()
+            remember: t.Optional(t.Boolean())
         }),
         detail: {
             description: 'Авторизация',
+            tags: ['Авторизация']
         },
         response: {
             200: ResponseObject,
@@ -20,6 +21,7 @@ export const schema = {
     logout: {
         detail: {
             description: 'Разавторизация',
+            tags: ['Авторизация']
         },
         response:{ 
             200: t.Boolean(),
@@ -34,7 +36,8 @@ export const schema = {
             telegram: t.Optional(t.String())
         }),
         detail: {
-            description: 'Регистрация'
+            description: 'Регистрация',
+            tags: ['Авторизация']
         },
         response: {
             200: ResponseObject,

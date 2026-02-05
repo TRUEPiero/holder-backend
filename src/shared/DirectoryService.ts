@@ -13,9 +13,9 @@ export class DirectoryService<modelName extends PrismaModelName> extends BaseSer
 
     private ConvertConnectedColumns(data: any) {
         for (const key in data) {
-        if (this.ColumnsToConnect.some(Column => Column === key) && data[key]) {
-            data[key] = {connect: {id: +data[key]}};
-        }
+            if (this.ColumnsToConnect.some(Column => Column === key) && data[key]) {
+                data[key] = {connect: {id: +data[key]}};
+            }
         }
     }
 

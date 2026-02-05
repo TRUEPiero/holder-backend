@@ -21,6 +21,9 @@
       "@plugins/*": [
         "./src/plugins/*"
       ],
+      "@common/*": [
+        "./src/common/*"
+      ],
       "@prisma/client": [
         "./prisma-client"
       ]

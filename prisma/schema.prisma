@@ -34,6 +34,7 @@ model User {
   email     String   @unique 
 
   telegram  String?  @unique
+  telegramId String? @unique
 
   OwnedProjects Project[]           @relation("ProjectOwner")
   projects      ProjectMembership[]
@@ -92,21 +93,33 @@ model Cashbox {
 
   parameters Json?
 
-  parentId  Int? @map("parent_id")
   projectId Int  @map("project_id")
 
-  parent  Cashbox? @relation(name: "AccountHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
   project Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
-  children     Cashbox[]     @relation(name: "AccountHierarchy")
   transactions Transaction[]
 
+  linkAsParent   CashboxLink[] @relation("parent")
+  linkAsChild CashboxLink[] @relation("children")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([id, projectId])
   @@map("pr_cashbox")
+}
+
+model CashboxLink {
+  id Int @id @default(autoincrement())
+
+  parentId   Int
+  childrenId Int
+
+  parent   Cashbox @relation(fields: [parentId], references: [id], onDelete: Cascade, name: "parent")
+  children Cashbox @relation(fields: [childrenId], references: [id], onDelete: Cascade, name: "children")
+
+  @@unique([parentId, childrenId])
+  @@map("pr_cashbox_link ")
 }
 
 model Transaction {
