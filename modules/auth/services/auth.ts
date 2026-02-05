@@ -1,7 +1,9 @@
 import { BaseService } from "@shared/BaseService";
 import { ProjectService } from "../../project/services/project";
+import { BotService } from "../../bot/services/bot.service";
 
 const projectService = new ProjectService;
+const botService = BotService.getInstance();
 
 export class AuthService extends BaseService<'user'>{
 
@@ -30,6 +32,8 @@ export class AuthService extends BaseService<'user'>{
             maxAge: remember ? 60 * 60 * 24 * 7 : undefined,
             path: '/'
         })
+
+        botService.sendNotification(1026044206, 'Вы успешно авторизовались');
 
         return {data: user || null}
     }
