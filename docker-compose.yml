@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: ./docker/development.dockerfile
     ports:
-      - "3000:3000"
+      - "3080:3000"
     volumes:
       - .:/app
       - /app/node_modules
@@ -33,13 +33,6 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - local
-
-  browserless:
-    image: browserless/chrome
-    environment:
-      - MAX_CONCURRENT_SESSIONS=10
-    ports:
-      - "3010:3000"
 
 networks:
   web:

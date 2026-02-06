@@ -14,7 +14,7 @@ const app = new Elysia()
   .use(projectApp)
   // .get("/", () => "Hello Elysia")
 
-  .listen(process.env.DEV_PORT);
+  .listen(3080);
 
 export type App = typeof app
 
