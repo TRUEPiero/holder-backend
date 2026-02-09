@@ -1,4 +1,4 @@
-import { Elysia } from 'elysia'
+import { Elysia, t } from 'elysia'
 import { AuthService } from '../services/auth'
 import { schema } from '../schemas/auth';
 import jwt from "@elysiajs/jwt";
@@ -10,10 +10,6 @@ export const AuthController = new Elysia({
 })
 .use(jwt({secret: process.env.JWT_SECRET!}))
 
-.post('/login', async ({body: {login, password, remember}, jwt, cookie, status}) => {
-    return await service.login(login, password, remember, jwt, cookie) || status(401, {error: "Invalid 'login' or 'password'"});
+.post('/login', async ({body: {email, password, remember}, jwt, cookie, status}) => {
+    return await service.login(email, password, jwt, cookie, remember) || status(401, {error: "Invalid 'login' or 'password'"});
 }, schema.login)
-
-.post('/register', async({body, jwt, cookie, status}) => {
-    return await service.register(body, jwt, cookie) || status(500, {error: "Error while register"});
-}, schema.register)
