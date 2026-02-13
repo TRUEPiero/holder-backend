@@ -1,16 +1,28 @@
-import {Bot} from 'grammy';
+import {Bot, session} from 'grammy';
 import { BotService } from '../services/bot.service';
 import { errorHandler } from './error-handler';
 import { BotContext } from './context';
 import { setupHandlers } from '../handlers';
+import { scenes } from '../scenes/scenes';
 
-const bot = new Bot<BotContext>(process.env.BOT_TOKEN);
+const token = process.env.BOT_TOKEN;
 
-BotService.init(bot);
+if (!token) {
+  throw new Error('BOT_TOKEN is not defined');
+}
 
+const bot = new Bot<BotContext>(token);
+
+bot.use(session({
+    initial: () => ({})
+}))
+bot.use(scenes.manager());
+bot.use(scenes);
+
+bot.catch(errorHandler);
 setupHandlers(bot);
 
-bot.catch(errorHandler)
+BotService.init(bot);
 
 export async function startBot() {
     bot.start();

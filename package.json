@@ -19,6 +19,7 @@
     "@prisma/client": "^6.19.0",
     "elysia": "latest",
     "grammy": "^1.39.3",
+    "grammy-scenes": "^10.2.0",
     "prisma": "^6.19.0"
   },
   "devDependencies": {
