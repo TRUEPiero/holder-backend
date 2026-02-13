@@ -1,10 +1,11 @@
-import {Context, SessionFlavor} from 'grammy';
+import {Context, LazySessionFlavor, SessionFlavor} from 'grammy';
+import type { ScenesFlavor, ScenesSessionData } from 'grammy-scenes';
 
 type SessionData = {
-    chat_id: number;
     user_id: number;
     project_id: number;
-    // cashbox_id: number;
-}
+    cashbox_id: number;
+    userData: any
+} & ScenesSessionData
 
-export type BotContext = Context & SessionFlavor<SessionData>
+export type BotContext = Context & SessionFlavor<SessionData> & ScenesFlavor;

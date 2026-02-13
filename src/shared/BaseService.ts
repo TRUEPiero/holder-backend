@@ -1,7 +1,9 @@
 import { PrismaClient } from "@prisma/client";
 import type { PrismaModelName, QueryParam } from "../types/type";
+import { FilterBuilder } from "./FilterBuilder";
 
 const prisma = new PrismaClient();
+const FilterBuild = new FilterBuilder();
 
 export class BaseService<ModelName extends PrismaModelName> {
     protected readonly model: (typeof prisma)[ModelName]
@@ -48,6 +50,56 @@ export class BaseService<ModelName extends PrismaModelName> {
         const item = await (this.model as any).findFirst({where: {...fields}, include});
 
         return {data: item || null}
+    }
+
+    async getWithPagination(
+        parameters: any
+    ) {
+        const { page, limit, name, sortBy = 'id', sortOrder = 'asc', include = "{}", textCheck = "{}", fieldIn = "{}" } = JSON.parse(JSON.stringify(parameters));
+
+        const isLimitsNotValid =
+            page === undefined ||
+            limit === undefined ||
+            page === null ||
+            limit === null;
+
+        const where = FilterBuild.buildFilterWhere(name, JSON.parse(textCheck), JSON.parse(fieldIn));
+        const orderBy = FilterBuild.buildFilterOrder(sortBy, sortOrder);
+
+        // Простой случай: без пагинации
+        if (isLimitsNotValid) {
+            return this.getAllWithQuery({where, orderBy});
+        }
+
+        // Валидация
+        if (page < 1 || limit < 1) {
+            throw new Error('Page or Limit is incorrect');
+        }
+
+        const skip = (page - 1) * limit;
+
+        const [items, totalItems] = await Promise.all([
+            (this.model as any).findMany({
+                skip,
+                take: limit,
+                where,
+                orderBy,
+                include: JSON.parse(include)
+            }),
+            (this.model as any).count({where}),
+        ]);
+
+        const totalPages = Math.ceil(totalItems / limit);
+
+        return {
+            data: items || [],
+            pagination: {
+                currentPage: page,
+                totalPages,
+                totalItems,
+                hasNextPage: page < totalPages,
+            },
+        };
     }
 
     async updateItem(
