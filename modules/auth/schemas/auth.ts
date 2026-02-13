@@ -5,7 +5,7 @@ import { t } from "elysia";
 export const schema = {
     login: {
         body: t.Object({
-            login: t.String(),
+            email: t.String(),
             password: t.String(),
             remember: t.Optional(t.Boolean())
         }),
@@ -25,22 +25,6 @@ export const schema = {
         },
         response:{ 
             200: t.Boolean(),
-            ...errorSchema
-        }
-    },
-    register: {
-        body: t.Object({
-            login: t.String(),
-            email: t.String(),
-            password: t.String(),
-            telegram: t.Optional(t.String())
-        }),
-        detail: {
-            description: 'Регистрация',
-            tags: ['Авторизация']
-        },
-        response: {
-            200: ResponseObject,
             ...errorSchema
         }
     }

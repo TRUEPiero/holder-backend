@@ -13,6 +13,6 @@ export const UserController = new Elysia({
     return {data: user}
 },schema.getUser)
 
-.patch('/:uid', async({params: {uid}, body, status}) => { 
-    return await service.updateUser(uid, body) || status(500, {error: 'Error while updating user'});
+.patch('/:uid', async({user, body, status}) => { 
+    return await service.updateUser(user.id, body) || status(500, {error: 'Error while updating user'});
 }, schema.updateUser)

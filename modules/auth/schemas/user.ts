@@ -14,9 +14,6 @@ export const schema = {
         }
     }, 
     updateUser: {
-        params: t.Object({
-            uid: t.Number()
-        }),
         body: t.Partial(
             t.Object({
                 name: t.String(),
