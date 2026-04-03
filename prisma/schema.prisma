@@ -5,7 +5,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -33,7 +33,7 @@ model User {
   email     String   @unique 
 
   telegram  String?  @unique
-  telegramId String? @unique
+  telegramId Int? @unique
 
   OwnedProjects Project[]           @relation("ProjectOwner")
   projects      ProjectMembership[]
@@ -60,7 +60,7 @@ model registerVerify {
 model Project {
   id    Int    @id @default(autoincrement())
   title String
-  default Boolean @default(false)
+  default Boolean @default(true)
 
   parameters Json?
 

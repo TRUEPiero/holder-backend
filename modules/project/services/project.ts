@@ -6,24 +6,13 @@ const db = new PrismaClient();
 export class ProjectService extends DirectoryService<'project'> {
 
     constructor() {
-        super("project", [])
+        super("project", ['owner'])
     }
 
     public async getUserProjects(user: any) {
         const projects = await this.getByFields({ownerId: user.id})
 
         return projects
-    }
-
-    public async getDefaultProject(user: any) {
-        const project = await this.getFirstByFields({
-            AND: [
-                {ownerId: user.id},
-                {default: true}
-            ]
-        })
-
-        return project;
     }
 
     public async updateProject(projectId: number, data: any) {
@@ -47,7 +36,7 @@ export class ProjectService extends DirectoryService<'project'> {
                 },
                 cashboxes: {
                     select: {
-                        amount: true
+                        balance: true
                     }
                 }
             }

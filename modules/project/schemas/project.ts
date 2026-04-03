@@ -37,7 +37,10 @@ export const schema = {
         }
     },
     create: {
-        body: t.Any(),
+        body: t.Object({
+            title: t.String(),
+            parameters: t.Any()
+        }),
         detail: {
             tag: [''],
             description: 'Создать проект',

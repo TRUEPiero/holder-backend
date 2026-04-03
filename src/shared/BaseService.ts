@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import type { PrismaModelName, QueryParam } from "../types/type";
+import type { PaginationParam, PrismaModelName, QueryParam } from "../types/type";
 import { FilterBuilder } from "./FilterBuilder";
 
 const prisma = new PrismaClient();
@@ -53,9 +53,9 @@ export class BaseService<ModelName extends PrismaModelName> {
     }
 
     async getWithPagination(
-        parameters: any
+        parameters: PaginationParam
     ) {
-        const { page, limit, name, sortBy = 'id', sortOrder = 'asc', include = "{}", textCheck = "{}", fieldIn = "{}" } = JSON.parse(JSON.stringify(parameters));
+        const { page, limit, name, sortBy = 'id', sortOrder = 'asc', include = "{}", textCheck = "{}", fieldIn = "{}", fieldFilter = "{}" } = JSON.parse(JSON.stringify(parameters));
 
         const isLimitsNotValid =
             page === undefined ||
@@ -63,12 +63,14 @@ export class BaseService<ModelName extends PrismaModelName> {
             page === null ||
             limit === null;
 
-        const where = FilterBuild.buildFilterWhere(name, JSON.parse(textCheck), JSON.parse(fieldIn));
+        const where = FilterBuild.buildFilterWhere(name, JSON.parse(textCheck), JSON.parse(fieldFilter), JSON.parse(fieldIn));
         const orderBy = FilterBuild.buildFilterOrder(sortBy, sortOrder);
 
         // Простой случай: без пагинации
         if (isLimitsNotValid) {
-            return this.getAllWithQuery({where, orderBy});
+            return {
+                data: await this.getAllWithQuery({where, orderBy})
+            };
         }
 
         // Валидация
