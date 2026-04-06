@@ -1,7 +1,7 @@
 import { Composer } from "grammy";
 import { BotContext } from "../../core/context";
 import { MenuKeyboard } from "../../keyboards/menu";
-import { UserService } from "../../../auth/services/user";
+import { UserService } from "../../../auth/src/modules/user/services";
 
 const userService = new UserService;
 

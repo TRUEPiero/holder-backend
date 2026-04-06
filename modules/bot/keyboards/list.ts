@@ -1,6 +1,6 @@
 import { InlineKeyboard } from "grammy";
-import { ProjectService } from "../../project/services/project";
-import { CashboxService } from "../../project/services/cashbox";
+import { ProjectService } from "../../project/src/modules/project/services";
+import { CashboxService } from "../../project/src/modules/cashbox/services";
 
 type EntityType = "project" | "cashbox"
 

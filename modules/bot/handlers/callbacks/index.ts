@@ -2,8 +2,8 @@ import { Composer } from "grammy";
 import { BotContext } from "../../core/context";
 import { MenuKeyboard } from "../../keyboards/menu";
 import { ItemsKeyboard } from "../../keyboards/list";
-import { ProjectService } from "../../../project/services/project";
-import { CashboxService } from "../../../project/services/cashbox";
+import { ProjectService } from "../../../project/src/modules/project/services";
+import { CashboxService } from "../../../project/src/modules/cashbox/services";
 
 const composer = new Composer<BotContext>();
 

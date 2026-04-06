@@ -12,29 +12,29 @@ export class BaseService<ModelName extends PrismaModelName> {
         this.model = prisma[modelName]
     }
 
-    async createItem(data: any) {
+    protected async createItem(data: any) {
         const item = await (this.model as any).create({ data })
         return {data: item || null}
     }
 
-    async getAll() {
+    protected async getAll() {
         const items = await (this.model as any).findMany();
         return {data: items || []};
     }
     
-    async getAllWithQuery(
+    protected async getAllWithQuery(
         query: QueryParam = {}
     ) {
         const items = await (this.model as any).findMany(query)
         return {data: items || []}
     }
 
-    async getById(id: number) {
+    protected async getById(id: number) {
         const item = await (this.model as any).findUnique({where: {id}});
         return {data: item || null};
     }
 
-    async getByFields(
+    protected async getByFields(
         fields: any, 
         include: any = {}, 
         orderBy: any = {}
@@ -43,7 +43,7 @@ export class BaseService<ModelName extends PrismaModelName> {
         return {data: items || []}
     }
 
-    async getFirstByFields(
+    protected async getFirstByFields(
         fields: any, 
         include: any = {}
     ) {
@@ -52,7 +52,7 @@ export class BaseService<ModelName extends PrismaModelName> {
         return {data: item || null}
     }
 
-    async getWithPagination(
+    protected async getWithPagination(
         parameters: PaginationParam
     ) {
         const { page, limit, name, sortBy = 'id', sortOrder = 'asc', include = "{}", textCheck = "{}", fieldIn = "{}", fieldFilter = "{}" } = JSON.parse(JSON.stringify(parameters));
@@ -104,7 +104,7 @@ export class BaseService<ModelName extends PrismaModelName> {
         };
     }
 
-    async updateItem(
+    protected async updateItem(
         id: number,
         data: any
     ) {
@@ -115,7 +115,7 @@ export class BaseService<ModelName extends PrismaModelName> {
         return {data: item || {}}
     }
 
-    async updateByFields(
+    protected async updateByFields(
         fields: any,
         data: any
     ) {
@@ -124,15 +124,13 @@ export class BaseService<ModelName extends PrismaModelName> {
         return {data: items || []}
     }
 
-    async deleteItem(id: number) {
+    protected async deleteItem(id: number) {
         const item = await (this.model as any).delete({where: { id }})
-        
-        if(!item) throw new Error('Wrong ID')
-            
-        return {data: item || null};
+                    
+        return {data: item};
     }
 
-    async deleteByFields(fields: any) {
+    protected async deleteByFields(fields: any) {
         const items = await (this.model as any).deleteMany({where: {...fields}})
 
         return {data: items || []}

@@ -19,7 +19,7 @@ export class DirectoryService<modelName extends PrismaModelName> extends BaseSer
         }
     }
 
-    async createItem(data: any): Promise<{ data: any; }> {
+    protected async createItem(data: any): Promise<{ data: any; }> {
         
         const InitObject = Object.assign(
             {},
@@ -34,7 +34,7 @@ export class DirectoryService<modelName extends PrismaModelName> extends BaseSer
         return {data: item || {}}
     }
 
-    async updateItem(id: number, data: any): Promise<{ data: any; }> {
+    protected async updateItem(id: number, data: any): Promise<{ data: any; }> {
         const InitObject = Object.assign(
             {},
             {

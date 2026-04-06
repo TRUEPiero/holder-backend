@@ -5,7 +5,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  // provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -77,6 +78,17 @@ model Project {
   @@map("pr_projects")
 }
 
+model ProjectInvite {
+  id Int @id @default(autoincrement())
+  email     String
+  code      String
+  expiredAt DateTime
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("project_invite")
+}
+
 model ProjectMembership {
   id        Int @id @default(autoincrement())
   projectId Int @map("project_id")
@@ -92,14 +104,14 @@ model ProjectMembership {
 
   @@index([id, projectId, userId])
   @@unique([projectId, userId])
-  @@map("pr_project_membership")
+  @@map("project_membership")
 }
 
 model Cashbox {
   id    Int    @id @default(autoincrement())
   title String
-  descriprion String?
-  balance Decimal @default(0)
+  description String?
+  balance Int @default(0)
 
   parameters Json?
 
@@ -116,7 +128,7 @@ model Cashbox {
   updatedAt DateTime @updatedAt
 
   @@index([id, projectId])
-  @@map("pr_cashbox")
+  @@map("project_cashbox")
 }
 
 model CashboxLink {
@@ -139,8 +151,7 @@ model Transaction {
 
   type TransactionType
 
-  tagId Int?
-  tag TransactionTag? @relation(fields: [tagId], references: [id], onDelete: SetNull)
+  tags TransactionTag[]
 
   authorId Int @map("author_id")
   author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
@@ -151,7 +162,7 @@ model Transaction {
   createdAt DateTime @default(now())
 
   @@index([id])
-  @@map("pr_transactions")
+  @@map("prpject_transaction")
 }
 
 model TransactionTag {
