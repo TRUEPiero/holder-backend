@@ -8,6 +8,7 @@ export const schema = {
             pid: t.Number(),
             cid: t.Number()
         }),
+        query: t.Any(),
         response: {
             200: ResponseObjects,
             ...errorSchema

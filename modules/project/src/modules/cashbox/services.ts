@@ -1,76 +1,41 @@
-import { DirectoryService } from "@shared/DirectoryService";
-import { ProjectService } from "../project/services";
-import { CashboxEntity } from "./entities/Cashbox";
-import type { Cashbox } from "./types";
+import { CashboxRepository } from "./repository";
 
-const projectService = new ProjectService();
+export class CashboxService{
 
-export class CashboxService extends DirectoryService<'cashbox'>{
+    constructor(private repo: CashboxRepository) {}
 
-    constructor() {
-        super('cashbox', [])
+    public async getCashbox(id: number) {
+        const cashbox = await this.repo.findById(id);
+        if (!cashbox) throw new Error("CASHBOX_NOT_FOUND");
+        return cashbox;
     }
 
-    public async getCashbox(cashboxId: number) {
-        const data = (await this.getById(cashboxId)).data;
-        if(!data) throw new Error("CASHBOX_UNDEFINED");  
-
-        return new CashboxEntity(data)
+    public async getDetailCashbox(id: number) {
+        const cashbox = await this.repo.findDetailedCashbox(id);
+        if(!cashbox) throw new Error("CASHBOX_NOT_FOUND");
+        return cashbox;
     }
 
     public async getProjectCashboxes(projectId: number) {
-        const data = (await this.getByFields({projectId})).data
-        const cashboxes = data.map((c: Cashbox) => new CashboxEntity(c))
-
-        return {data: cashboxes || []}
+        return await this.repo.findProjectCashboxes(projectId);
     }
 
     public async createCashbox(projectId: number, body: any) {
-
-        const project = await projectService.getProject(projectId);
-        if(!project) throw new Error('PROJECT_NOT_FOUND'); 
-
-        const data = (await this.createItem({
-            title: body.title,
-            projectId
-        })).data
-
-        if(!data) throw new Error("CASHBOX_NOT_CREATED");
-
-        const cashbox = new CashboxEntity(data);
-
-        return {data: cashbox}
+        return this.repo.create({ projectId, ...body });
     }
 
-    public async updateCashbox(cashboxId: number, body: any) {
-        const cashboxExist = await this.getCashbox(cashboxId);
-
-        if(!cashboxExist) throw new Error('CASHBOX_UNDEFINED');
-
-        const data = (await this.updateItem(
-            cashboxId,
-            {
-                ...body
-            }
-        )).data
-
-        const cashbox = new CashboxEntity(data)
-        return {data: cashbox}
+    public async updateCashbox(id: number, data: any) {
+        await this.getCashbox(id);
+        return this.repo.update(id, data);
     }
 
     public async updateBalance(id: number, amount: number) {
-        const data = (await this.updateItem(id, {
-            balance: amount
-        })).data 
-
-        const cashbox = new CashboxEntity(data);
-        return {data: cashbox}
+        await this.getCashbox(id);
+        return this.repo.update(id, {balance: amount});
     }
 
-    public async deleteCashbox(cashboxId: number) {
-        const cashbox = await this.getCashbox(cashboxId);
-        if(!cashbox) throw new Error('CASHBOX_UNDEFINED')
-
-        return await this.deleteItem(cashboxId);
+    public async deleteCashbox(id: number) {
+        await this.getCashbox(id); 
+        return await this.repo.delete(id);
     }
 }

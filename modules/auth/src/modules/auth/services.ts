@@ -1,32 +1,17 @@
-import { BaseService } from "@shared/BaseService";
+import { UserRepository } from "../user/repository";
 
-export class AuthService extends BaseService<'user'>{
+export class AuthService{
 
-    constructor() {
-        super('user')
-    }
+    constructor(private repo: UserRepository) {}
 
-    async login(email: string, password: string, jwt: any, cookie: any, status: any, remember?: boolean, ) {
+    async login(email: string, password: string) {
 
-        const user = (await this.getFirstByFields({email})).data
-        if(!user) return  status(401, {code: 'INCORECT_DATA', description: "Invalid 'login' or 'password'"});
+        const user = await this.repo.findByEmail(email);
+        if(!user) throw new Error('INVALID_DATA');
         
         const passwordValid = await Bun.password.verify(password, user.password)
-        if(!passwordValid) return status(401, {code: 'INCORECT_DATA', description: "Invalid 'login' or 'password'"});
+        if(!passwordValid) throw new Error('INVALID_DATA');
 
-        const token = await jwt.sign({
-            id: user.id
-        })
-
-        cookie['auth-token'].set({
-            value: token,
-            httpOnly: true,
-            secure: false,
-            sameSite: 'lax',
-            maxAge: remember ? 60 * 60 * 24 * 7 : undefined,
-            path: '/'
-        })
-
-        return {data: user}
+        return user;
     }
 }

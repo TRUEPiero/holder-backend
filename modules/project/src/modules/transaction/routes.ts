@@ -1,10 +1,15 @@
 import { Elysia, t } from 'elysia'
-import { TransactionService } from './services'
 import { schema } from './schemas';
 import { deriveUser } from '@plugins/deriveUser';
-import { TransferService } from './TransferService';
+import { TransactionService } from './services/transaction'
+import { TransferService } from './services/transfer';
+import { DirectoryService } from '@shared/DirectoryService';
+import { TransactionRepository } from './repository';
 
-const service = new TransactionService();
+const base = new DirectoryService<'transaction'>('transaction', [])
+const repo = new TransactionRepository(base)
+
+const service = new TransactionService(repo);
 const transfer = new TransferService();
 
 export const TransactionController = new Elysia({
@@ -12,8 +17,9 @@ export const TransactionController = new Elysia({
 })
 .derive(deriveUser)
 
-.get('/', async({params: {pid, cid}}) => {
-    return await service.getTransactions(pid, cid)
+.get('/', async({params: {pid, cid}, query}) => {
+    const transactions = await service.getCashboxTransactions(pid, cid, query)
+    return {data: transactions}
 }, schema.get)
 
 .post('/transfer', async({params: {pid, cid}, body, user}) => {

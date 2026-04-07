@@ -8,6 +8,8 @@ export type Project = {
     ownerId: number,
     createdAt: Date,
     updatedAt: Date,
+    members: any,
+    cashboxes: any,
 }
 
 export const ResponseProject = t.Any()

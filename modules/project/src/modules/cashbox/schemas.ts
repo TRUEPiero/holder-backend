@@ -16,6 +16,20 @@ export const schema = {
             ...errorSchema
         }
     },
+    detail: {
+        params: t.Object({
+            pid: t.Number(),
+            cid: t.Number()
+        }),
+        detail: {
+            tag: [''],
+            description: 'Получить элемент',
+        },
+        response: {
+            200: t.Any(),
+            ...errorSchema
+        }
+    },
     create: {
         params: t.Object({
             pid: t.Number(),

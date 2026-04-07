@@ -1,71 +1,36 @@
-import { DirectoryService } from "@shared/DirectoryService";
-import { ProjectEntity } from "./entities/Project";
-import { Project } from "./types";
+import { ProjectRepository } from "./repository";
 
-export class ProjectService extends DirectoryService<'project'> {
+export class ProjectService {
 
-    constructor() {
-        super("project", ['owner'])
-    }
+    constructor(private repo: ProjectRepository) {}
 
     public async getProject(id: number) {
-        const data = (await this.getById(id)).data;
-        if(!data) throw new Error("PROJECT_UNDEFINED");
-
-        return new ProjectEntity(data);
-    }
-
-    public async getUserProjects(user: any) {
-        const data = (await this.getByFields({ownerId: user.id})).data;
-
-        const projects = data.map((p: Project) => new ProjectEntity(p)) ?? [];
-
-        return {data: projects}
-    }
-
-    public async getDetailProject(id: number) {
-        const detailProject = await this.getFirstByFields(
-            {id},
-            {
-                members: {
-                    include: {users: true}
-                },
-                cashboxes: true
-            }
-        )
-
-        if(!detailProject) throw new Error('PROJECT_UNDEFINED'); 
-
-        return detailProject
-    }
-
-    public async updateProject(projectId: number, data: any) {
-        const project = await this.getById(projectId);
-        if(!project.data) throw new Error('PROJECT_UNDEFINED')
-
-        const updatedProject = await this.updateItem(
-            projectId, 
-            {
-                ...data
-            }
-        )
-        if(!updatedProject.data) throw new Error('UPDATE_FAILED');
-
-        return updatedProject;
-    }
-
-    public async createProject(user: any, body: any) {
-        const project = await this.createItem({
-            ownerId: user.id,
-            ...body
-        });
-
-        if(!project) throw new Error('PROJECT_NOT_CREATED');
-
+        const project = await this.repo.findById(id);
+        if (!project) throw new Error("PROJECT_NOT_FOUND");
         return project;
     }
 
-    public async deleteProject(id: number) {
-        return await this.deleteItem(id);
+    async getUserProjects(user: any) {
+        return await this.repo.findUserProjects(user.id);
+    }
+
+    async getDetailProject(id: number) {
+        const project = await this.repo.findDetailedProject(id);
+        if (!project) throw new Error("PROJECT_NOT_FOUND");
+        return project;
+    }
+
+    async createProject(user: any, body: any) {
+        return this.repo.create({ ownerId: user.id, ...body });
+    }
+
+    async updateProject(id: number, data: any) {
+        await this.getProject(id);
+        return this.repo.update(id, data);
+    }
+
+    async deleteProject(id: number) {
+        await this.getProject(id);
+        return this.repo.delete(id);
     }
 }

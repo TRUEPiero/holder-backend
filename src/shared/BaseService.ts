@@ -1,58 +1,54 @@
-import { PrismaClient } from "@prisma/client";
-import type { PaginationParam, PrismaModelName, QueryParam } from "../types/type";
+import type { PaginationParam, PrismaModelName, PrismaTxClient, QueryParam } from "../types/type";
 import { FilterBuilder } from "./FilterBuilder";
+import db from "@common/prisma";
 
-const prisma = new PrismaClient();
 const FilterBuild = new FilterBuilder();
 
 export class BaseService<ModelName extends PrismaModelName> {
-    protected readonly model: (typeof prisma)[ModelName]
+    public readonly model: any
 
-    constructor(modelName: ModelName) {
-        this.model = prisma[modelName]
+    constructor(
+        public modelName: ModelName,
+        public client?: typeof db | PrismaTxClient
+    ) {
+        this.client = client ?? db
+        this.model = this.client[modelName]
     }
 
-    protected async createItem(data: any) {
-        const item = await (this.model as any).create({ data })
-        return {data: item || null}
+    public async createItem(data: any) {
+        return await (this.model as any).create({ data }) || null;
     }
 
-    protected async getAll() {
-        const items = await (this.model as any).findMany();
-        return {data: items || []};
+    public async getAll() {
+        return await (this.model as any).findMany() || [];
     }
     
-    protected async getAllWithQuery(
+    public async getAllWithQuery(
         query: QueryParam = {}
     ) {
-        const items = await (this.model as any).findMany(query)
-        return {data: items || []}
+        return await (this.model as any).findMany(query) || []
     }
 
-    protected async getById(id: number) {
-        const item = await (this.model as any).findUnique({where: {id}});
-        return {data: item || null};
+    public async getById(id: number) {
+        return await (this.model as any).findUnique({where: {id}}) || null;
     }
 
-    protected async getByFields(
+    public async getByFields(
         fields: any, 
         include: any = {}, 
         orderBy: any = {}
     ) {
-        const items = await (this.model as any).findMany({where: {...fields}, include, orderBy})
-        return {data: items || []}
+        return await (this.model as any).findMany({where: {...fields}, include, orderBy}) || [];
     }
 
-    protected async getFirstByFields(
+    public async getFirstByFields(
         fields: any, 
         include: any = {}
     ) {
-        const item = await (this.model as any).findFirst({where: {...fields}, include});
-
-        return {data: item || null}
+        return await (this.model as any).findFirst({where: {...fields}, include}) || null;
     }
 
-    protected async getWithPagination(
+    public async getWithPagination(
         parameters: PaginationParam
     ) {
         const { page, limit, name, sortBy = 'id', sortOrder = 'asc', include = "{}", textCheck = "{}", fieldIn = "{}", fieldFilter = "{}" } = JSON.parse(JSON.stringify(parameters));
@@ -66,14 +62,10 @@ export class BaseService<ModelName extends PrismaModelName> {
         const where = FilterBuild.buildFilterWhere(name, JSON.parse(textCheck), JSON.parse(fieldFilter), JSON.parse(fieldIn));
         const orderBy = FilterBuild.buildFilterOrder(sortBy, sortOrder);
 
-        // Простой случай: без пагинации
         if (isLimitsNotValid) {
-            return {
-                data: await this.getAllWithQuery({where, orderBy})
-            };
+            return await this.getAllWithQuery({where, orderBy});
         }
 
-        // Валидация
         if (page < 1 || limit < 1) {
             throw new Error('Page or Limit is incorrect');
         }
@@ -87,24 +79,16 @@ export class BaseService<ModelName extends PrismaModelName> {
                 where,
                 orderBy,
                 include: JSON.parse(include)
-            }),
+            }) || [],
             (this.model as any).count({where}),
         ]);
 
         const totalPages = Math.ceil(totalItems / limit);
 
-        return {
-            data: items || [],
-            pagination: {
-                currentPage: page,
-                totalPages,
-                totalItems,
-                hasNextPage: page < totalPages,
-            },
-        };
+        return {items, currentPage: page, totalPages, totalItems, hasNextPage: page < totalPages};
     }
 
-    protected async updateItem(
+    public async updateItem(
         id: number,
         data: any
     ) {
@@ -112,27 +96,21 @@ export class BaseService<ModelName extends PrismaModelName> {
 
         if(!item) throw new Error('Wrong ID'); 
 
-        return {data: item || {}}
+        return item || null
     }
 
-    protected async updateByFields(
+    public async updateByFields(
         fields: any,
         data: any
     ) {
-        const items = await (this.model as any).updateMany({where: {...fields}, data})
-
-        return {data: items || []}
+        return await (this.model as any).updateMany({where: {...fields}, data}) || []
     }
 
-    protected async deleteItem(id: number) {
-        const item = await (this.model as any).delete({where: { id }})
-                    
-        return {data: item};
+    public async deleteItem(id: number) {
+        return await (this.model as any).delete({where: { id }}) || {}
     }
 
-    protected async deleteByFields(fields: any) {
-        const items = await (this.model as any).deleteMany({where: {...fields}})
-
-        return {data: items || []}
+    public async deleteByFields(fields: any) {
+        return await (this.model as any).deleteMany({where: {...fields}}) || [];
     }
 }

@@ -1,6 +1,17 @@
 import {t} from 'elysia';
 
-export const ResponseTransaction = t.Object({
+export type Transaction = {
+    id: number;
+    amount: number;
+    description: string;
+    type: string;
+    tags: any[];
+    author: any;
+    cashbox: any;
+    createdAt: Date;
+}
+
+export const ResponseTransaction = t.Any({
 
 })
 

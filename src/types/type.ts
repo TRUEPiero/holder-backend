@@ -1,8 +1,7 @@
-import { PrismaClient } from "@prisma/client";
+import db from "@common/prisma";
 
-const prisma = new PrismaClient();
-
-type PrismaModelName = keyof typeof prisma;
+type PrismaModelName = keyof typeof db;
+type PrismaTxClient = Omit<typeof db, "$connect" | "$disconnect" | "$on" | "$transaction" | "$extends">;
 
 type QueryParam = {
     where?: Record<string, any>,
@@ -23,6 +22,7 @@ type PaginationParam = {
 
 export type {
     PrismaModelName,
+    PrismaTxClient,
     QueryParam,
     PaginationParam
 }

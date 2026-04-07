@@ -1,13 +1,17 @@
+import db from "@common/prisma";
 import { BaseService } from "./BaseService";
-import type { PrismaModelName } from "../types/type";
+import type { PrismaModelName, PrismaTxClient } from "../types/type";
 
 export class DirectoryService<modelName extends PrismaModelName> extends BaseService<modelName> {
 
-    protected ColumnsToConnect: string[] = [];
+    public ColumnsToConnect: string[] = [];
 
-    constructor(Model: modelName, columns: string[]) {
+    constructor(
+        public Model: modelName, 
+        public columns: string[],
+        public client?: typeof db | PrismaTxClient
+    ) {
         super(Model);
-
         this.ColumnsToConnect.push(...columns);
     }
 
@@ -19,7 +23,7 @@ export class DirectoryService<modelName extends PrismaModelName> extends BaseSer
         }
     }
 
-    protected async createItem(data: any): Promise<{ data: any; }> {
+    public async createItem(data: any): Promise<any> {
         
         const InitObject = Object.assign(
             {},
@@ -29,12 +33,10 @@ export class DirectoryService<modelName extends PrismaModelName> extends BaseSer
         );
         this.ConvertConnectedColumns(InitObject);
         
-        const item = await (this.model as any).create({data: InitObject})
-
-        return {data: item || {}}
+        return await (this.model as any).create({data: InitObject}) || null;
     }
 
-    protected async updateItem(id: number, data: any): Promise<{ data: any; }> {
+    public async updateItem(id: number, data: any): Promise<any> {
         const InitObject = Object.assign(
             {},
             {
@@ -49,7 +51,7 @@ export class DirectoryService<modelName extends PrismaModelName> extends BaseSer
             data: InitObject
         })
         
-        return {data: item || {}}
+        return item || null
     }
 
 }

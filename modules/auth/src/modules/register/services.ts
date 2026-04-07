@@ -1,77 +1,64 @@
-import { BaseService } from "@shared/BaseService";
 import { MailService } from "../../../lib/mail";
+import { RegisterRepository } from "./repository";
+import { UserRepository } from "../user/repository";
+import { DirectoryService } from "@shared/DirectoryService";
 
-export class RegisterService extends BaseService<'registerVerify'> {
-    constructor() {
-        super('registerVerify')
+const base = new DirectoryService<'user'>('user', [])
+const userRepo = new UserRepository(base);
+const mailService = new MailService();
+
+export class RegisterService {
+    constructor(
+        private repo: RegisterRepository
+    ) {}
+
+    public async getVerify(filter: any) {
+        const verify = await this.repo.getByFilter(filter);
+        return verify;
     }
 
-    async register(body: any, jwt: any, cookie: any) {
+    public async register(data: any) {
+        const user = await userRepo.create(data)
+        if(!user) throw new Error("USER_NOT_CREATED");
 
-        const user = await this.createItem({
-            ...body
-        })
-
-        if(!user.data) return null
-
-        const token = await jwt.sign({
-            id: user.data.id
-        })
-
-        cookie['auth-token'].set({
-            value: token,
-            httpOnly: true,
-            secure: false,
-            sameSite: 'lax',
-            maxAge: undefined,
-            path: '/'
-        })
-
-        return {data: user.data || null}
+        return user;
     }
 
-    async sendVerify(email: string) {
+    public async createVerify(email: string) {
 
-        const exist = await this.getFirstByFields({
-                email,
-                expiredAt: {
-                    gt: new Date(),
-                },
-            }
-        );
+        const verify = await this.getVerify({email});
+        if(verify && !verify.isExpired()) return null;
 
-        if(exist.data) return null;
-    
-        const code = Math.floor(10000 + Math.random() * 90000).toString();
+        const code = this.generateCode();
 
-        await this.createItem({
+        await this.repo.create({
                 email,
                 code,
                 expiredAt: new Date(Date.now() + 10 * 60 * 1000),
             }
         );
 
-        await new MailService().send(`Content`, `Header`, {})
+        await mailService.send(`Content`, `Header`, {})
         
         return true
     }
 
-    async chechVerify(code: string) {
+    public async chechVerify(code: string) {
 
-        const exist = await this.getFirstByFields({
-            code,
-            expiredAt: {
-                gt: new Date(),
-            },
-        });
+        const verify = await this.getVerify({code});
+        if (verify.isExpired()) return null;
 
-        if (!exist.data) return null;
-
-        await this.updateByFields(
+        verify.setExpiredDate()
+        const updated = await this.repo.update(
             {code}, 
-            {expiredAt: new Date()}
+            verify.toJSON()
         )
+        if(!updated) throw new Error("UPDATE_ERROR");
 
-        return {email: exist.data.email}
+        return Boolean(updated)
+    }
+
+    private generateCode() {
+        return Math.floor(10000 + Math.random() * 90000).toString();
     }
 }

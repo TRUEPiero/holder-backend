@@ -1,30 +1,25 @@
-import { BaseService } from "@shared/BaseService";
+import { UserRepository } from "./repository";
 
-export class UserService extends BaseService<'user'> {
+export class UserService{
     
-    constructor() {
-        super('user')
-    }
+    constructor(private repo: UserRepository) {}
 
-    async getUser(userId: number) {
-        const user = await this.getById(userId);
-
+    async getUser(id: number) {
+        const user = await this.repo.findById(id);
+        if(!user) throw new Error("USER_NOT_FOUND");
         return user;
     }
 
     async getUserByEmail(email: string) {
-        const user = await this.getFirstByFields({
-            email
-        });
-
+        const user = await this.repo.findByEmail(email);
+        if(!user) throw new Error("USER_NOT_FOUND");
         return user;
     }
 
-    async updateUser(userId: number, data: any, status: any) {
-        const user = await this.updateByFields({id: userId}, data);
+    async updateUser(user: any, data: any) {
+        if(!user) throw new Error("USER_NOT_FOUND");
+        user.update(data)
 
-        if(!user) return status(500, {code: 'UPDATE_ERROR', description: 'Error while updating user'})
-
-        return user;
+        return await this.repo.update(user.id, user.toJSON());
     }
 }

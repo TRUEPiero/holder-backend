@@ -13,16 +13,6 @@ export const schema = {
             ...errorSchema
         }
     },
-    default: {
-        detail: {
-            tag: [''],
-            description: 'Получить проект по умолчанию',
-        },
-        response: {
-            200: ResponseObject,
-            ...errorSchema
-        }
-    },
     detail: {
         params: t.Object({
             pid: t.Number()

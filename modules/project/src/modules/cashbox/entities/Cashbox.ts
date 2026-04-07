@@ -8,6 +8,7 @@ export class CashboxEntity {
     public parameters: any;
     public createdAt: Date;
     public updatedAt: Date;
+    public transactions: any[];
     
     constructor(
         params: any
@@ -19,17 +20,22 @@ export class CashboxEntity {
         this.parameters = params.parameters || {}
         this.createdAt = params.createdAt;
         this.updatedAt = params.updatedAt;
+        this.transactions = params.transactions || [];
     }
 
     public debit(amount: Money) {
         if (this.balance < amount.get()) {
-            throw new Error();
+            throw new Error("BALANSE_LESS_AMOUNT");
         }
         this.balance -= amount.get();
     }
 
     public credit(amount: Money) {
         this.balance += amount.get();
+    }
+
+    public updateBalanse(amount: number) {
+
     }
 
     public getInfo(): any {

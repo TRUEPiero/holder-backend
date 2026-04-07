@@ -7,7 +7,6 @@ export const schema = {
         body: t.Object({
             email: t.String(),
             password: t.String(),
-            telegram: t.Optional(t.String())
         }),
         detail: {
             description: 'Регистрация',
@@ -40,9 +39,7 @@ export const schema = {
             tags: ['Авторизация']
         },
         response: {
-            200: t.Record(
-                t.String(), t.String()
-            ),
+            200: t.Boolean(),
             ...errorSchema
         }
     }
