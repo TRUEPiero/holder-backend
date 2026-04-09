@@ -4,8 +4,6 @@ export class InviteEntity {
     public code: string;
     public projectId: number;
     public expiredAt: Date;
-    public createdAt: Date;
-    public updatedAt: Date;
 
     constructor(params: any) {
         this.id = params.id;
@@ -13,8 +11,10 @@ export class InviteEntity {
         this.projectId = params.projectId;
         this.email = params.email;
         this.expiredAt = params.expiredAt;
-        this.createdAt = params.createdAt;
-        this.updatedAt = params.updatedAt;
+    }
+
+    public getEmail() {
+        return this.email;
     }
 
     public isExpired() {
@@ -31,8 +31,6 @@ export class InviteEntity {
             email: this.email,
             code: this.code,
             expiredAt: this.expiredAt,
-            createdAt: this.createdAt,
-            updatedAt: this.updatedAt,
         }
     }
 }

@@ -1,9 +1,11 @@
 import { Composer } from "grammy";
 import { BotContext } from "../../core/context";
 import { MenuKeyboard } from "../../keyboards/menu";
-import { UserService } from "../../../auth/src/modules/user/services";
+import { DirectoryService } from "@shared/DirectoryService";
+import { UserRepository } from "../../../auth/src/modules/user/repository";
 
-const userService = new UserService;
+const base = new DirectoryService<'user'>('user', [])
+const repo = new UserRepository(base);
 
 const composer = new Composer<BotContext>();
 
@@ -15,7 +17,7 @@ composer.command('start', async (ctx) => {
         return
     }
 
-    const user = (await userService.getFirstByFields({telegram: username})).data
+    const user = (await repo.findByTelegram(username!))
 
     if(!user) {
         await ctx.reply(`К сожалению, нам не удалось найти вас в системе. 

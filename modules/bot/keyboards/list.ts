@@ -1,11 +1,19 @@
 import { InlineKeyboard } from "grammy";
+import { DirectoryService } from "@shared/DirectoryService";
 import { ProjectService } from "../../project/src/modules/project/services";
 import { CashboxService } from "../../project/src/modules/cashbox/services";
+import { CashboxRepository } from "../../project/src/modules/cashbox/repository";
+import { ProjectRepository } from "../../project/src/modules/project/repository";
 
 type EntityType = "project" | "cashbox"
 
-const projectService = new ProjectService();
-const cashboxService = new CashboxService();
+const projectBase = new DirectoryService<'project'>('project', ['cashbox']);
+const projectRepo = new ProjectRepository(projectBase);
+const projectService = new ProjectService(projectRepo);
+
+const cashboxBase = new DirectoryService<'cashbox'>('cashbox', [])
+const cashboxRepo = new CashboxRepository(cashboxBase);
+const cashboxService = new CashboxService(cashboxRepo);
 
 const services: Record<string, typeof projectService | typeof cashboxService> = {
     project: projectService,
@@ -31,12 +39,14 @@ export class ItemsKeyboard {
         const service = services[entity];
         const fieldFilter = JSON.stringify(filter);
 
-        const items = await service.getWithPagination({page, limit, fieldFilter});
+        const data = await service.getWithPagination({page, limit, fieldFilter});
 
-        items.data.map((id: number, title: string) => keyboard.text(title, `${entity}_${id}`).row());
+        data!.items.map(({id, title}) => {
+            return keyboard.text(title, `${entity}_${id}`).row()
+        });
 
-        if(items.pagination) {
-            const { currentPage, totalPages, totalItems, hasNextPage } = items.pagination;
+        if(data!.pagination) {
+            const { currentPage, totalPages, totalItems, hasNextPage } = data!.pagination;
             const paginationKeyboard = this.pagination(entity, currentPage, totalPages, totalItems, hasNextPage)
             
             keyboard.append(paginationKeyboard)

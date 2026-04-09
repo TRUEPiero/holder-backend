@@ -6,10 +6,18 @@ import { RegisterService } from './services';
 import { RegisterRepository } from './repository';
 import { AuthTokenService } from '../../../common/services/token';
 import { AuthCookieService } from '../../../common/services/cookie';
+import { UserRepository } from '../user/repository';
+import { MailService } from '../../../lib/mail';
 
 const base = new DirectoryService<'registerVerify'>('registerVerify', [])
 const repo = new RegisterRepository(base);
-const service = new RegisterService(repo);
+
+const userBase = new DirectoryService<'user'>('user', [])
+const userRepo = new UserRepository(userBase);
+
+const mainService = new MailService();
+
+const service = new RegisterService(repo, userRepo, mainService);
 
 export const RegisterController = new Elysia({
     prefix: '/register'
@@ -17,7 +25,7 @@ export const RegisterController = new Elysia({
 .use(jwt({secret: process.env.JWT_SECRET!}))
 
 .post('/', async({body, jwt, cookie, status}) => {
-    const user = await service.register(body)
+    const user = await service.registerNewUser(body)
 
     const tokenService = new AuthTokenService(jwt);
     const token = await tokenService.generate(user);
@@ -29,7 +37,7 @@ export const RegisterController = new Elysia({
 }, schema.register)
 
 .post('/send', async({body: {email}, status}) => {
-    return await service.createVerify(email) || status(500, {code: '', description: "Error while send verify code"});
+    return await service.sendVerify(email) || status(500, {code: '', description: "Error while send verify code"});
 }, schema.sendVerify)
 
 .post('/check', async({body: {verify_code}, status}) => {

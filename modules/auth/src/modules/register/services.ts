@@ -1,15 +1,12 @@
 import { MailService } from "../../../lib/mail";
 import { RegisterRepository } from "./repository";
 import { UserRepository } from "../user/repository";
-import { DirectoryService } from "@shared/DirectoryService";
-
-const base = new DirectoryService<'user'>('user', [])
-const userRepo = new UserRepository(base);
-const mailService = new MailService();
 
 export class RegisterService {
     constructor(
-        private repo: RegisterRepository
+        private repo: RegisterRepository,
+        private userRepo: UserRepository,
+        private mailService: MailService
     ) {}
 
     public async getVerify(filter: any) {
@@ -17,14 +14,14 @@ export class RegisterService {
         return verify;
     }
 
-    public async register(data: any) {
-        const user = await userRepo.create(data)
+    public async registerNewUser(data: any) {
+        const user = await this.userRepo.create(data)
         if(!user) throw new Error("USER_NOT_CREATED");
 
         return user;
     }
 
-    public async createVerify(email: string) {
+    public async sendVerify(email: string) {
 
         const verify = await this.getVerify({email});
         if(verify && !verify.isExpired()) return null;
@@ -38,7 +35,7 @@ export class RegisterService {
             }
         );
 
-        await mailService.send(`Content`, `Header`, {})
+        await this.mailService.send(`Content`, `Header`, {})
         
         return true
     }

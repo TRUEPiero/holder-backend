@@ -1,26 +1,27 @@
 import db from "@common/prisma";
 import { Money } from "../../cashbox/entities/Money";
-import { DirectoryService } from "@shared/DirectoryService";
 import { CashboxRepository } from "../../cashbox/repository";
-// import { TransactionRepository } from "../repository";
+import { TransactionRepository } from "../repository";
 
 export class TransferService {
 
-    public async moneyTransfer(projectId: number, cashboxId: number, request: any, user: any) {
+    constructor(
+        private cashboxRepo: CashboxRepository,
+        private transactionRepo: TransactionRepository
+    ) {}
+
+    public async transferMoneyBetweenCashbox(projectId: number, cashboxId: number, request: any, user: any) {
         const amount = new Money(request.amount)
 
         return await db.$transaction(async (tx) => {
             if(cashboxId === request.to) throw new Error('SAME_ID');
 
-            const cashboxBase = new DirectoryService<'cashbox'>('cashbox', [], tx)
-            const cashboxRepo = new CashboxRepository(cashboxBase);
-
             // const transactionBase = new DirectoryService<'transaction'>('transaction', [])
             // const transactionRepo = new TransactionRepository(transactionBase)
 
             const [from, to] = await Promise.all([
-                cashboxRepo.findById(cashboxId),
-                cashboxRepo.findById(request.to)
+                this.cashboxRepo.findById(cashboxId),
+                this.cashboxRepo.findById(request.to)
             ]);
 
             if(!from || !to) throw new Error('CASHBOX_NOT_FOUND');

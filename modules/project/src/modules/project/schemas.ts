@@ -29,7 +29,7 @@ export const schema = {
     create: {
         body: t.Object({
             title: t.String(),
-            parameters: t.Any()
+            settings: t.Any()
         }),
         detail: {
             tag: [''],

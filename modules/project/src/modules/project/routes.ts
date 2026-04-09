@@ -16,13 +16,13 @@ export const ProjectController = new Elysia({
 .derive(deriveUser)
 
 .get('/', async({user}) => {
-    const projects = await service.getUserProjects(user);
+    const projects = await service.getByUser(user);
     return {data: projects}
 }, schema.getAll)
 
 .get('/:pid', async({params: {pid}, status}) => {
     try{
-        const project = await service.getDetailProject(pid);
+        const project = await service.getDetail(pid);
         return {data: project}
     } catch(e: any) {
         if(e.message === 'PROJECT_NOT_FOUND') return status(404, {code: "PROJECT_NOT_FOUND", description: 'Project by ID not founded'});
@@ -33,24 +33,24 @@ export const ProjectController = new Elysia({
 
 .post('/', async({user, body, status}) => {
     try{
-        const project =  await service.createProject(user, body)
+        const project =  await service.create(user, body)
         return {data: project}
     } catch(e: any) {
-        if(e.message === 'PROJECT_NOT_CREATED') return status(500, {code: "PROJECT_NOT_CREATED", description: "Error while create project"})
+        // if(e.message === 'PROJECT_NOT_CREATED') return status(500, {code: "PROJECT_NOT_CREATED", description: "Error while create project"})
     } 
 }, schema.create)
 
 .patch('/:pid', async({params: {pid}, body, status}) => {
     try{
-        const project =  await service.updateProject(pid, body);
+        const project =  await service.update(pid, body);
         return {data: project}
     } catch(e: any) {
         if(e.message === 'PROJECT_NOT_FOUND') return status(404, {code: "PROJECT_NOT_FOUND", description: "Project by ID not founded"});
-        return status(500, {code: "PROJECT_NOT_UPDATED", description: "Error while updates project"});
+        return status(500, {code: "PROJECT_NOT_UPDATED", description: JSON.stringify(e)});
     } 
 }, schema.update)
 
 .delete('/:pid', async({params: {pid}}) => {
-    const project =  await service.deleteProject(pid)
+    const project =  await service.delete(pid)
     return {data: project}
 }, schema.delete)

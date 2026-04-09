@@ -6,8 +6,6 @@ export class CashboxEntity {
     public title: string;
     public description: string;
     public parameters: any;
-    public createdAt: Date;
-    public updatedAt: Date;
     public transactions: any[];
     
     constructor(
@@ -18,8 +16,6 @@ export class CashboxEntity {
         this.title = params.title;
         this.description = params.description || '';
         this.parameters = params.parameters || {}
-        this.createdAt = params.createdAt;
-        this.updatedAt = params.updatedAt;
         this.transactions = params.transactions || [];
     }
 
@@ -45,8 +41,6 @@ export class CashboxEntity {
             description: this.description,
             parameters: this.parameters,
             balance: this.balance,
-            createdAt: this.createdAt,
-            updatedAt: this.updatedAt,
         }
     }
 }

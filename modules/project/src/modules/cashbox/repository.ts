@@ -27,6 +27,22 @@ export class CashboxRepository {
         return new CashboxEntity(data);
     }
 
+    async findWithPagination(parameters: any) {
+        const paginationData = await this.base.getWithPagination(parameters); 
+        const { currentPage, totalPages, totalItems, hasNextPage } = paginationData;
+        
+        const items = paginationData.items.map((p: Cashbox) => new CashboxEntity(p));
+        return {
+            items,
+            pagination: {
+                currentPage, 
+                totalPages, 
+                totalItems, 
+                hasNextPage
+            }
+        }
+    }
+
     async create(data: any): Promise<CashboxEntity> {
         const created = await this.base.createItem(data);
         return new CashboxEntity(created);

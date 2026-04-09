@@ -14,6 +14,11 @@ export class UserRepository {
         return data ? new UserEntity(data) : null;
     }
 
+    public async findByTelegram(telegram: string) {
+        const data = await this.base.getFirstByFields({telegram});
+        return data ? new UserEntity(data) : null;
+    }
+
     public async create(data: any) {
         const created = await this.base.createItem(data);
         return new UserEntity(created);

@@ -5,7 +5,7 @@ export class InviteRepository {
     constructor(private base: DirectoryService<'projectInvite'>) {}
 
     public async getByFilter(filter: any) {
-        const data = await this.base.getByFields(filter);
+        const data = await this.base.getFirstByFields(filter);
         return new InviteEntity(data);
     }
 

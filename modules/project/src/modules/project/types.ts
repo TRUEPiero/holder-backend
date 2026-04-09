@@ -4,7 +4,7 @@ export type Project = {
     id: number,
     title: string,
     default: boolean,
-    parameters: any,
+    settings: any,
     ownerId: number,
     createdAt: Date,
     updatedAt: Date,

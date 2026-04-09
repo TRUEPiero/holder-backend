@@ -19,17 +19,17 @@ export class BaseService<ModelName extends PrismaModelName> {
         return await (this.model as any).create({ data }) || null;
     }
 
-    public async getAll() {
+    public async getAll(): Promise<any[]> {
         return await (this.model as any).findMany() || [];
     }
     
     public async getAllWithQuery(
         query: QueryParam = {}
-    ) {
+    ): Promise<any[]> {
         return await (this.model as any).findMany(query) || []
     }
 
-    public async getById(id: number) {
+    public async getById(id: number): Promise<any | null> {
         return await (this.model as any).findUnique({where: {id}}) || null;
     }
 
@@ -37,14 +37,14 @@ export class BaseService<ModelName extends PrismaModelName> {
         fields: any, 
         include: any = {}, 
         orderBy: any = {}
-    ) {
+    ): Promise<any[]> {
         return await (this.model as any).findMany({where: {...fields}, include, orderBy}) || [];
     }
 
     public async getFirstByFields(
         fields: any, 
         include: any = {}
-    ) {
+    ): Promise<any | null> {
         return await (this.model as any).findFirst({where: {...fields}, include}) || null;
     }
 
@@ -63,7 +63,8 @@ export class BaseService<ModelName extends PrismaModelName> {
         const orderBy = FilterBuild.buildFilterOrder(sortBy, sortOrder);
 
         if (isLimitsNotValid) {
-            return await this.getAllWithQuery({where, orderBy});
+            const items = await this.getAllWithQuery({where, orderBy});
+            return {items}
         }
 
         if (page < 1 || limit < 1) {
@@ -91,7 +92,7 @@ export class BaseService<ModelName extends PrismaModelName> {
     public async updateItem(
         id: number,
         data: any
-    ) {
+    ): Promise<any | null> {
         const item = await (this.model as any).update({where: {id}, data})
 
         if(!item) throw new Error('Wrong ID'); 
@@ -102,15 +103,15 @@ export class BaseService<ModelName extends PrismaModelName> {
     public async updateByFields(
         fields: any,
         data: any
-    ) {
+    ): Promise<any[]> {
         return await (this.model as any).updateMany({where: {...fields}, data}) || []
     }
 
-    public async deleteItem(id: number) {
+    public async deleteItem(id: number): Promise<any | null> {
         return await (this.model as any).delete({where: { id }}) || {}
     }
 
-    public async deleteByFields(fields: any) {
+    public async deleteByFields(fields: any): Promise<any[]> {
         return await (this.model as any).deleteMany({where: {...fields}}) || [];
     }
 }
