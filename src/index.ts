@@ -2,8 +2,8 @@ import { Elysia } from "elysia";
 import { corsPlugin } from "@plugins/cors";
 import { swaggerPlugin } from "@plugins/swagger";
 import { BotController } from "../modules/bot";
-import { app as authApp } from "../modules/auth";
-import { app as projectApp } from "../modules/project";
+import { app as authApp } from "../modules/auth/src/app";
+import { app as projectApp } from "../modules/project/src/app";
 
 await BotController.start();
 

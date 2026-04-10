@@ -7,11 +7,13 @@ await db.project.createMany({
         {
             title: 'Дефолтный проект',
             default: true,
+            settings: JSON.stringify({}),
             ownerId: 1,
         },
         {
             title: 'Тестовый проект',
             default: false,
+            settings: JSON.stringify({}),
             ownerId: 1,
         }
     ]

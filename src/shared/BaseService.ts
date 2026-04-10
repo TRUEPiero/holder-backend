@@ -1,61 +1,57 @@
-import { PrismaClient } from "@prisma/client";
-import type { PrismaModelName, QueryParam } from "../types/type";
+import type { PaginationParam, PrismaModelName, PrismaTxClient, QueryParam } from "../types/type";
 import { FilterBuilder } from "./FilterBuilder";
+import db from "@common/prisma";
 
-const prisma = new PrismaClient();
 const FilterBuild = new FilterBuilder();
 
 export class BaseService<ModelName extends PrismaModelName> {
-    protected readonly model: (typeof prisma)[ModelName]
+    public readonly model: any
 
-    constructor(modelName: ModelName) {
-        this.model = prisma[modelName]
+    constructor(
+        public modelName: ModelName,
+        public client?: typeof db | PrismaTxClient
+    ) {
+        this.client = client ?? db
+        this.model = this.client[modelName]
     }
 
-    async createItem(data: any) {
-        const item = await (this.model as any).create({ data })
-        return {data: item || null}
+    public async createItem(data: any) {
+        return await (this.model as any).create({ data }) || null;
     }
 
-    async getAll() {
-        const items = await (this.model as any).findMany();
-        return {data: items || []};
+    public async getAll(): Promise<any[]> {
+        return await (this.model as any).findMany() || [];
     }
     
-    async getAllWithQuery(
+    public async getAllWithQuery(
         query: QueryParam = {}
-    ) {
-        const items = await (this.model as any).findMany(query)
-        return {data: items || []}
+    ): Promise<any[]> {
+        return await (this.model as any).findMany(query) || []
     }
 
-    async getById(id: number) {
-        const item = await (this.model as any).findUnique({where: {id}});
-        return {data: item || null};
+    public async getById(id: number): Promise<any | null> {
+        return await (this.model as any).findUnique({where: {id}}) || null;
     }
 
-    async getByFields(
+    public async getByFields(
         fields: any, 
         include: any = {}, 
         orderBy: any = {}
-    ) {
-        const items = await (this.model as any).findMany({where: {...fields}, include, orderBy})
-        return {data: items || []}
+    ): Promise<any[]> {
+        return await (this.model as any).findMany({where: {...fields}, include, orderBy}) || [];
     }
 
-    async getFirstByFields(
+    public async getFirstByFields(
         fields: any, 
         include: any = {}
-    ) {
-        const item = await (this.model as any).findFirst({where: {...fields}, include});
-
-        return {data: item || null}
+    ): Promise<any | null> {
+        return await (this.model as any).findFirst({where: {...fields}, include}) || null;
     }
 
-    async getWithPagination(
-        parameters: any
+    public async getWithPagination(
+        parameters: PaginationParam
     ) {
-        const { page, limit, name, sortBy = 'id', sortOrder = 'asc', include = "{}", textCheck = "{}", fieldIn = "{}" } = JSON.parse(JSON.stringify(parameters));
+        const { page, limit, name, sortBy = 'id', sortOrder = 'asc', include = "{}", textCheck = "{}", fieldIn = "{}", fieldFilter = "{}" } = JSON.parse(JSON.stringify(parameters));
 
         const isLimitsNotValid =
             page === undefined ||
@@ -63,15 +59,14 @@ export class BaseService<ModelName extends PrismaModelName> {
             page === null ||
             limit === null;
 
-        const where = FilterBuild.buildFilterWhere(name, JSON.parse(textCheck), JSON.parse(fieldIn));
+        const where = FilterBuild.buildFilterWhere(name, JSON.parse(textCheck), JSON.parse(fieldFilter), JSON.parse(fieldIn));
         const orderBy = FilterBuild.buildFilterOrder(sortBy, sortOrder);
 
-        // Простой случай: без пагинации
         if (isLimitsNotValid) {
-            return this.getAllWithQuery({where, orderBy});
+            const items = await this.getAllWithQuery({where, orderBy});
+            return {items}
         }
 
-        // Валидация
         if (page < 1 || limit < 1) {
             throw new Error('Page or Limit is incorrect');
         }
@@ -85,54 +80,38 @@ export class BaseService<ModelName extends PrismaModelName> {
                 where,
                 orderBy,
                 include: JSON.parse(include)
-            }),
+            }) || [],
             (this.model as any).count({where}),
         ]);
 
         const totalPages = Math.ceil(totalItems / limit);
 
-        return {
-            data: items || [],
-            pagination: {
-                currentPage: page,
-                totalPages,
-                totalItems,
-                hasNextPage: page < totalPages,
-            },
-        };
+        return {items, currentPage: page, totalPages, totalItems, hasNextPage: page < totalPages};
     }
 
-    async updateItem(
+    public async updateItem(
         id: number,
         data: any
-    ) {
+    ): Promise<any | null> {
         const item = await (this.model as any).update({where: {id}, data})
 
         if(!item) throw new Error('Wrong ID'); 
 
-        return {data: item || {}}
+        return item || null
     }
 
-    async updateByFields(
+    public async updateByFields(
         fields: any,
         data: any
-    ) {
-        const items = await (this.model as any).updateMany({where: {...fields}, data})
-
-        return {data: items || []}
+    ): Promise<any[]> {
+        return await (this.model as any).updateMany({where: {...fields}, data}) || []
     }
 
-    async deleteItem(id: number) {
-        const item = await (this.model as any).delete({where: { id }})
-        
-        if(!item) throw new Error('Wrong ID')
-            
-        return {data: item || null};
+    public async deleteItem(id: number): Promise<any | null> {
+        return await (this.model as any).delete({where: { id }}) || {}
     }
 
-    async deleteByFields(fields: any) {
-        const items = await (this.model as any).deleteMany({where: {...fields}})
-
-        return {data: items || []}
+    public async deleteByFields(fields: any): Promise<any[]> {
+        return await (this.model as any).deleteMany({where: {...fields}}) || [];
     }
 }

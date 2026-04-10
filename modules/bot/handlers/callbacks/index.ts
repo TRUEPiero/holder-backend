@@ -1,40 +1,78 @@
 import { Composer } from "grammy";
 import { BotContext } from "../../core/context";
 import { MenuKeyboard } from "../../keyboards/menu";
-import { ProjectService } from "../../../project/services/project";
-import { CashboxService } from "../../../project/services/cashbox";
-
-const projectService = new ProjectService();
-const cashboxService = new CashboxService();
+import { ItemsKeyboard } from "../../keyboards/list";
+import { ProjectService } from "../../../project/src/modules/project/services";
+import { CashboxService } from "../../../project/src/modules/cashbox/services";
+import { DirectoryService } from "@shared/DirectoryService";
+import { ProjectRepository } from "../../../project/src/modules/project/repository";
+import { CashboxRepository } from "../../../project/src/modules/cashbox/repository";
 
 const composer = new Composer<BotContext>();
 
-composer.callbackQuery('project_list', async (ctx) => {
+const projectBase = new DirectoryService<'project'>('project', ['cashbox']);
+const projectRepo = new ProjectRepository(projectBase);
+const projectService = new ProjectService(projectRepo);
+
+const cashboxBase = new DirectoryService<'cashbox'>('cashbox', [])
+const cashboxRepo = new CashboxRepository(cashboxBase);
+const cashboxService = new CashboxService(cashboxRepo);
+
+type EntityHandler = {
+    service: any,
+    filterKey: string,
+    menu: {
+        list: (entity: string, filter: any, limit?: number, page?: number) => Promise<any>,
+        item: (item?: any) => any
+    }
+}
+
+const handlers: Record<string, EntityHandler> = {
+    project: {
+        service: projectService,
+        filterKey: 'ownerId',
+        menu: {
+            list: (entity, filter, limit=5, page=1) => ItemsKeyboard.entityList(entity, filter, limit, page),
+            item: (project) => MenuKeyboard.projectMenu()
+        }
+    },
+    cashbox: {
+        service: cashboxService,
+        filterKey: 'projectId',
+        menu: {
+            list: (entity, filter, limit=5, page=1) => ItemsKeyboard.entityList(entity, filter, limit, page),
+            item: (cashbox) => MenuKeyboard.cashboxMenu()
+        }
+    }
+}
+
+composer.callbackQuery(/^(project|cashbox)_list$/, async (ctx) => {
+    const entity = ctx.match[1]
+    const handler = handlers[entity];
+
     await ctx.answerCallbackQuery()
-    await ctx.editMessageText('Список проектов:', {reply_markup: await MenuKeyboard.projectList(ctx.session.user_id)})
+    await ctx.editMessageText('Список:', {reply_markup: await handler.menu.list(entity, {[handler.filterKey]: ctx.session.user_id})})
 })
 
-composer.callbackQuery('cashbox_list', async(ctx) => {
+composer.callbackQuery(/^(project|cashbox)_(\d+)$/, async(ctx) => {
+    const entity = ctx.match[1];
+    const id = Number(ctx.match[2]);
+    const handler = handlers[entity];
+
+    const item = (await handler.service.getById(id));
+    ctx.session[`${entity}_id`] = id;
+
     await ctx.answerCallbackQuery();
-    await ctx.editMessageText('Список счетов', {reply_markup: await MenuKeyboard.cashboxList(ctx.session.project_id)})
+    await ctx.editMessageText(`Сущность: ${item.title}`, {reply_markup: await handler.menu.item()})
 })
 
-composer.callbackQuery(/^project_(\d+)$/, async(ctx) => {
-    const projectId = Number(ctx.match[1])
-    const project = (await projectService.getById(projectId)).data;
-    ctx.session.project_id = projectId;
+composer.callbackQuery(/^(project|cashbox)_page_(\d+)$/, async(ctx) => {
+    const entity = ctx.match[1]
+    const page = Number(ctx.match[2]);
+    const handler = handlers[entity];
 
-    await ctx.answerCallbackQuery();
-    await ctx.editMessageText(`Проект: ${project?.title}`, {reply_markup: await MenuKeyboard.cashboxList(project.id)})
-})
-
-composer.callbackQuery(/^cashbox_(\d+)$/, async(ctx) => {
-    const cashboxId = Number(ctx.match[1]);
-    const cashbox = (await cashboxService.getById(cashboxId)).data;
-
-    ctx.session.project_id = cashboxId;
-    await ctx.answerCallbackQuery();
-    await ctx.editMessageText(`Счет: ${cashbox.title}`)
+    await ctx.answerCallbackQuery()
+    await ctx.editMessageText('Список:', {reply_markup: await handler.menu.list(ctx, {[handler.filterKey]: ctx.session.user_id}, 5, page)})
 })
 
 export default composer;
