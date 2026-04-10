@@ -6,8 +6,10 @@ export class ProjectRepository {
 
     constructor(private base: DirectoryService<"project">) {}
 
-    async findById(id: number): Promise<ProjectEntity> {
+    async findById(id: number): Promise<ProjectEntity | null> {
         const data = await this.base.getById(id);
+        if(!data) return null;
+
         return new ProjectEntity(data);
     }
 
@@ -24,6 +26,7 @@ export class ProjectRepository {
                 cashboxes: true
             }
         );
+        if(!data) return null; 
 
         return new ProjectEntity(data);
     }
@@ -44,19 +47,24 @@ export class ProjectRepository {
         }
     }
 
-    async create(data: any): Promise<ProjectEntity> {
+    async create(data: any): Promise<ProjectEntity | null> {
         const created = await this.base.createItem(data);
+        if(!created) return null;
+
         return new ProjectEntity(created);
     }
 
-    async update(id: number, data: any): Promise<ProjectEntity> {
+    async update(id: number, data: any): Promise<ProjectEntity | null> {
         const updated = await this.base.updateItem(id, data);
+        if(!updated) return null;
+
         return new ProjectEntity(updated);
     }
 
-    async delete(id: number) {
-        const project = await this.base.deleteItem(id);
+    async delete(id: number): Promise<ProjectEntity | null>{
+        const deleted = await this.base.deleteItem(id);
+        if(!deleted) return null;
 
-        return new ProjectEntity(project);
+        return new ProjectEntity(deleted);
     }
 }

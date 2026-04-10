@@ -15,5 +15,8 @@ export class SettingService {
     public async getProjectSetting(projectId: number) {
         const project = await this.projectService.checjProjectExist(projectId);
         const projectSettings = project.getSettings();
+        const defaultSetting = await this.getDefaultSetings();
+
+        console.log(defaultSetting, projectSettings)
     }
 }

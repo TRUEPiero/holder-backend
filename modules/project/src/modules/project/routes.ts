@@ -5,7 +5,7 @@ import { ProjectRepository } from './repository';
 import { ProjectService } from './services';
 import { schema } from './schemas';
 
-const base = new DirectoryService<'project'>('project', ['owner']);
+const base = new DirectoryService<'project'>('project', ['owner', 'cashboxes']);
 const repo = new ProjectRepository(base);
 
 const service = new ProjectService(repo);
@@ -36,13 +36,13 @@ export const ProjectController = new Elysia({
         const project =  await service.create(user, body)
         return {data: project}
     } catch(e: any) {
-        // if(e.message === 'PROJECT_NOT_CREATED') return status(500, {code: "PROJECT_NOT_CREATED", description: "Error while create project"})
+        if(e.message === 'PROJECT_NOT_CREATED') return status(500, {code: "PROJECT_NOT_CREATED", description: "Error while create project"})
     } 
 }, schema.create)
 
-.patch('/:pid', async({params: {pid}, body, status}) => {
+.patch('/:pid', async({params: {pid}, user, body, status}) => {
     try{
-        const project =  await service.update(pid, body);
+        const project =  await service.update(user, pid, body);
         return {data: project}
     } catch(e: any) {
         if(e.message === 'PROJECT_NOT_FOUND') return status(404, {code: "PROJECT_NOT_FOUND", description: "Project by ID not founded"});
@@ -50,7 +50,7 @@ export const ProjectController = new Elysia({
     } 
 }, schema.update)
 
-.delete('/:pid', async({params: {pid}}) => {
-    const project =  await service.delete(pid)
+.delete('/:pid', async({params: {pid}, user}) => {
+    const project =  await service.delete(user, pid)
     return {data: project}
 }, schema.delete)

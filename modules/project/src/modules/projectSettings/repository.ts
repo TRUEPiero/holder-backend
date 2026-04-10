@@ -11,7 +11,12 @@ export class SettingRepository {
     }
 
     public async findAll() {
-        const data = await this.base.getAll();
+        const data = await this.base.getAllWithQuery({
+            include: {
+                values: true,
+                defaultValue: true
+            }
+        });
         return data.map((s: Setting) => new SettingEntity(s))
     }
 }

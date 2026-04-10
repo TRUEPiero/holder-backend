@@ -6,6 +6,7 @@ type PrismaTxClient = Omit<typeof db, "$connect" | "$disconnect" | "$on" | "$tra
 type QueryParam = {
     where?: Record<string, any>,
     orderBy?: Record<string , 'asc' | 'desc'>,
+    include?: Record<string, any>
 }
 
 type PaginationParam = {

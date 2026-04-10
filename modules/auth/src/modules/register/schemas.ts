@@ -5,6 +5,7 @@ import { t } from "elysia";
 export const schema = {
     register: {
         body: t.Object({
+            name: t.String(),
             email: t.String(),
             password: t.String(),
         }),

@@ -28,20 +28,32 @@ export class ProjectService {
     }
 
     public async create(user: any, body: any) {
-        return this.repo.create({ ownerId: user.id, ...body });
+        const created = await this.repo.create({ ownerId: user.id, ...body });
+        if(!created) throw new Error("PROJECT_NOT_CREATED");
+        return created;
     }
 
-    public async update(id: number, data: any) {
-        const project = await this.checjProjectExist(id);
+    public async update(user: any, id: number, data: any) {
+        const project = await this.getDetail(id);
+        
+        const access = project.checkAccess(user)
+        if(!access) throw new Error('ACCESS_DENIED')
 
         const updated = project.update(data);
-        console.log(updated.getJSON())
-        return this.repo.update(id, updated.getJSON());
+
+        return this.repo.update(id, updated.toUpdate());
 
     }
 
-    public async delete(id: number) {
-        await this.checjProjectExist(id);
-        return this.repo.delete(id);
+    public async delete(user: any, id: number) {
+        const project = await this.getDetail(id);
+
+        const access = project.checkAccess(user)
+        if(!access) throw new Error('ACCESS_DENIED')
+
+        const deleted = await this.repo.delete(id);
+        if(!deleted) throw new Error("PROJECT_NOT_DELETED");
+
+        return deleted;
     }
 }

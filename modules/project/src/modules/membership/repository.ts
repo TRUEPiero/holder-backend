@@ -6,13 +6,13 @@ export class InviteRepository {
 
     public async getByFilter(filter: any) {
         const data = await this.base.getFirstByFields(filter);
+        if(!data) return null;
         return new InviteEntity(data);
     }
 
     public async create(data:any) {
         const created = await this.base.createItem(data);
-        return new InviteEntity(created);
-        
+        return new InviteEntity(created);   
     }
 
     public async update(filter: any, data: any) {

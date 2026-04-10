@@ -24,3 +24,9 @@ export const ProjectSettingsController = new Elysia({
         pid: t.Number()
     })
 })
+.patch('/', async({}) => {
+
+})
+.patch("/reset", async({}) => {
+    
+})

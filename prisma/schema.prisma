@@ -21,7 +21,6 @@ enum TransactionType {
 }
 
 enum ProjectRole {
-  owner
   viewer
   editor
 }
@@ -31,6 +30,7 @@ enum SettingType {
   string
   number
   boolean
+  float
 }
 
 model User {
@@ -82,7 +82,7 @@ model Project {
   updatedAt DateTime @updatedAt
 
   @@index([id, ownerId])
-  @@map("pr_projects")
+  @@map("projects")
 }
 
 model SettingGroup {
@@ -93,35 +93,27 @@ model SettingGroup {
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   projectSettings ProjectSetting[]
+
+  @@map("setting_group")
 }
 
 model ProjectSetting {
   id          Int            @id @default(autoincrement())
-  name        String
   code        String         @unique
+  title        String
   description String?
   disable     Boolean        @default(false)
   type        SettingType
+
   groupId     Int
   group       SettingGroup   @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  values      SettingValue[]
+
+
+
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
-}
 
-model SettingValue {
-  id Int @id @default(autoincrement())
-
-  valueString  String?  @map("value_string")
-  valueInteger Int?     @map("value_integer")
-  valueFloat   Float?   @map("value_float")
-  valueBoolean Boolean? @map("value_boolean")
-
-  settingId Int
-  setting   ProjectSetting @relation(fields: [settingId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  @@map("project_setting")
 }
 
 model ProjectInvite {
@@ -189,7 +181,7 @@ model CashboxLink {
   children Cashbox @relation(fields: [childrenId], references: [id], onDelete: Cascade, name: "children")
 
   @@unique([parentId, childrenId])
-  @@map("pr_cashbox_link ")
+  @@map("cashbox_link ")
 }
 
 model Transaction {

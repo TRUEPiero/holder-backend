@@ -10,9 +10,7 @@ export class ProjectInviteService {
     ) {}
 
     public async getInvite(filter: any) {
-        const invite = await this.inviteRepo.getByFilter(filter);
-        if(!invite) throw new Error("VERIFY_NOT_FOUND");
-        return invite;
+        return await this.inviteRepo.getByFilter(filter);
     }
 
     public async sendInviteToUser(projectId: number, email: string) { 
@@ -20,7 +18,9 @@ export class ProjectInviteService {
         if(!user) throw new Error("USER_UNDEFINED");
 
         const invite = await this.getInvite({email});
-        if(invite && !invite.isExpired) throw new Error("INVITE_ALREADY_EXIST");
+
+
+        if(invite && !invite.isExpired()) throw new Error("INVITE_ALREADY_EXIST");
 
         const code = this.generateCode();
 

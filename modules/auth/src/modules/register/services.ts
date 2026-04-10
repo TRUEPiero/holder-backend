@@ -24,7 +24,8 @@ export class RegisterService {
     public async sendVerify(email: string) {
 
         const verify = await this.getVerify({email});
-        if(verify && !verify.isExpired()) return null;
+        console.log(verify)
+        // if(verify && !verify.isExpired()) return null;
 
         const code = this.generateCode();
 
