@@ -34,7 +34,7 @@ export class CashboxEntity {
 
     }
 
-    public getInfo(): any {
+    public toJSON(): any {
         return {
             id: this.id,
             title: this.title,

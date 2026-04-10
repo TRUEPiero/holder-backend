@@ -6,7 +6,7 @@ export class ProjectService {
 
     constructor(private repo: ProjectRepository) {}
 
-    public async checjProjectExist(id: number) {
+    public async getById(id: number) {
         const project = await this.repo.findById(id);
         if (!project) throw new Error("PROJECT_NOT_FOUND");
         return project;

@@ -19,7 +19,7 @@ export const UserController = new Elysia({
     return {data: user.toJSON()}
 },schema.getUser)
 
-.patch('/:uid', async({user, body, status}) => { 
+.patch('/', async({user, body, status}) => { 
     try {
         const entity = await service.updateUser(user, body);
         return {data: entity}

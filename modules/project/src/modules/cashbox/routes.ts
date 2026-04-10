@@ -39,7 +39,7 @@ export const CashboxController = new Elysia({
         return {data: cashbox}
     } catch (error: any) {
         if(error.message === 'CASHBOX_NOT_FOUND') return status(404, {code: 'CASHBOX_NOT_FOUND', description: ''});
-        return status(500, {code: 'CASHBOX_NOT_UPDATED', description: ""});
+        return status(500, {code: 'CASHBOX_NOT_UPDATED', description: JSON.stringify(error)});
     }
 }, schema.update)
 

@@ -31,7 +31,7 @@ export class CashboxService{
 
     public async update(id: number, data: any) {
         await this.getById(id);
-        return this.repo.update(id, data);
+        return this.repo.update(id, {...data, balance: undefined});
     }
 
     public async updateBalance(id: number, amount: number) {

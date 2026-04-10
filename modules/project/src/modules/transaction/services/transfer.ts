@@ -16,9 +16,6 @@ export class TransferService {
         return await db.$transaction(async (tx) => {
             if(cashboxId === request.to) throw new Error('SAME_ID');
 
-            // const transactionBase = new DirectoryService<'transaction'>('transaction', [])
-            // const transactionRepo = new TransactionRepository(transactionBase)
-
             const [from, to] = await Promise.all([
                 this.cashboxRepo.findById(cashboxId),
                 this.cashboxRepo.findById(request.to)
@@ -31,8 +28,8 @@ export class TransferService {
 
             //Выполняется очень долго timeout 5s
             // await Promise.all([
-            //     cashboxRepo.update(from.id, { balance: from.balance }),
-            //     cashboxRepo.update(to.id, { balance: to.balance })
+            //     this.cashboxRepo.update(from.id, { balance: from.balance }),
+            //     this.cashboxRepo.update(to.id, { balance: to.balance })
             // ]);
             await Promise.all([
                 tx.cashbox.update({ where: { id: from.id }, data: { balance: from.balance } }),
@@ -41,13 +38,13 @@ export class TransferService {
 
             //Выполняется очень долго timeout 5s
             // await Promise.all([
-            //     transactionRepo.create({
+            //     this.transactionRepo.create({
             //         cashboxId: from.id,
             //         type: "expense",
             //         amount: amount.get(),
             //         authorId: user.id
             //     }),
-            //     transactionRepo.create({
+            //     this.transactionRepo.create({
             //         cashboxId: to.id,
             //         type: "income",
             //         amount: amount.get(),

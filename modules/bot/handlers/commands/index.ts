@@ -12,6 +12,7 @@ const composer = new Composer<BotContext>();
 composer.command('start', async (ctx) => {
     const username = ctx.chat.username;
 
+    ctx.session.history = ['start_menu'];
     if(ctx.session.user_id) {
         await ctx.reply('Начало', {reply_markup: MenuKeyboard.mainMenu()});
         return

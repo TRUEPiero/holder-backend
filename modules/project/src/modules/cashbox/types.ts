@@ -6,8 +6,6 @@ export type Cashbox = {
     title: string,
     description?: string,
     balance: number,
-    createdAt: Date,
-    updatedAt: Date
 }
 
 export const ResponseCashbox = t.Object({
@@ -15,9 +13,7 @@ export const ResponseCashbox = t.Object({
     parameters: t.Any(),
     title: t.String(),
     description: t.Nullable(t.String()),
-    balance: t.Number(),
-    createdAt: t.Date(),
-    updatedAt: t.Date()
+    balance: t.Any(),
 })
 
 export const ResponseObject = t.Record(

@@ -5,6 +5,7 @@ type SessionData = {
     user_id: number;
     project_id: number;
     cashbox_id: number;
+    history: any;
     userData: any
 } & ScenesSessionData
 

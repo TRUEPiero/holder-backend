@@ -14,7 +14,9 @@ if (!token) {
 const bot = new Bot<BotContext>(token);
 
 bot.use(session({
-    initial: () => ({})
+    initial: () => ({
+        history: []
+    })
 }))
 bot.use(scenes.manager());
 bot.use(scenes);

@@ -151,7 +151,7 @@ model Cashbox {
   id          Int     @id @default(autoincrement())
   title       String
   description String?
-  balance     Int     @default(0)
+  balance     Decimal     @default(0)
 
   parameters Json?
 

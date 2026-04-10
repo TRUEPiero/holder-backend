@@ -4,6 +4,7 @@ import { ProjectService } from "../../project/src/modules/project/services";
 import { CashboxService } from "../../project/src/modules/cashbox/services";
 import { CashboxRepository } from "../../project/src/modules/cashbox/repository";
 import { ProjectRepository } from "../../project/src/modules/project/repository";
+import { CommonKeyboard } from "./common";
 
 type EntityType = "project" | "cashbox"
 
@@ -39,6 +40,8 @@ export class ItemsKeyboard {
         const service = services[entity];
         const fieldFilter = JSON.stringify(filter);
 
+        console.log(entity)
+
         const data = await service.getWithPagination({page, limit, fieldFilter});
 
         data!.items.map(({id, title}) => {
@@ -50,6 +53,7 @@ export class ItemsKeyboard {
             const paginationKeyboard = this.pagination(entity, currentPage, totalPages, totalItems, hasNextPage)
             
             keyboard.append(paginationKeyboard)
+            keyboard.append(CommonKeyboard.back())
         }
 
         return InlineKeyboard.from(keyboard)
