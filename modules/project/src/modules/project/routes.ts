@@ -1,14 +1,9 @@
 import {Elysia} from 'elysia';
 import { deriveUser } from '@plugins/deriveUser';
-import { DirectoryService } from '@shared/DirectoryService';
-import { ProjectRepository } from './repository';
-import { ProjectService } from './services';
 import { schema } from './schemas';
+import { container } from '../../../../containers';
 
-const base = new DirectoryService<'project'>('project', ['owner', 'cashboxes']);
-const repo = new ProjectRepository(base);
-
-const service = new ProjectService(repo);
+const {projectService} = container;
 
 export const ProjectController = new Elysia({
     prefix: '/project'
@@ -16,13 +11,13 @@ export const ProjectController = new Elysia({
 .derive(deriveUser)
 
 .get('/', async({user}) => {
-    const projects = await service.getByUser(user);
+    const projects = await projectService.getByUser(user);
     return {data: projects}
 }, schema.getAll)
 
 .get('/:pid', async({params: {pid}, status}) => {
     try{
-        const project = await service.getDetail(pid);
+        const project = await projectService.getDetail(pid);
         return {data: project}
     } catch(e: any) {
         if(e.message === 'PROJECT_NOT_FOUND') return status(404, {code: "PROJECT_NOT_FOUND", description: 'Project by ID not founded'});
@@ -33,7 +28,7 @@ export const ProjectController = new Elysia({
 
 .post('/', async({user, body, status}) => {
     try{
-        const project =  await service.create(user, body)
+        const project =  await projectService.create(user, body)
         return {data: project}
     } catch(e: any) {
         if(e.message === 'PROJECT_NOT_CREATED') return status(500, {code: "PROJECT_NOT_CREATED", description: "Error while create project"})
@@ -42,7 +37,7 @@ export const ProjectController = new Elysia({
 
 .patch('/:pid', async({params: {pid}, user, body, status}) => {
     try{
-        const project =  await service.update(user, pid, body);
+        const project =  await projectService.update(user, pid, body);
         return {data: project}
     } catch(e: any) {
         if(e.message === 'PROJECT_NOT_FOUND') return status(404, {code: "PROJECT_NOT_FOUND", description: "Project by ID not founded"});
@@ -51,6 +46,6 @@ export const ProjectController = new Elysia({
 }, schema.update)
 
 .delete('/:pid', async({params: {pid}, user}) => {
-    const project =  await service.delete(user, pid)
+    const project =  await projectService.delete(user, pid)
     return {data: project}
 }, schema.delete)

@@ -1,5 +1,5 @@
 import { DirectoryService } from "@shared/DirectoryService";
-import { UserEntity } from "./User";
+import { UserEntity } from "./entities/User";
 
 export class UserRepository {
     constructor(private base: DirectoryService<'user'>) {}

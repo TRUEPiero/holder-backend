@@ -1,8 +1,7 @@
 export class ProjectEntity {
     private readonly id: number;
     private title: string;
-    private default: boolean;
-    private settings: Record<string, any>;
+    private settings: Record<string, any>[];
     private ownerId: number;
     private members: any[];
     private cashboxes: any[];
@@ -10,7 +9,6 @@ export class ProjectEntity {
     constructor(params: any) {
         this.id = params.id;
         this.title = params.title;
-        this.default = params.default;
         this.settings = params.settings;
         this.ownerId = params.ownerId;
         this.members = params.members;
@@ -21,7 +19,6 @@ export class ProjectEntity {
         return {
             id: this.id,
             title: this.title,
-            default: this.default,
             settings: this.settings,
             ownerId: this.ownerId,
             members: this.formatMembers(this.members),
@@ -29,20 +26,13 @@ export class ProjectEntity {
         }
     }
 
-    public toUpdate() {
-        return {
-            id: this.id,
-            title: this.title,
-            default: this.default,
-            settings: this.settings,
-        }
-    }
-
     public getSettings() {
+        if(typeof this.settings === 'string') return JSON.parse(this.settings);
+        
         return this.settings;
     }
 
-    public update(data: any): ProjectEntity {
+    public update(data: any) {
         const {settings, ...dataWithoutParams} = data;
         
         for(const [key, value] of Object.entries(dataWithoutParams)) {
@@ -51,7 +41,11 @@ export class ProjectEntity {
 
         this.setParameters(settings);
 
-        return this;
+        return {
+            title: this.title,
+            ownerId: this.ownerId,
+            settings: this.settings,
+        };
     }
     
     public checkAccess(user: any) {

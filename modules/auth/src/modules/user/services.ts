@@ -17,7 +17,7 @@ export class UserService{
     }
 
     public async getTelegramUser(telegram: string) {
-        const user = await this.repo.findByEmail(telegram);
+        const user = await this.repo.findByTelegram(telegram);
         if(!user) throw new Error("USER_NOT_FOUND");
         return user
     }

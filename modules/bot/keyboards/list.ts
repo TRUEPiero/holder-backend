@@ -1,28 +1,18 @@
 import { InlineKeyboard } from "grammy";
-import { DirectoryService } from "@shared/DirectoryService";
-import { ProjectService } from "../../project/src/modules/project/services";
-import { CashboxService } from "../../project/src/modules/cashbox/services";
-import { CashboxRepository } from "../../project/src/modules/cashbox/repository";
-import { ProjectRepository } from "../../project/src/modules/project/repository";
 import { CommonKeyboard } from "./common";
+import { EntityType } from "../types";
+import { container } from "../../containers";
 
-type EntityType = "project" | "cashbox"
+const {cashboxService, projectService, transactionService} = container;
 
-const projectBase = new DirectoryService<'project'>('project', ['cashbox']);
-const projectRepo = new ProjectRepository(projectBase);
-const projectService = new ProjectService(projectRepo);
-
-const cashboxBase = new DirectoryService<'cashbox'>('cashbox', [])
-const cashboxRepo = new CashboxRepository(cashboxBase);
-const cashboxService = new CashboxService(cashboxRepo);
-
-const services: Record<string, typeof projectService | typeof cashboxService> = {
+const services: Record<string, typeof projectService | typeof cashboxService | typeof transactionService> = {
     project: projectService,
-    cashbox: cashboxService
+    cashbox: cashboxService,
+    transaction: transactionService
 }
 
 export class ItemsKeyboard {
-    static pagination(object: EntityType, currentPage: any, totalPages: number, totalItems: any, hasNextPage: boolean) {
+    static pagination(object: EntityType, currentPage: any, hasNextPage: boolean, totalPages: number, totalItems: any) {
         
         const prevPage: number | null = currentPage > 1 ? currentPage - 1: null;
         const nextPage: number | null = hasNextPage ? currentPage + 1 : null
@@ -40,8 +30,6 @@ export class ItemsKeyboard {
         const service = services[entity];
         const fieldFilter = JSON.stringify(filter);
 
-        console.log(entity)
-
         const data = await service.getWithPagination({page, limit, fieldFilter});
 
         data!.items.map(({id, title}) => {
@@ -50,12 +38,16 @@ export class ItemsKeyboard {
 
         if(data!.pagination) {
             const { currentPage, totalPages, totalItems, hasNextPage } = data!.pagination;
-            const paginationKeyboard = this.pagination(entity, currentPage, totalPages, totalItems, hasNextPage)
+            const paginationKeyboard = this.pagination(entity, currentPage, hasNextPage, totalPages, totalItems)
             
             keyboard.append(paginationKeyboard)
             keyboard.append(CommonKeyboard.back())
         }
 
         return InlineKeyboard.from(keyboard)
+    }
+
+    static async settingList(entity: EntityType) {
+        
     }
 }

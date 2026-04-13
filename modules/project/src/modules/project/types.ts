@@ -3,7 +3,6 @@ import {t} from 'elysia';
 export type Project = {
     id: number,
     title: string,
-    default: boolean,
     settings: any,
     ownerId: number,
     createdAt: Date,

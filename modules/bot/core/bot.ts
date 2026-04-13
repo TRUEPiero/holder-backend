@@ -15,7 +15,7 @@ const bot = new Bot<BotContext>(token);
 
 bot.use(session({
     initial: () => ({
-        history: []
+        history: [] as any[],
     })
 }))
 bot.use(scenes.manager());

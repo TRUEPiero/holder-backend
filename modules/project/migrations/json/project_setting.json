@@ -1,0 +1,39 @@
+[
+    {
+        "code": "main",
+        "title": "основ",
+        "description": "",
+        "settings": [
+            {
+                "code": "test",
+                "title": "увед",
+                "type": "boolean",
+                "value": false,
+                "description": "",
+                "isDisable": false,
+                "isRequired": false
+            },
+            {
+                "code": "enum",
+                "title": "enum",
+                "type": "enum",
+                "value": 1,
+                "values": [
+                    1,2,3
+                ],
+                "description": "",
+                "isDisable": false,
+                "isRequired": false
+            },
+            {
+                "code": "string_code",
+                "title": "string_title",
+                "type": "string",
+                "value": "",
+                "description": "",
+                "isDisable": false,
+                "isRequired": false
+            }
+        ] 
+    }
+]

@@ -1,116 +1,64 @@
 import { Composer } from "grammy";
-import { DirectoryService } from "@shared/DirectoryService";
 import { BotContext } from "../../core/context";
-import { MenuKeyboard } from "../../keyboards/menu";
-import { ItemsKeyboard } from "../../keyboards/list";
-import { ProjectService } from "../../../project/src/modules/project/services";
-import { CashboxService } from "../../../project/src/modules/cashbox/services";
-import { ProjectRepository } from "../../../project/src/modules/project/repository";
-import { CashboxRepository } from "../../../project/src/modules/cashbox/repository";
+import { HistoryService } from "../../services/history";
+import { render } from "../../lib/render";
+import { EntityType } from "../../types";
 
 const composer = new Composer<BotContext>();
 
-const projectBase = new DirectoryService<'project'>('project', ['cashbox']);
-const projectRepo = new ProjectRepository(projectBase);
-const projectService = new ProjectService(projectRepo);
-
-const cashboxBase = new DirectoryService<'cashbox'>('cashbox', [])
-const cashboxRepo = new CashboxRepository(cashboxBase);
-const cashboxService = new CashboxService(cashboxRepo);
-
-type EntityHandler = {
-    service: any,
-    filterKey: string,
-    customFields: any[],
-    menu: {
-        list: (entity: string, filter: any, limit?: number, page?: number) => Promise<any>,
-        item: (item?: any) => any
-    }
-}
-
-const handlers: Record<string, EntityHandler> = {
-    project: {
-        service: projectService,
-        filterKey: 'ownerId',
-        customFields: [
-            {key: "title", title: 'Проект'},
-        ],
-        menu: {
-            list: (entity, filter, limit=5, page=1) => ItemsKeyboard.entityList(entity, filter, limit, page),
-            item: (project) => MenuKeyboard.projectMenu()
-        }
-    },
-    cashbox: {
-        service: cashboxService,
-        filterKey: 'projectId',
-        customFields: [
-            {key: "title", title: 'Счет'},
-            {key: "balance", title: 'Баланс'}
-        ],
-        menu: {
-            list: (entity, filter, limit=5, page=1) => ItemsKeyboard.entityList(entity, filter, limit, page),
-            item: (cashbox) => MenuKeyboard.cashboxMenu()
-        }
-    }
-}
-
-composer.callbackQuery(/^(project|cashbox)_list$/, async (ctx) => {
-    const entity = ctx.match[1]
-    const handler = handlers[entity];
-
-    ctx.session.history.push(`${entity}_list`)
-    await ctx.answerCallbackQuery()
-    await ctx.editMessageText('Список:', {reply_markup: await handler.menu.list(entity, {[handler.filterKey]: ctx.session.user_id})})
-})
 
 composer.callbackQuery(/^(project|cashbox)_(\d+)$/, async(ctx) => {
-    const entity = ctx.match[1];
+    const entity = ctx.match[1] as EntityType;
     const id = Number(ctx.match[2]);
-    const handler = handlers[entity];
 
-    const item = (await handler.service.getById(id));
-    ctx.session[`${entity}_id`] = id;
-
-    const buldedMessageText = buildMessageText(handler, item);
-
-    ctx.session.history.push({
+    const step = {
         entity, 
         type: 'item',
         id
-    })
+    }
+
+    await render(ctx, step)
     await ctx.answerCallbackQuery();
-    await ctx.editMessageText(`${buldedMessageText}`, {reply_markup: await handler.menu.item()})
 })
 
-composer.callbackQuery(/^(project|cashbox)_page_(\d+)$/, async(ctx) => {
-    const entity = ctx.match[1]
-    const page = Number(ctx.match[2]);
-    const handler = handlers[entity];
+composer.callbackQuery(/^(project|cashbox|transaction)_page_(\d+)$/, async(ctx) => {
+    const entity = ctx.match[1] as EntityType
+    const id = Number(ctx.match[2]);
 
-    ctx.session.history.push({
+    const step = {
         entity, 
         type: 'page',
-        id: page
-    })
-    await ctx.answerCallbackQuery()
-    await ctx.editMessageText('Список:', {reply_markup: await handler.menu.list(entity, {[handler.filterKey]: ctx.session.user_id}, 5, page)})
+        id
+    }
+
+    await render(ctx, step);
+    await ctx.answerCallbackQuery();
+})
+
+composer.callbackQuery(/^(project|cashbox)_create/, async(ctx) => {
+    await ctx.scenes.enter('createEntity'); 
+    await ctx.answerCallbackQuery();
+})
+
+composer.callbackQuery(/^(project|cashbox)_settings_(\d+)$/, async(ctx) => {
+    const entity = ctx.match[1] as EntityType;
+    const id = Number(ctx.match[2]);
+
+    const step = {
+        entity, 
+        type: 'settings',
+        id
+    }
+    await render(ctx, step)
+    await ctx.answerCallbackQuery();
 })
 
 composer.callbackQuery('back', async(ctx) => {
-    ctx.session.history.pop();
-    const backstep = ctx.session.history.pop();
+    const history = new HistoryService(ctx);
+    const backstep = history.getPreviosStep();
 
     await render(ctx, backstep)
+    await ctx.answerCallbackQuery();
 })
-
-const render = async (ctx: any, step: string) => {
-    console.log(step)
-}
-
-const buildMessageText = (handler: any, entity: any) => {
-    return handler.customFields.map(i => {
-        return `${i.title}: ${entity[i.key]}`
-    }).join('\n')
-}
 
 export default composer;

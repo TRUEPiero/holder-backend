@@ -2,7 +2,7 @@ import { DirectoryService } from "@shared/DirectoryService";
 import { MembershipEntity } from "../entities/membership";
 
 export class MembershipRepository {
-    constructor(private base: DirectoryService<'projectMembership'>) {}
+    constructor(private base: DirectoryService<'projectMember'>) {}
 
     
     public async getMembership(id: number) {

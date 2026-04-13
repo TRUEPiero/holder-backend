@@ -1,10 +1,14 @@
+import { UserService } from "../../../../auth/src/modules/user/services";
 import { ProjectRepository } from "./repository";
 
 export class ProjectService {
 
     private lastError: any;
 
-    constructor(private repo: ProjectRepository) {}
+    constructor(
+        private repo: ProjectRepository,
+        private userService: UserService
+    ) {}
 
     public async getById(id: number) {
         const project = await this.repo.findById(id);
@@ -28,7 +32,9 @@ export class ProjectService {
     }
 
     public async create(user: any, body: any) {
-        const created = await this.repo.create({ ownerId: user.id, ...body });
+        let ownerId = this.resolveUserId(user);      
+
+        const created = await this.repo.create({ ownerId, ...body });
         if(!created) throw new Error("PROJECT_NOT_CREATED");
         return created;
     }
@@ -41,7 +47,7 @@ export class ProjectService {
 
         const updated = project.update(data);
 
-        return this.repo.update(id, updated.toUpdate());
+        return this.repo.update(id, updated);
 
     }
 
@@ -56,4 +62,16 @@ export class ProjectService {
 
         return deleted;
     }
+
+    private async resolveUserId(user: any) {
+        if (typeof user === "object" && user !== null) {
+            return user.id;
+        } else {
+            const userId = Number(user);
+            const curUser = await this.userService.getUser(userId);
+
+            if (!curUser) throw new Error("USER_NOT_FOUND");
+            return userId;
+        }
+    } 
 }
