@@ -15,11 +15,8 @@ export class SettingRepository {
         return data.map(d => new SettingEntity(d))
     }
 
-    public async findAll() {
-        const data = await this.base.getAllWithQuery({
-            include: {
-            }
-        });
-        return data.map((s: Setting) => new SettingEntity(s))
+    public async findByFilter(filter: any) {
+        const data = await this.base.getByFields(filter);
+        return data.map(i => new SettingEntity(i))
     }
 }

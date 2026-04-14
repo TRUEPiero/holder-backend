@@ -1,11 +1,13 @@
 import { container } from "../../containers";
+import { TransactionEntity } from "../../project/src/modules/transaction/entities/Transaction";
 import { BotContext } from "../core/context";
 import { ItemsKeyboard } from "../keyboards/list";
 import { MenuKeyboard } from "../keyboards/menu";
 import { BaseEntityHandler } from "./base-entity.handler";
 
 export class TransactionHandler extends BaseEntityHandler<any> {
-    service = container.transactionService;
+    protected service = container.transactionService;
+    protected settingService = container;
 
     constructor(protected ctx: BotContext) {
         super()
@@ -13,6 +15,14 @@ export class TransactionHandler extends BaseEntityHandler<any> {
 
     public getFilter() {
         return { cashboxId: this.ctx.session.cashbox_id };
+    }
+
+    public async delete() {
+        // return await this.service.delete(this.ctx.session.cashbox_id);
+    }
+
+    public async create() {
+        return new TransactionEntity({})// return await this.service.delete(this.ctx.session.user_id, this.ctx.session.project_id);
     }
 
     protected getFields() {
@@ -31,5 +41,9 @@ export class TransactionHandler extends BaseEntityHandler<any> {
 
     protected async renderItem() {
         return MenuKeyboard.transactionMenu();
+    }
+
+    protected async renderSettings() {
+        // return SettingKeyboard.ProjectSettings(this.ctx.session.project_id);
     }
 }

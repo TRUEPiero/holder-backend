@@ -2,6 +2,8 @@ import { Scene } from "grammy-scenes";
 import { BotContext } from "../core/context";
 import { render } from "../lib/render";
 import { EntityHandlerFactory } from "../lib/factory";
+import { Step } from "../types";
+import { ProjectEntity } from "../../project/src/modules/project/entities/Project";
 
 const scene = new Scene<BotContext>("createEntity");
 scene.step(async (ctx) => {
@@ -9,7 +11,7 @@ scene.step(async (ctx) => {
     const handler = EntityHandlerFactory.create(ctx, entity);
     if(!handler) return;
 
-    ctx.session.createEntityData = {
+    ctx.session.entityData = {
         entity,
         title: '',
         filter: handler.getFilter()
@@ -37,32 +39,34 @@ scene.wait('wait_title').on('message:text', async(ctx) => {
         ctx.scene.exit();
     }
     
-    ctx.session.createEntityData.title = title;
+    ctx.session.entityData.title = title;
     ctx.scene.goto('create_item');
 })
 
 scene.label('create_item').step(async(ctx) => {
 
-    const createData = ctx.session.createEntityData;
+    const createData = ctx.session.entityData;
     const handler = EntityHandlerFactory.create(ctx, createData.entity);
 
     if(!handler) return;
 
-    try{
-        const user = ctx.session.user_id;
-        const data = {
-            title: createData.title,
-            ...createData.filter
+    try{     
+        const item = await handler.create()
+        if(!item) return;
+
+        const step: Step = {
+            entity: createData.entity,
+            type: 'item',
+            id: item.id
         }
         
-        const item = await handler.service.create(user, data)
-        await ctx.reply('Успешно!');
+        await render(ctx, step, true);
+
     }catch(err){
         console.log(err)
         await ctx.reply('Ошибка при создании. Обратитесь в сл. под.');
     }
 
-    await render(ctx, {type: 'start'}, true);
     ctx.scene.exit();
 })
 

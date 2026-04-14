@@ -35,7 +35,7 @@ export class ProjectRepository {
         const paginationData = await this.base.getWithPagination(parameters); 
         const { currentPage, totalPages, totalItems, hasNextPage } = paginationData;
         
-        const items = paginationData.items.map((p: Project) => new ProjectEntity(p));
+        const items: ProjectEntity[] = paginationData.items.map((p: Project) => new ProjectEntity(p));
         return {
             items,
             pagination: {

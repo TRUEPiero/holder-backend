@@ -18,3 +18,7 @@ export const TransactionController = new Elysia({
 .post('/transfer', async({params: {pid, cid}, body, user}) => {
     return await transferService.transferMoneyBetweenCashbox(pid, cid, body, user);
 }, schema.transfer)
+
+.post('/external', async({params: {pid, cid}, body, user}) => {
+    return await transferService.transferWithExternal(cid, body, user)
+}, schema.external)

@@ -1,4 +1,6 @@
+import { UserEntity } from "../../../../auth/src/modules/user/entities/User";
 import { UserService } from "../../../../auth/src/modules/user/services";
+import { ProjectEntity } from "./entities/Project";
 import { ProjectRepository } from "./repository";
 
 export class ProjectService {
@@ -16,7 +18,7 @@ export class ProjectService {
         return project;
     }
 
-    public async getByUser(user: any) {
+    public async getByUser(user: UserEntity) {
         return await this.repo.findUserProjects(user.id);
     }
 
@@ -31,15 +33,13 @@ export class ProjectService {
         return projects;
     }
 
-    public async create(user: any, body: any) {
-        let ownerId = this.resolveUserId(user);      
-
-        const created = await this.repo.create({ ownerId, ...body });
+    public async create(user: UserEntity, body: any) {
+        const created = await this.repo.create({ owner: user.id, ...body });
         if(!created) throw new Error("PROJECT_NOT_CREATED");
         return created;
     }
 
-    public async update(user: any, id: number, data: any) {
+    public async update(user: UserEntity, id: number, data: any) {
         const project = await this.getDetail(id);
         
         const access = project.checkAccess(user)
@@ -51,10 +51,10 @@ export class ProjectService {
 
     }
 
-    public async delete(user: any, id: number) {
+    public async delete(user: UserEntity, id: number) {
         const project = await this.getDetail(id);
 
-        const access = project.checkAccess(user)
+        const access = project.checkAccess(user)       
         if(!access) throw new Error('ACCESS_DENIED')
 
         const deleted = await this.repo.delete(id);
@@ -62,16 +62,4 @@ export class ProjectService {
 
         return deleted;
     }
-
-    private async resolveUserId(user: any) {
-        if (typeof user === "object" && user !== null) {
-            return user.id;
-        } else {
-            const userId = Number(user);
-            const curUser = await this.userService.getUser(userId);
-
-            if (!curUser) throw new Error("USER_NOT_FOUND");
-            return userId;
-        }
-    } 
 }

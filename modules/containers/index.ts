@@ -15,6 +15,9 @@ import { ProjectService } from "../project/src/modules/project/services";
 import { CashboxRepository } from "../project/src/modules/cashbox/repository";
 import { CashboxService } from "../project/src/modules/cashbox/services";
 
+import { CashboxSettingsRepository } from "../project/src/modules/cashboxSetting/repositories";
+import { CashboxSettingsService } from "../project/src/modules/cashboxSetting/services";
+
 import { TransactionRepository } from "../project/src/modules/transaction/repository";
 import { TransactionService } from "../project/src/modules/transaction/services/transaction";
 import { TransferService } from "../project/src/modules/transaction/services/transfer";
@@ -24,17 +27,19 @@ import { MembershipService } from "../project/src/modules/member/services/member
 
 import { ProjectInviteService } from "../project/src/modules/member/services/invite";
 
-import { SettingRepository } from "../project/src/modules/setting/repositories/setting";
-import { SettingService } from "../project/src/modules/setting/services/settings";
-import { InviteRepository } from "../project/src/modules/member/repository";
+import { SettingRepository } from "../project/src/modules/projectSetting/repositories/setting";
+import { SettingService } from "../project/src/modules/projectSetting/services/settings";
+
+import { InviteRepository } from "../project/src/modules/member/repositories/invite";
 
 const mainService = new MailService();
 
 // bases
 const userBase = new DirectoryService<'user'>('user', []);
 const registerBase = new DirectoryService<'registerVerify'>('registerVerify', []);
-const projectBase = new DirectoryService<'project'>('project', ['cashbox']);
+const projectBase = new DirectoryService<'project'>('project', ['cashbox', 'owner']);
 const cashboxBase = new DirectoryService<'cashbox'>('cashbox', []);
+const cashboxSettingBase = new DirectoryService<'cashboxSetting'>('cashboxSetting', [])
 const transactionBase = new DirectoryService<'transaction'>('transaction', []);
 const settingBase = new DirectoryService<'projectSetting'>('projectSetting', ['values'])
 const memberBase = new DirectoryService<'projectMember'>('projectMember', ['user', 'project'])
@@ -45,6 +50,7 @@ const userRepo = new UserRepository(userBase);
 const registerRepo = new RegisterRepository(registerBase);
 const projectRepo = new ProjectRepository(projectBase);
 const cashboxRepo = new CashboxRepository(cashboxBase);
+const cashboxSettingRepo = new CashboxSettingsRepository(cashboxSettingBase);
 const transactionRepo = new TransactionRepository(transactionBase)
 const settingRepo = new SettingRepository(settingBase)
 const memberRepo = new MembershipRepository(memberBase);
@@ -55,11 +61,12 @@ const userService = new UserService(userRepo);
 const authService = new AuthService(userRepo);
 const registerService = new RegisterService(registerRepo, userRepo, mainService);
 const projectService = new ProjectService(projectRepo, userService);
-const cashboxService = new CashboxService(cashboxRepo);
+const cashboxService = new CashboxService(cashboxRepo, projectService);
+const cashboxSettingService = new CashboxSettingsService(cashboxSettingRepo, cashboxService);
 const transactionService = new TransactionService(transactionRepo)
-const transferService = new TransferService(cashboxRepo, transactionRepo)
+const transferService = new TransferService(cashboxService, transactionRepo)
 const memberService = new MembershipService(memberRepo);
-const settingService = new SettingService(settingRepo, projectService)
+const projectSettingService = new SettingService(settingRepo, projectService)
 const inviteService = new ProjectInviteService(inviteRepo, userRepo, memberService)
 
 export const container = {
@@ -68,9 +75,10 @@ export const container = {
     registerService,
     projectService,
     cashboxService,
+    cashboxSettingService,
     transactionService,
     transferService,
     memberService,
     inviteService,
-    settingService,
+    projectSettingService,
 };

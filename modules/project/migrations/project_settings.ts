@@ -12,6 +12,7 @@ type Setting = {
     description: String
     isDisable: boolean
     isRequired: boolean
+    telegram: boolean
     groupId: number
 }
 
@@ -54,6 +55,7 @@ async function main() {
                     },
                     isDisable: setting.isDisable,
                     isRequired: setting.isRequired,
+                    telegram: setting.telegram,
                     value: setting.value,
                     values: setting.values
                 }

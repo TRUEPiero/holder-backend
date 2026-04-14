@@ -11,13 +11,19 @@ await db.user.createMany({
             name: 'Admin',
             password: await hash('adminuser'),
             telegram: 'truepiero',
-            role: 'admin',
+            status: 'enterprise',
         },
         {
             email: 'demo@test.su',
             name: 'Demo',
             password: await hash('demouser'),
-            role: 'demo',
+            status: 'trial',
+        },
+        {
+            email: 'test@test.su',
+            name: 'Test',
+            password: await hash('demouser'),
+            status: 'personal',
         },
     ]
 })

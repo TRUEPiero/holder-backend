@@ -1,5 +1,5 @@
 import { UserRepository } from "../../../../../auth/src/modules/user/repository";
-import { InviteRepository } from "../repository";
+import { InviteRepository } from "../repositories/invite";
 import { MembershipService } from "./membership";
 
 export class ProjectInviteService {

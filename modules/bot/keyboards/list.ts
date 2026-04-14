@@ -12,7 +12,7 @@ const services: Record<string, typeof projectService | typeof cashboxService | t
 }
 
 export class ItemsKeyboard {
-    static pagination(object: EntityType, currentPage: any, hasNextPage: boolean, totalPages: number, totalItems: any) {
+    static pagination(object: EntityType, currentPage: any, hasNextPage?: boolean, totalPages?: number, totalItems?: any) {
         
         const prevPage: number | null = currentPage > 1 ? currentPage - 1: null;
         const nextPage: number | null = hasNextPage ? currentPage + 1 : null
@@ -41,13 +41,9 @@ export class ItemsKeyboard {
             const paginationKeyboard = this.pagination(entity, currentPage, hasNextPage, totalPages, totalItems)
             
             keyboard.append(paginationKeyboard)
-            keyboard.append(CommonKeyboard.back())
         }
-
-        return InlineKeyboard.from(keyboard)
-    }
-
-    static async settingList(entity: EntityType) {
         
+        keyboard.append(CommonKeyboard.back())
+        return InlineKeyboard.from(keyboard)
     }
 }

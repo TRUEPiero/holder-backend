@@ -1,5 +1,5 @@
 import { DirectoryService } from "@shared/DirectoryService";
-import { InviteEntity } from "./entities/Invite";
+import { InviteEntity } from "../entities/Invite";
 
 export class InviteRepository {
     constructor(private base: DirectoryService<'projectInvite'>) {}

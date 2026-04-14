@@ -2,7 +2,7 @@ import { t } from "elysia";
 
 export type Cashbox = {
     id: number,
-    parameters: any,
+    settings: any,
     title: string,
     description?: string,
     balance: number,
@@ -10,7 +10,7 @@ export type Cashbox = {
 
 export const ResponseCashbox = t.Object({
     id: t.Number(),
-    parameters: t.Any(),
+    settings: t.Any(),
     title: t.String(),
     description: t.Nullable(t.String()),
     balance: t.Any(),

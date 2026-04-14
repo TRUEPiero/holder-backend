@@ -35,12 +35,7 @@ composer.callbackQuery(/^(project|cashbox|transaction)_page_(\d+)$/, async(ctx) 
     await ctx.answerCallbackQuery();
 })
 
-composer.callbackQuery(/^(project|cashbox)_create/, async(ctx) => {
-    await ctx.scenes.enter('createEntity'); 
-    await ctx.answerCallbackQuery();
-})
-
-composer.callbackQuery(/^(project|cashbox)_settings_(\d+)$/, async(ctx) => {
+composer.callbackQuery(/^(project|cashbox)_settings/, async(ctx) => {
     const entity = ctx.match[1] as EntityType;
     const id = Number(ctx.match[2]);
 
@@ -53,11 +48,25 @@ composer.callbackQuery(/^(project|cashbox)_settings_(\d+)$/, async(ctx) => {
     await ctx.answerCallbackQuery();
 })
 
+composer.callbackQuery(/^(project|cashbox)_create/, async(ctx) => {
+    await ctx.scenes.enter('createEntity'); 
+    await ctx.answerCallbackQuery();
+})
+
+composer.callbackQuery(/^(project|cashbox)_delete/, async(ctx) => {
+    await ctx.scenes.enter('deleteEntity'); 
+    await ctx.answerCallbackQuery();
+})
+
 composer.callbackQuery('back', async(ctx) => {
     const history = new HistoryService(ctx);
-    const backstep = history.getPreviosStep();
+    let backstep = history.getPreviosStep();
 
-    await render(ctx, backstep)
+    try{
+        await render(ctx, backstep)
+    }catch(err){
+        await render(ctx, {type: 'start'})
+    }
     await ctx.answerCallbackQuery();
 })
 

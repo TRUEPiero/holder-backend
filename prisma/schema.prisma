@@ -10,19 +10,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum UserRole {
-  admin
-  demo
+enum UserStatus {
+  trial
+  personal
+  enterprise
+}
+
+enum MemberRole {
+  viewer
+  editor
 }
 
 enum TransactionType {
   income
   expense
-}
-
-enum ProjectRole {
-  viewer
-  editor
 }
 
 enum SettingType {
@@ -37,7 +38,7 @@ model User {
   id       Int      @id @default(autoincrement())
   name     String
   password String
-  role     UserRole @default(demo)
+  status   UserStatus
   email    String   @unique
 
   telegram   String? @unique
@@ -109,6 +110,7 @@ model ProjectSetting {
   description String?
   isDisable   Boolean     @default(false)
   isRequired  Boolean     @default(false)
+  telegram    Boolean     @default(false)
 
   groupId Int
   group   SettingGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
@@ -138,7 +140,7 @@ model ProjectMember {
   projectId Int @map("project_id")
   userId    Int @map("user_id")
 
-  role ProjectRole
+  role MemberRole
 
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
@@ -159,7 +161,7 @@ model Cashbox {
   description String?
   balance     Decimal @default(0)
 
-  parameters Json?
+  settings Json?
 
   projectId Int     @map("project_id")
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
@@ -190,6 +192,24 @@ model CashboxLink {
 
   @@unique([parentId, childrenId])
   @@map("cashbox_link")
+}
+
+model CashboxSetting {
+  id          Int         @id @default(autoincrement())
+  code        String      @unique
+  type        SettingType
+  values      Json?
+  value       Json?
+  title       String
+  description String?
+  isDisable   Boolean     @default(false)
+  isRequired  Boolean     @default(false)
+  telegram    Boolean     @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("cashbox_setting")
 }
 
 model Transaction {

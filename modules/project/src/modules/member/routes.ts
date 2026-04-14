@@ -2,7 +2,7 @@ import {Elysia, t} from 'elysia';
 import { errorSchema } from '@schemas/error';
 import { container } from '../../../../containers';
 
-const {inviteService} = container;
+const {inviteService, memberService} = container;
 
 export const MembershipController = new Elysia({
     prefix: 'project/:pid/membership'
@@ -10,6 +10,7 @@ export const MembershipController = new Elysia({
 
 .post('/invite/send', async ({params: {pid}, body: {email}, status}) => {
     return await inviteService.sendInviteToUser(pid, email)
+    
 }, {    
     params: t.Object({
         pid: t.Number()
@@ -20,8 +21,7 @@ export const MembershipController = new Elysia({
 }) 
 
 .post('/invite/accept', async ({params: {pid},body: {code}}) => {
-    const test = await inviteService.acceptInvite(pid, code);
-    return test
+    return await inviteService.acceptInvite(pid, code);
 }, {
     params: t.Object({
         pid: t.Number()
@@ -33,4 +33,16 @@ export const MembershipController = new Elysia({
         200: t.Any(),
         ...errorSchema
     }
+})
+
+.patch('/:mid/role', async({params: {pid, mid}, body: {role}}) => {
+    return await memberService.setRole(pid, mid, role); 
+}, {
+    params: t.Object({
+        pid: t.Number(),
+        mid: t.Number(),
+    }),
+    body: t.Object({
+        role: t.Any()
+    })
 })

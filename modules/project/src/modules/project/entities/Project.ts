@@ -48,13 +48,13 @@ export class ProjectEntity {
         };
     }
     
-    public checkAccess(user: any) {
-        if(this.ownerId === user.id) return true
+    public checkAccess(userId: any) {
+        if(this.ownerId === userId) return true
 
         const editors = this.members.filter(member => member.role === 'editor')
                                     .map(member => member.user)
         
-        const inEditors = editors.some(i => i.id === user.id)
+        const inEditors = editors.some(i => i.id === userId)
         
         return inEditors;
     }
@@ -75,4 +75,12 @@ export class ProjectEntity {
             }
         })
     }
+
+    private async resolveUserId(user: any) {
+        if (typeof user === "object" && user !== null) {
+            return user.id;
+        } else {
+            return Number(user);
+        }
+    } 
 }

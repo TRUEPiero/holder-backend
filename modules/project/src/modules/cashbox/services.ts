@@ -1,8 +1,12 @@
+import { ProjectService } from "../project/services";
 import { CashboxRepository } from "./repository";
 
 export class CashboxService{
 
-    constructor(private repo: CashboxRepository) {}
+    constructor(
+        private repo: CashboxRepository,
+        private projectService: ProjectService
+    ) {}
 
     public async getById(id: number) {
         const cashbox = await this.repo.findById(id);
@@ -11,13 +15,13 @@ export class CashboxService{
     }
 
     public async getDetail(id: number) {
-        const cashbox = await this.repo.findDetailedCashbox(id);
+        const cashbox = await this.repo.findDetailed(id);
         if(!cashbox) throw new Error("CASHBOX_NOT_FOUND");
         return cashbox;
     }
 
     public async getByProject(projectId: number) {
-        return await this.repo.findProjectCashboxes(projectId);
+        return await this.repo.findByProject(projectId);
     }
 
     public async getWithPagination(parameters: any) {
@@ -25,21 +29,32 @@ export class CashboxService{
         return cashbox;
     }
 
-    public async create(projectId: number, body: any) {
+    public async create(projectId: number, body: any, user: any) {
+        const project = await this.projectService.getById(projectId);
+        
+        const access = project.checkAccess(user)       
+        if(!access) throw new Error('ACCESS_DENIED')
+
         return this.repo.create({ projectId, ...body });
     }
 
-    public async update(id: number, data: any) {
-        await this.getById(id);
-        return this.repo.update(id, {...data, balance: undefined});
+    public async update(projectId: number, id: number, data: any, user: any) {
+        const project = await this.projectService.getById(projectId);
+        
+        const access = project.checkAccess(user)       
+        if(!access) throw new Error('ACCESS_DENIED')
+
+        const cashbox = await this.getById(id);
+        const updated = cashbox.update(data);
+        return this.repo.update(id, updated);
     }
 
-    public async updateBalance(id: number, amount: number) {
-        await this.getById(id);
-        return this.repo.update(id, {balance: amount});
-    }
+    public async delete(projectId: number, id: number, user: any) {
+        const project = await this.projectService.getById(projectId);
+        
+        const access = project.checkAccess(user)       
+        if(!access) throw new Error('ACCESS_DENIED')
 
-    public async delete(id: number) {
         await this.getById(id); 
         return await this.repo.delete(id);
     }

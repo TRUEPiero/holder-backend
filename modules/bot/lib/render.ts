@@ -22,5 +22,5 @@ export const render = async (ctx: BotContext, step: Step, isCommand = false) => 
         return isCommand ? await ctx.reply(welcomeMsg, options) : await ctx.editMessageText(welcomeMsg, options);
     }
 
-    await handler.render(step)
+    await handler.render(step, isCommand)
 }

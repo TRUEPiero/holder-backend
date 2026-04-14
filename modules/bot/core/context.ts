@@ -8,7 +8,7 @@ type SessionData = {
     transaction_id: number
     history: any[]
     userData: any
-    createEntityData: any
+    entityData: any
 } & ScenesSessionData
 
 export type BotContext = Context & SessionFlavor<SessionData> & ScenesFlavor;

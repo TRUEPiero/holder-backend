@@ -2,20 +2,22 @@ import { Money } from "./Money";
 
 export class CashboxEntity {
     public id: number;
+    public projectId: number;
     public balance: number;
     public title: string;
     public description: string;
-    public parameters: any;
+    public settings: any;
     public transactions: any[];
     
     constructor(
         params: any
     ) {
         this.id = params.id;
+        this.projectId = params.projectId;
         this.balance = params.balance;
         this.title = params.title;
         this.description = params.description || '';
-        this.parameters = params.parameters || {}
+        this.settings = params.settings || {}
         this.transactions = params.transactions || [];
     }
 
@@ -30,8 +32,30 @@ export class CashboxEntity {
         this.balance += amount.get();
     }
 
-    public updateBalanse(amount: number) {
+    public update(data: any) {
+        const {settings, ...dataWithoutParams} = data;
+        
+        for(const [key, value] of Object.entries(dataWithoutParams)) {
+            if(toString(value)) this[key] = value
+        }
 
+        this.setParameters(settings);
+
+        return {
+            title: this.title,
+            settings: this.settings,
+        };
+    }
+
+    public getSettings() {
+        if(typeof this.settings === 'string') return JSON.parse(this.settings);
+        
+        return this.settings;
+    }
+
+    private setParameters(newParams: any) {
+        const preparedParams = newParams;
+        this.settings = preparedParams;
     }
 
     public toJSON(): any {
@@ -39,7 +63,7 @@ export class CashboxEntity {
             id: this.id,
             title: this.title,
             description: this.description,
-            parameters: this.parameters,
+            settings: this.settings,
             balance: this.balance,
         }
     }

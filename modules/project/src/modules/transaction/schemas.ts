@@ -28,5 +28,19 @@ export const schema = {
             200: t.Boolean(),
             ...errorSchema
         }
+    },
+    external: {
+        params: t.Object({
+            pid: t.Number(),
+            cid: t.Number()
+        }),
+        body: t.Object({
+            amount: t.Number(),
+            type: t.String()
+        }),
+        response: {
+            200: t.Boolean(),
+            ...errorSchema
+        }
     }
 }

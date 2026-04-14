@@ -4,7 +4,7 @@ import { ProjectController } from '../modules/project/routes';
 import { CashboxController } from '../modules/cashbox/routes';
 import { TransactionController } from '../modules/transaction/routes';
 import { MembershipController } from '../modules/member/routes';
-import { ProjectSettingsController } from '../modules/setting/routes';
+import { ProjectSettingsController } from '../modules/projectSetting/routes';
 
 export const app = new Elysia()
 .derive(deriveUser)

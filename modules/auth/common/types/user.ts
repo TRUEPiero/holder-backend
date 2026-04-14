@@ -3,7 +3,7 @@ import { t } from "elysia";
 export const ResponseUser = t.Object({
     id: t.Number(),
     name: t.String(),
-    role: t.String(),
+    status: t.String(),
     telegram: t.Nullable(t.Any()),
     telegramId: t.Nullable(t.Any()),
 })

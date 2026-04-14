@@ -2,21 +2,27 @@ import { BotContext } from "../core/context";
 import { Step } from "../types";
 
 export abstract class BaseEntityHandler<T> {
-  public abstract service: any;
+  protected abstract service: any;
+  protected abstract settingService: any;
   protected abstract ctx: BotContext
 
   public abstract getFilter(ctx: BotContext): Record<string, any>;
+  public abstract create(): any;
+  public abstract delete(): any;
   protected abstract getFields(): { key: keyof T; title: string; visible: boolean }[];
 
   protected abstract renderList(page: number): Promise<any>;
   protected abstract renderItem(): Promise<any>;
+  protected abstract renderSettings(): Promise<any>;
 
-  async render(step: Step) {
+  async render(step: Step, isCommand: boolean) {
     const id = Number(step.id);
 
     switch (step.type) {
       case "page":
-        await this.ctx.editMessageText("Список:", {
+        const methodPage = isCommand ? this.ctx.reply.bind(this.ctx) : this.ctx.editMessageText.bind(this.ctx)
+
+        await methodPage("Список:", {
           reply_markup: await this.renderList(id),
         });
         break;
@@ -27,21 +33,39 @@ export abstract class BaseEntityHandler<T> {
 
         this.ctx.session[`${step.entity}_id`] = id;
 
-        const text = this.buildMessage(item);
+        const text = this.buildDetailMessage(item);
 
-        await this.ctx.editMessageText(text, {
+        const methodItem = isCommand ? this.ctx.reply.bind(this.ctx) : this.ctx.editMessageText.bind(this.ctx)
+        await methodItem(text, {
           reply_markup: await this.renderItem(),
         });
         break;
       case "settings":
+        const settings = await this.settingService.getForTelegram(this.ctx.session.project_id)
+        const settingMsg = this.buildSettingsMessage(settings);
+
+        await this.ctx.editMessageText(settingMsg, {
+          reply_markup: await this.renderSettings() 
+        })
         break;
     }
   }
 
-  private buildMessage(entity: T): string {
+  private buildDetailMessage(entity: T): string {
     return this.getFields()
       .filter(f => f.visible)
       .map(f => `${f.title}: ${entity[f.key]}`)
       .join("\n");
+  }
+
+  private buildSettingsMessage(settings: any[]) {
+    let res = `Настройки\n`
+
+    res += settings
+      .filter(s => s.type === "boolean")
+      .map(s => `${s.title}: ${s.value ? 'on' : 'off'}`)
+      .join("\n")
+
+    return res;
   }
 }

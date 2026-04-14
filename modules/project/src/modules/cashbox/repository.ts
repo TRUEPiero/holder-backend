@@ -8,21 +8,23 @@ export class CashboxRepository {
 
     async findById(id: number): Promise<CashboxEntity | null> {
         const data = await this.base.getById(id);
-        return data ? new CashboxEntity(data) : null;
+        if(!data) return null;
+        return new CashboxEntity(data);
     }
 
-    async findProjectCashboxes(projectId: number): Promise<CashboxEntity[]> {
+    async findByProject(projectId: number): Promise<CashboxEntity[]> {
         const data = await this.base.getByFields({ projectId });
         return data.map((p: Cashbox) => new CashboxEntity(p));
     }
 
-    async findDetailedCashbox(id: number) {
+    async findDetailed(id: number):Promise<CashboxEntity|null> {
         const data = await this.base.getFirstByFields(
             { id },
             {
                 transactions: true
             }
         );
+        if(!data) return null;
 
         return new CashboxEntity(data);
     }
@@ -43,19 +45,21 @@ export class CashboxRepository {
         }
     }
 
-    async create(data: any): Promise<CashboxEntity> {
+    async create(data: any): Promise<CashboxEntity | null> {
         const created = await this.base.createItem(data);
+        if(!created) return null;
         return new CashboxEntity(created);
     }
 
-    async update(id: number, data: any): Promise<CashboxEntity> {
+    async update(id: number, data: any): Promise<CashboxEntity| null> {
         const updated = await this.base.updateItem(id, data);
+        if(!updated) return null;
         return new CashboxEntity(updated);
     }
 
-    async delete(id: number) {
-        const project = await this.base.deleteItem(id);
-
-        return new CashboxEntity(project);
+    async delete(id: number): Promise<CashboxEntity | null> {
+        const deleted = await this.base.deleteItem(id);
+        if(!deleted) return null;
+        return new CashboxEntity(deleted);
     }
 }
