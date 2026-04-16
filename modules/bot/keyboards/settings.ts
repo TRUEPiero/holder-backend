@@ -1,42 +1,56 @@
 import { InlineKeyboard } from "grammy";
 import { container } from "../../containers";
 import { CommonKeyboard } from "./common";
+import { EntityType } from "../types";
 
 const {projectSettingService, cashboxSettingService} = container;
 
+type SettingService = typeof projectSettingService | typeof cashboxSettingService;
 
 export class SettingKeyboard {
-    static async ProjectSettings(projectId: number) {
+    static async projectSettings(projectId: number, settingService: SettingService) {
         const keyboard = new InlineKeyboard();
         
-        const data = await projectSettingService.getForTelegram(projectId);
-        
-        data.forEach((setting, index) => {
-            const key = keyboard.text(`Edit ${setting.title}`, `project_setting_${setting.id}`)
+        keyboard.text('Пользователи', 'member_page_1')
+                .text('Переименовать', 'project_rename')
 
-            if(index++ && index++ % 3 === 0) key.row();
-        })
+        const settings = await this.commonSettings('project', projectId, settingService);
 
-        keyboard.append(CommonKeyboard.back())
+        keyboard.append(settings, CommonKeyboard.back())
         return InlineKeyboard.from(keyboard)
     }
 
-    static async CashboxSetting(cashboxId: number) {
+    static async cashboxSetting(cashboxId: number, settingService: SettingService) {
+
         const keyboard = new InlineKeyboard();
         
-        const data = await cashboxSettingService.getForTelegram(cashboxId);
+        keyboard.text('Переименовать', 'cashbox_rename')
 
-        data.forEach((setting, index) => {
-            const key = keyboard.text(`Edit ${setting.title}`, `cashbox_setting_${setting.id}`)
+        const settings = await this.commonSettings('cashbox', cashboxId, settingService);
 
-            if(index++ && index++ % 3 === 0) key.row();
-        })
-
-        keyboard.append(CommonKeyboard.back())
+        keyboard.append(settings, CommonKeyboard.back())
         return InlineKeyboard.from(keyboard)
     }
 
-    static async TransactionSetting() {
+    static async transactionSetting() {
         return new InlineKeyboard();
+    }
+
+    static async memberSetting() {
+        return new InlineKeyboard();
+    }
+
+    private static async commonSettings(entity: EntityType, entityId: number, service: SettingService) {
+        const keyboard = new InlineKeyboard();
+        
+        const data = await service.getForTelegram(entityId);
+        
+        data.forEach((setting, index) => {
+            const key = keyboard.text(`Edit ${setting.title}`, `${entity}_setting_${setting.id}`)
+
+            if(index++ && index++ % 3 === 0) key.row();
+        })
+
+        return keyboard;
     }
 }

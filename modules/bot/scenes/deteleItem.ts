@@ -4,22 +4,22 @@ import { EntityHandlerFactory } from "../lib/factory";
 import { InlineKeyboard } from "grammy";
 import { render } from "../lib/render";
 import { Step } from "../types";
+import { CommonKeyboard } from "../keyboards/common";
 
 const scene = new Scene<BotContext>("deleteEntity");
 
-const keyboard = new InlineKeyboard()
-    .text('Удалить', 'del_yes')
-    .text('Отемна', 'cancel')
 
 scene.label('confirm_delete').step(async(ctx) => {
     const entity = ctx.match![1];
     const handler = EntityHandlerFactory.create(ctx, entity);
     if(!handler) return;
 
-    ctx.session.entityData = {entity}
+    ctx.session.entityData = {
+        entity
+    }
 
     await ctx.editMessageText(`Вы уверены, что хотите удалить?`, {
-        reply_markup: keyboard
+        reply_markup: CommonKeyboard.confirmDelete()
     })
 })
 
@@ -35,7 +35,6 @@ scene.wait('choice').on('callback_query', async(ctx) => {
 })
 
 scene.label('delete_project').step(async(ctx) => {
-    console.log('test')
     const createData = ctx.session.entityData;
     const handler = EntityHandlerFactory.create(ctx, createData.entity);
 

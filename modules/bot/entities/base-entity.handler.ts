@@ -1,3 +1,4 @@
+import { Decimal } from "@prisma/client/runtime/library";
 import { BotContext } from "../core/context";
 import { Step } from "../types";
 
@@ -7,9 +8,12 @@ export abstract class BaseEntityHandler<T> {
   protected abstract ctx: BotContext
 
   public abstract getFilter(ctx: BotContext): Record<string, any>;
+  
   public abstract create(): any;
+  public abstract update(): any;
   public abstract delete(): any;
-  protected abstract getFields(): { key: keyof T; title: string; visible: boolean }[];
+  protected abstract getId(): number 
+  protected abstract getFields(): { key: keyof T; title: string; visible: boolean, formatter?:  any}[];
 
   protected abstract renderList(page: number): Promise<any>;
   protected abstract renderItem(): Promise<any>;
@@ -41,7 +45,7 @@ export abstract class BaseEntityHandler<T> {
         });
         break;
       case "settings":
-        const settings = await this.settingService.getForTelegram(this.ctx.session.project_id)
+        const settings = await this.settingService.getForTelegram(this.getId())
         const settingMsg = this.buildSettingsMessage(settings);
 
         await this.ctx.editMessageText(settingMsg, {
@@ -54,7 +58,14 @@ export abstract class BaseEntityHandler<T> {
   private buildDetailMessage(entity: T): string {
     return this.getFields()
       .filter(f => f.visible)
-      .map(f => `${f.title}: ${entity[f.key]}`)
+      .map(f => {
+          const rawValue = this.getValueByPath(entity, f.key as string);
+          const value = f.formatter
+              ? f.formatter(rawValue, entity)
+              : rawValue;
+
+          return `${f.title}: ${value}`;
+      })
       .join("\n");
   }
 
@@ -67,5 +78,9 @@ export abstract class BaseEntityHandler<T> {
       .join("\n")
 
     return res;
+  }
+
+  private getValueByPath(obj: any, path: string) {
+    return path.split('.').reduce((acc, key) => acc?.[key], obj);
   }
 }

@@ -1,13 +1,13 @@
 import { Scene } from "grammy-scenes";
 import { BotContext } from "../core/context";
-import { render } from "../lib/render";
 import { EntityHandlerFactory } from "../lib/factory";
-import { Step } from "../types";
 import { CommonKeyboard } from "../keyboards/common";
+import { Step } from "../types";
+import { render } from "../lib/render";
 
-const scene = new Scene<BotContext>("createEntity");
+const scene = new Scene<BotContext>('renameEntity')
 
-scene.step(async (ctx) => {
+scene.step(async(ctx) => {
     const entity = ctx.match![1]
     const handler = EntityHandlerFactory.create(ctx, entity);
     if(!handler) return;
@@ -21,7 +21,7 @@ scene.step(async (ctx) => {
 })
 
 scene.label('enter_title').step(async (ctx) => {
-    await ctx.editMessageText(`Введите наименование`, {
+    await ctx.editMessageText(`Введите новое наименование`, {
         reply_markup: CommonKeyboard.cancelCreate()
     })
 })
@@ -44,19 +44,19 @@ scene.wait('wait_title').on(['message:text', 'callback_query'], async(ctx) => {
     ctx.scene.resume();
 })
 
-scene.label('create_item').step(async(ctx) => {
+scene.label('rename_item').step(async(ctx) => {
 
-    const createData = ctx.session.entityData;
-    const handler = EntityHandlerFactory.create(ctx, createData.entity);
+    const updateData = ctx.session.entityData;
+    const handler = EntityHandlerFactory.create(ctx, updateData.entity);
 
     if(!handler) return;
 
     try{     
-        const item = await handler.create()
-        if(!item) throw new Error('ITEM_NOT_CREATED');
+        const item = await handler.update()
+        if(!item) throw new Error("ITEM_NOT_UPDATED");
 
         const step: Step = {
-            entity: createData.entity,
+            entity: updateData.entity,
             type: 'item',
             id: item.id
         }
@@ -65,7 +65,7 @@ scene.label('create_item').step(async(ctx) => {
 
     }catch(err){
         console.log(err)
-        await ctx.reply('Ошибка при создании. Обратитесь в сл. под.');
+        await ctx.reply('Ошибка при обновлении. Обратитесь в сл. под.');
     }
 
     ctx.scene.exit();

@@ -5,6 +5,13 @@ import { Transaction } from "./types";
 export class TransactionRepository {
     constructor(private base: DirectoryService<"transaction">) {}
     
+    async findById(id: number): Promise<TransactionEntity | null> {
+        const data = await this.base.getById(id);
+        if(!data) return null;
+
+        return new TransactionEntity(data);
+    }
+    
     public async findByCashbox(projectId: number, cashboxId: number, query: any) {
         const data = await this.base.getByFields({
             AND: [
@@ -40,5 +47,12 @@ export class TransactionRepository {
     public async create(body: any) {
         const data = await this.base.createItem(body)
         return new TransactionEntity(data);
+    }
+
+    public async delete(id: number) {
+        const deleted = await this.base.deleteItem(id);
+        if(!deleted) return null;
+
+        return new TransactionEntity(deleted);
     }
 }

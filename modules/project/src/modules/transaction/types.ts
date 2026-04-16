@@ -11,6 +11,15 @@ export type Transaction = {
     createdAt: Date;
 }
 
+export type CreateData = {
+    amount: number;
+    description?: string;
+    type: string;
+    tags?: any[];
+    author?: any;
+    cashbox?: any;
+}
+
 export const ResponseTransaction = t.Any({
 
 })

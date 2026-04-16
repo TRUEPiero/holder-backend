@@ -7,7 +7,7 @@ import { EntityType } from "../../types";
 const composer = new Composer<BotContext>();
 
 
-composer.callbackQuery(/^(project|cashbox)_(\d+)$/, async(ctx) => {
+composer.callbackQuery(/^(project|cashbox|transaction|member)_(\d+)$/, async(ctx) => {
     const entity = ctx.match[1] as EntityType;
     const id = Number(ctx.match[2]);
 
@@ -21,7 +21,7 @@ composer.callbackQuery(/^(project|cashbox)_(\d+)$/, async(ctx) => {
     await ctx.answerCallbackQuery();
 })
 
-composer.callbackQuery(/^(project|cashbox|transaction)_page_(\d+)$/, async(ctx) => {
+composer.callbackQuery(/^(project|cashbox|transaction|member)_page_(\d+)$/, async(ctx) => {
     const entity = ctx.match[1] as EntityType
     const id = Number(ctx.match[2]);
 
@@ -35,7 +35,7 @@ composer.callbackQuery(/^(project|cashbox|transaction)_page_(\d+)$/, async(ctx) 
     await ctx.answerCallbackQuery();
 })
 
-composer.callbackQuery(/^(project|cashbox)_settings/, async(ctx) => {
+composer.callbackQuery(/^(project|cashbox)_settings$/, async(ctx) => {
     const entity = ctx.match[1] as EntityType;
     const id = Number(ctx.match[2]);
 
@@ -48,17 +48,37 @@ composer.callbackQuery(/^(project|cashbox)_settings/, async(ctx) => {
     await ctx.answerCallbackQuery();
 })
 
-composer.callbackQuery(/^(project|cashbox)_create/, async(ctx) => {
+composer.callbackQuery(/^(project|cashbox)_create$/, async(ctx) => {
     await ctx.scenes.enter('createEntity'); 
     await ctx.answerCallbackQuery();
 })
 
-composer.callbackQuery(/^(project|cashbox)_delete/, async(ctx) => {
+composer.callbackQuery(/^(project|cashbox)_rename$/, async(ctx) => {
+    await ctx.scenes.enter('renameEntity'); 
+    await ctx.answerCallbackQuery();
+})
+
+composer.callbackQuery(/^(project|cashbox|transaction|member)_delete$/, async(ctx) => {
     await ctx.scenes.enter('deleteEntity'); 
     await ctx.answerCallbackQuery();
 })
 
-composer.callbackQuery('back', async(ctx) => {
+composer.callbackQuery(/^cashbox_transaction_(income|expense)$/, async(ctx) => {
+    ctx.scenes.enter('moneyTransfer');
+    ctx.answerCallbackQuery();
+})
+
+composer.callbackQuery(/^(project|cashbox)_setting_(\d+)$/, async(ctx) => {
+    ctx.scenes.enter('editSetting');
+    ctx.answerCallbackQuery();
+})
+
+composer.callbackQuery(/^member_invite$/, async(ctx) => {
+    ctx.scenes.enter('inviteMember');
+    ctx.answerCallbackQuery();
+})
+
+composer.callbackQuery(/^back$/, async(ctx) => {
     const history = new HistoryService(ctx);
     let backstep = history.getPreviosStep();
 

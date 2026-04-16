@@ -6,8 +6,8 @@ type SessionData = {
     project_id: number
     cashbox_id: number
     transaction_id: number
+    member_id: number
     history: any[]
-    userData: any
     entityData: any
 } & ScenesSessionData
 

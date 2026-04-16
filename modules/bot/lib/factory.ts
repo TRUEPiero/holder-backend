@@ -1,5 +1,6 @@
 import { BotContext } from "../core/context";
 import { CashboxHandler } from "../entities/cashbox.handler";
+import { MemberHandler } from "../entities/member.handler";
 import { ProjectHandler } from "../entities/project.handler";
 import { TransactionHandler } from "../entities/transaction.handler";
 
@@ -12,6 +13,8 @@ export class EntityHandlerFactory {
             return new CashboxHandler(ctx);
         case "transaction":
             return new TransactionHandler(ctx);
+        case "member":
+            return new MemberHandler(ctx);
         default:
             return null;
         }

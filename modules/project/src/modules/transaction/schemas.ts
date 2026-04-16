@@ -36,7 +36,7 @@ export const schema = {
         }),
         body: t.Object({
             amount: t.Number(),
-            type: t.String()
+            type: t.Any()
         }),
         response: {
             200: t.Boolean(),

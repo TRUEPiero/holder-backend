@@ -1,8 +1,13 @@
+import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
+import { ProjectService } from "../../project/services";
 import { MembershipRepository } from "../repositories/membership";
 
 export class MembershipService {
 
-    constructor(private repo: MembershipRepository) {};
+    constructor(
+        private repo: MembershipRepository,
+        private projectService: ProjectService,
+    ) {};
 
     public async getById(id: number) {
         const member = await this.repo.findById(id);
@@ -10,7 +15,12 @@ export class MembershipService {
         return member;
     }
 
-    public async addMemberToProject(projectId: number, user: any) {
+    public async getWithPagination(parameters: any) {
+        const members = await this.repo.findWithPagination(parameters);
+        return members;
+    }
+
+    public async create(projectId: number, user: UserEntity) {
         const exist = await this.repo.findByFilter({projectId, userId: user.id})
         if(exist) throw new Error('MEMBER_ALREADY_EXIST');
 
@@ -23,11 +33,15 @@ export class MembershipService {
         return member
     }
 
-    public async setRole(projectId: number, memberId: number, newRole: any) {
-        const member = await this.getById(memberId);
-        member.setRole(newRole);
+    public async update(projectId: number, memberId: number, data: any, user: UserEntity) {
+        const project = await this.projectService.getById(projectId);
 
-        const updated = member.setRole(newRole);
+        if(!project.checkAccess(user)) {
+            throw new Error("ACCESS_DENIED");
+        }
+
+        const member = await this.getById(memberId);
+        const updated = member.update(data);
 
         return this.repo.update(memberId, updated);
     }
@@ -35,5 +49,4 @@ export class MembershipService {
     public async delete(projectId: number, userId: number) {
 
     }
-
 }

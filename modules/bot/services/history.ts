@@ -24,7 +24,6 @@ export class HistoryService {
     }
 
     public getPreviosStep() {
-        
         this.ctx.session.history.pop();
         const previosStep = this.ctx.session.history.pop();
 

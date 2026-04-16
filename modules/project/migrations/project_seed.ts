@@ -6,14 +6,12 @@ await db.project.createMany({
     data: [
         {
             title: 'Дефолтный проект',
-            settings: JSON.stringify([
-               {code: 'string_code', value: "test value"}
-            ]),
+            settings: [],
             ownerId: 1,
         },
         {
             title: 'Тестовый проект',
-            settings: JSON.stringify([]),
+            settings: [],
             ownerId: 1,
         }
     ]

@@ -1,20 +1,34 @@
 import db from "@common/prisma";
 import { Money } from "../../cashbox/entities/Money";
-import { CashboxRepository } from "../../cashbox/repository";
 import { TransactionRepository } from "../repository";
 import { CashboxService } from "../../cashbox/services";
+import { ProjectService } from "../../project/services";
+import { Prisma, TransactionType } from "@prisma/client";
+import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
+
+type ParamsBetween = {
+    amount: number,
+    to: number,
+}
+
+type ParamsExternal = {
+    amount: number,
+    type: TransactionType
+}
 
 export class TransferService {
 
     constructor(
         private cashboxService: CashboxService,
-        private transactionRepo: TransactionRepository
+        private transactionRepo: TransactionRepository,
+        private projectService: ProjectService,
     ) {}
 
-    public async transferMoneyBetweenCashbox(projectId: number, cashboxId: number, request: any, user: any) {
-        const amount = new Money(request.amount)
-
-        return await db.$transaction(async (tx) => {
+    public async transferMoneyBetweenCashbox(projectId: number, cashboxId: number, request: ParamsBetween, user: any) {      
+        
+        const amount = new Money(request.amount);
+        
+        return await this.execute(projectId, user, async (tx) => {
             if(cashboxId === request.to) throw new Error('SAME_ID');
 
             const [from, to] = await Promise.all([
@@ -27,32 +41,9 @@ export class TransferService {
             from.debit(amount);
             to.credit(amount)
 
-            //Выполняется очень долго timeout 5s
-            // await Promise.all([
-            //     this.cashboxRepo.update(from.id, { balance: from.balance }),
-            //     this.cashboxRepo.update(to.id, { balance: to.balance })
-            // ]);
             await Promise.all([
                 tx.cashbox.update({ where: { id: from.id }, data: { balance: from.balance } }),
                 tx.cashbox.update({ where: { id: to.id }, data: { balance: to.balance } }),
-            ]);
-
-            //Выполняется очень долго timeout 5s
-            // await Promise.all([
-            //     this.transactionRepo.create({
-            //         cashboxId: from.id,
-            //         type: "expense",
-            //         amount: amount.get(),
-            //         authorId: user.id
-            //     }),
-            //     this.transactionRepo.create({
-            //         cashboxId: to.id,
-            //         type: "income",
-            //         amount: amount.get(),
-            //         authorId: user.id
-            //     })
-            // ])
-            await Promise.all([
                 tx.transaction.create({
                     data: {
                         cashboxId: from.id,
@@ -76,11 +67,12 @@ export class TransferService {
         })        
     }
 
-    public async transferWithExternal(cashboxId: number, request: any, user: any) {
-        const amount = new Money(request.amount)
+    public async transferWithExternal(projectId: number, cashboxId: number, request: ParamsExternal, user: any) {
+        
+        const amount = new Money(request.amount);
 
-        return await db.$transaction(async(tx) => {
-            const transactionType = request.type;
+        return await this.execute(projectId, user, async(tx) => {
+            const transactionType = request.type as TransactionType;
 
             const cashbox = await this.cashboxService.getById(cashboxId);
 
@@ -91,7 +83,7 @@ export class TransferService {
                 tx.transaction.create({
                     data: {
                         cashboxId: cashbox.id,
-                        type: "expense",
+                        type: transactionType,
                         amount: amount.get(),
                         authorId: user.id
                     }
@@ -100,5 +92,19 @@ export class TransferService {
 
             return true;
         })
+    }
+
+    private async execute(
+        projectId: number, 
+        user: UserEntity,
+        hadler: (tx: Prisma.TransactionClient) => Promise<any>
+    ) {
+        const project = await this.projectService.getById(projectId);
+
+        if(!project.checkAccess(user)) {
+            throw new Error('ACCESS_DENIED');
+        }
+
+        return db.$transaction(hadler);
     }
 }

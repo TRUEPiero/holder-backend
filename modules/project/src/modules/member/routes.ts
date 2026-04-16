@@ -1,12 +1,15 @@
 import {Elysia, t} from 'elysia';
 import { errorSchema } from '@schemas/error';
 import { container } from '../../../../containers';
+import { deriveUser } from '@plugins/deriveUser';
 
 const {inviteService, memberService} = container;
 
 export const MembershipController = new Elysia({
     prefix: 'project/:pid/membership'
 })
+
+.derive(deriveUser)
 
 .post('/invite/send', async ({params: {pid}, body: {email}, status}) => {
     return await inviteService.sendInviteToUser(pid, email)
@@ -35,8 +38,8 @@ export const MembershipController = new Elysia({
     }
 })
 
-.patch('/:mid/role', async({params: {pid, mid}, body: {role}}) => {
-    return await memberService.setRole(pid, mid, role); 
+.patch('/:mid/role', async({params: {pid, mid}, body: {role}, user}) => {
+    return await memberService.update(pid, mid, {role}, user); 
 }, {
     params: t.Object({
         pid: t.Number(),

@@ -5,65 +5,14 @@
         "description": "",
         "settings": [
             {
-                "code": "test4",
-                "title": "увед4",
+                "code": "notification",
+                "title": "Уведомления",
                 "type": "boolean",
                 "value": false,
-                "description": "",
+                "description": "Присылать уведомления",
                 "isDisable": false,
                 "isRequired": false,
                 "telegram": true
-            },
-            {
-                "code": "test2",
-                "title": "увед2",
-                "type": "boolean",
-                "value": false,
-                "description": "",
-                "isDisable": false,
-                "isRequired": false,
-                "telegram": true
-            },
-            {
-                "code": "test1",
-                "title": "увед1",
-                "type": "boolean",
-                "value": false,
-                "description": "",
-                "isDisable": false,
-                "isRequired": false,
-                "telegram": true
-            },
-            {
-                "code": "test3",
-                "title": "увед3",
-                "type": "boolean",
-                "value": false,
-                "description": "",
-                "isDisable": false,
-                "isRequired": false,
-                "telegram": true
-            },
-            {
-                "code": "enum",
-                "title": "enum",
-                "type": "enum",
-                "value": 1,
-                "values": [
-                    1,2,3
-                ],
-                "description": "",
-                "isDisable": false,
-                "isRequired": false
-            },
-            {
-                "code": "string_code",
-                "title": "string_title",
-                "type": "string",
-                "value": "",
-                "description": "",
-                "isDisable": false,
-                "isRequired": false
             }
         ] 
     }

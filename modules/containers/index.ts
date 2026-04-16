@@ -37,11 +37,11 @@ const mainService = new MailService();
 // bases
 const userBase = new DirectoryService<'user'>('user', []);
 const registerBase = new DirectoryService<'registerVerify'>('registerVerify', []);
-const projectBase = new DirectoryService<'project'>('project', ['cashbox', 'owner']);
-const cashboxBase = new DirectoryService<'cashbox'>('cashbox', []);
+const projectBase = new DirectoryService<'project'>('project', ['owner']);
+const cashboxBase = new DirectoryService<'cashbox'>('cashbox', ['project']);
 const cashboxSettingBase = new DirectoryService<'cashboxSetting'>('cashboxSetting', [])
-const transactionBase = new DirectoryService<'transaction'>('transaction', []);
-const settingBase = new DirectoryService<'projectSetting'>('projectSetting', ['values'])
+const transactionBase = new DirectoryService<'transaction'>('transaction', ['cashbox']);
+const settingBase = new DirectoryService<'projectSetting'>('projectSetting', [])
 const memberBase = new DirectoryService<'projectMember'>('projectMember', ['user', 'project'])
 const inviteBase = new DirectoryService<'projectInvite'>('projectInvite', [])
 
@@ -63,9 +63,9 @@ const registerService = new RegisterService(registerRepo, userRepo, mainService)
 const projectService = new ProjectService(projectRepo, userService);
 const cashboxService = new CashboxService(cashboxRepo, projectService);
 const cashboxSettingService = new CashboxSettingsService(cashboxSettingRepo, cashboxService);
-const transactionService = new TransactionService(transactionRepo)
-const transferService = new TransferService(cashboxService, transactionRepo)
-const memberService = new MembershipService(memberRepo);
+const transactionService = new TransactionService(transactionRepo, projectService)
+const transferService = new TransferService(cashboxService, transactionRepo, projectService)
+const memberService = new MembershipService(memberRepo, projectService);
 const projectSettingService = new SettingService(settingRepo, projectService)
 const inviteService = new ProjectInviteService(inviteRepo, userRepo, memberService)
 

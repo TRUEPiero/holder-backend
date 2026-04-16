@@ -1,15 +1,14 @@
 import { InlineKeyboard } from "grammy";
 import { CommonKeyboard } from "./common";
-import { EntityType } from "../types";
+import { EntityListOptions, EntityListFlags, EntityType, PaginationItem } from "../types";
 import { container } from "../../containers";
+import { Decimal } from "@prisma/client/runtime/library";
+import { formatDate } from "../lib/formatter";
+import { MenuKeyboard } from "./menu";
 
-const {cashboxService, projectService, transactionService} = container;
+const {cashboxService, projectService, transactionService, memberService} = container;
 
-const services: Record<string, typeof projectService | typeof cashboxService | typeof transactionService> = {
-    project: projectService,
-    cashbox: cashboxService,
-    transaction: transactionService
-}
+type Service = typeof projectService | typeof cashboxService | typeof transactionService | typeof memberService;
 
 export class ItemsKeyboard {
     static pagination(object: EntityType, currentPage: any, hasNextPage?: boolean, totalPages?: number, totalItems?: any) {
@@ -24,16 +23,23 @@ export class ItemsKeyboard {
 
     }
 
-    static async entityList(entity: EntityType, filter: any, limit = 5, page = 1) {
+    static async entityList(entity: EntityType, service: Service, filter: any, getTitle?: any, options: EntityListOptions = {}, flags: EntityListFlags = {}) {
+        const {limit = 5, page = 1} = options;
+        const { excludeId = null, withBackButton = true, isMember = false } = flags;
+
+        if(excludeId) filter.id = {not: excludeId}
+
         const keyboard = new InlineKeyboard();
 
-        const service = services[entity];
-        const fieldFilter = JSON.stringify(filter);
+        if(isMember) keyboard.append(MenuKeyboard.memberInvite());
 
+        const fieldFilter = filter;
         const data = await service.getWithPagination({page, limit, fieldFilter});
 
-        data!.items.map(({id, title}) => {
-            return keyboard.text(title, `${entity}_${id}`).row()
+        data!.items.forEach((item: PaginationItem) => {
+            const title = getTitle(item);
+
+            return keyboard.text(title, `${entity}_${item.id}`).row()
         });
 
         if(data!.pagination) {
@@ -43,7 +49,8 @@ export class ItemsKeyboard {
             keyboard.append(paginationKeyboard)
         }
         
-        keyboard.append(CommonKeyboard.back())
+        if (withBackButton) keyboard.append(CommonKeyboard.back());
+
         return InlineKeyboard.from(keyboard)
     }
 }

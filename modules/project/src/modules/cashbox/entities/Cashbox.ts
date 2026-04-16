@@ -1,9 +1,11 @@
+import { Decimal } from "@prisma/client/runtime/library";
+import { UpdateData } from "../types";
 import { Money } from "./Money";
 
 export class CashboxEntity {
     public id: number;
     public projectId: number;
-    public balance: number;
+    public balance: Decimal;
     public title: string;
     public description: string;
     public settings: any;
@@ -14,7 +16,7 @@ export class CashboxEntity {
     ) {
         this.id = params.id;
         this.projectId = params.projectId;
-        this.balance = params.balance;
+        this.balance = new Decimal(params.balance);
         this.title = params.title;
         this.description = params.description || '';
         this.settings = params.settings || {}
@@ -22,21 +24,21 @@ export class CashboxEntity {
     }
 
     public debit(amount: Money) {
-        if (this.balance < amount.get()) {
+        if (this.balance.lessThan(amount.get())) {
             throw new Error("BALANSE_LESS_AMOUNT");
         }
-        this.balance -= amount.get();
+        this.balance = this.balance.sub(new Decimal(amount.get()));
     }
 
     public credit(amount: Money) {
-        this.balance += amount.get();
+        this.balance = this.balance.add(new Decimal(amount.get()));
     }
 
-    public update(data: any) {
+    public update(data: UpdateData) {
         const {settings, ...dataWithoutParams} = data;
         
         for(const [key, value] of Object.entries(dataWithoutParams)) {
-            if(toString(value)) this[key] = value
+            if(value.toString()) (this as any)[key] = value
         }
 
         this.setParameters(settings);

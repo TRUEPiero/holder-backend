@@ -51,7 +51,7 @@ export class BaseService<ModelName extends PrismaModelName> {
     public async getWithPagination(
         parameters: PaginationParam
     ) {
-        const { page, limit, name, sortBy = 'id', sortOrder = 'asc', include = "{}", textCheck = "{}", fieldIn = "{}", fieldFilter = "{}" } = JSON.parse(JSON.stringify(parameters));
+        const { page, limit, name, sortBy = 'id', sortOrder = 'asc', include = {}, textCheck = {}, fieldIn = {}, fieldFilter = {} } = JSON.parse(JSON.stringify(parameters));
 
         const isLimitsNotValid =
             page === undefined ||
@@ -59,7 +59,7 @@ export class BaseService<ModelName extends PrismaModelName> {
             page === null ||
             limit === null;
 
-        const where = FilterBuild.buildFilterWhere(name, JSON.parse(textCheck), JSON.parse(fieldFilter), JSON.parse(fieldIn));
+        const where = FilterBuild.buildFilterWhere(name, textCheck, fieldFilter, fieldIn);
         const orderBy = FilterBuild.buildFilterOrder(sortBy, sortOrder);
 
         if (isLimitsNotValid) {
@@ -79,7 +79,7 @@ export class BaseService<ModelName extends PrismaModelName> {
                 take: limit,
                 where,
                 orderBy,
-                include: JSON.parse(include)
+                include: include
             }) || [],
             (this.model as any).count({where}),
         ]);

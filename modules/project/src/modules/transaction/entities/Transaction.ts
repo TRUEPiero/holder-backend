@@ -6,6 +6,7 @@ export class TransactionEntity {
     public tags: any[];
     public author: any;
     public cashbox: any;
+    public createdAt: Date;
 
     constructor(params: any) {
         this.id = params.id;
@@ -15,5 +16,6 @@ export class TransactionEntity {
         this.tags = params.tags || [];
         this.author = params.author || {};
         this.cashbox = params.cashbox || {};
+        this.createdAt = params.createdAt;
     }
 }

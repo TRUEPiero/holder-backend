@@ -8,6 +8,17 @@ export type Cashbox = {
     balance: number,
 }
 
+export type UpdateData = {
+    title?: string,
+    settings?: Setting[],
+    description?: string,
+}
+
+type Setting = {
+    code: string,
+    value: any
+} 
+
 export const ResponseCashbox = t.Object({
     id: t.Number(),
     settings: t.Any(),

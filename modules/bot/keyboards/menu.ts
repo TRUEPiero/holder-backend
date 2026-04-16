@@ -7,7 +7,6 @@ export class MenuKeyboard {
             .text('Список проектов','project_page_1')
             .text('Добавить проект', 'project_create')
             .row()
-            .text('Настройки')
     }
 
     static projectMenu() {
@@ -23,9 +22,10 @@ export class MenuKeyboard {
 
     static cashboxMenu() {
         return new InlineKeyboard()
-            .text('Список операций', 'transaction_page_1')
-            .text('Перевод', 'transfer')
+            .text('Пополнить', 'cashbox_transaction_income')
+            .text('Переверсти', 'cashbox_transaction_expense')
             .row()
+            .text('История операций', 'transaction_page_1')
             .text('Настройки', `cashbox_settings`)
             .row()
             .text('Удалить', `cashbox_delete`)
@@ -35,7 +35,21 @@ export class MenuKeyboard {
     static transactionMenu() {
         return new InlineKeyboard()
             .text('Повторить', 'transaction_repeat')
+            .text('Удалить', 'transaction_delete')
             .row()
             .append(CommonKeyboard.back())
+    }
+
+    static memberMenu() {
+        return new InlineKeyboard()
+            .text('Сменить роль', 'member_set_role')
+            .text('Удалить', 'member_delete')
+            .append(CommonKeyboard.back())
+    }
+
+    static memberInvite() {
+        return new InlineKeyboard()
+            .text('Пригласить пользователя', 'member_invite')
+            .row()
     }
 }

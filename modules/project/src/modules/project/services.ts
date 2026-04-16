@@ -1,6 +1,5 @@
 import { UserEntity } from "../../../../auth/src/modules/user/entities/User";
 import { UserService } from "../../../../auth/src/modules/user/services";
-import { ProjectEntity } from "./entities/Project";
 import { ProjectRepository } from "./repository";
 
 export class ProjectService {
@@ -13,6 +12,8 @@ export class ProjectService {
     ) {}
 
     public async getById(id: number) {
+        if(!id) throw new Error("ID_NOT_VALID");
+
         const project = await this.repo.findById(id);
         if (!project) throw new Error("PROJECT_NOT_FOUND");
         return project;
@@ -28,13 +29,19 @@ export class ProjectService {
         return project;
     }
 
-    public async getWithPagination(settings: any) {
-        const projects = await this.repo.findWithPagination(settings);
+    public async getWithPagination(parameters: any) {
+        const projects = await this.repo.findWithPagination(parameters);
         return projects;
     }
 
     public async create(user: UserEntity, body: any) {
-        const created = await this.repo.create({ owner: user.id, ...body });
+        const createData = { 
+            owner: user.id, 
+            ...body,
+            settings: body.settings ?? []
+        };
+
+        const created = await this.repo.create(createData);
         if(!created) throw new Error("PROJECT_NOT_CREATED");
         return created;
     }

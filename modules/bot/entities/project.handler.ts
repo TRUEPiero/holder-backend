@@ -4,6 +4,7 @@ import { ItemsKeyboard } from "../keyboards/list";
 import { MenuKeyboard } from "../keyboards/menu";
 import { container } from "../../containers";
 import { SettingKeyboard } from "../keyboards/settings";
+import { EntityListOptions } from "../types";
 
 export class ProjectHandler extends BaseEntityHandler<any> {
   private userService = container.userService;
@@ -15,33 +16,63 @@ export class ProjectHandler extends BaseEntityHandler<any> {
   }
 
   public getFilter() {
-    return { ownerId: this.ctx.session.user_id };
-  }
+    const userId = this.ctx.session.user_id;
 
-  public async delete() {
-    const user = await this.userService.getUser(this.ctx.session.user_id);
-
-    return await this.service.delete(user, this.ctx.session.project_id);
-  }
+    return {
+      OR: [
+          {ownerId: userId},
+          {members: {
+              some: {
+                  userId
+              }
+          }}
+      ]
+    };
+  }       
 
   public async create() {
+    const user = await this.userService.getUser(this.ctx.session.user_id);
+    const updateData = this.ctx.session.entityData;
+    const data = {
+      title: updateData.title
+    }
+
+    return await this.service.create(user, data);
+  }
+
+  public async update() {
     const user = await this.userService.getUser(this.ctx.session.user_id);
     const createData = this.ctx.session.entityData;
     const data = {
       title: createData.title
     }
 
-    return await this.service.create(user, data);
+    return await this.service.update(user, this.getId(), data);
+  }
+
+  public async delete() {
+    const user = await this.userService.getUser(this.ctx.session.user_id);
+
+    return await this.service.delete(user, this.getId());
+  }
+
+  protected getId() {
+    return this.ctx.session.project_id;
   }
 
   protected getFields() {
     return [
-      { key: "title", title: "Проект", visible: true }
+      { key: "title", title: "Проект", visible: true },
     ];
   }
 
   protected async renderList(page: number) {
-    return ItemsKeyboard.entityList("project", this.getFilter(), 5, page);
+    const options: EntityListOptions = {
+      limit: 5, 
+      page
+    }
+
+    return ItemsKeyboard.entityList("project", this.service, this.getFilter(), this.getTitleKey, options);
   }
 
   protected async renderItem() {
@@ -49,6 +80,10 @@ export class ProjectHandler extends BaseEntityHandler<any> {
   }
 
   protected async renderSettings() {
-    return SettingKeyboard.ProjectSettings(this.ctx.session.project_id);
+    return await SettingKeyboard.projectSettings(this.getId(), this.settingService);
   }
+
+    private getTitleKey(item: any) {
+      return item.title
+    }
 }

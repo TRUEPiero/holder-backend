@@ -53,7 +53,7 @@ export class ProjectInviteService {
         const user = await this.userRepo.findByEmail(email);
         if(!user) throw new Error("USER_UNDEFINED");
 
-        const member =  await this.memberService.addMemberToProject(projectId, user);
+        const member =  await this.memberService.create(projectId, user);
         return member;
     }
 

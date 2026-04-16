@@ -1,5 +1,7 @@
+import { UpdateData } from "../types";
+
 export class ProjectEntity {
-    private readonly id: number;
+    public id: number;
     private title: string;
     private settings: Record<string, any>[];
     private ownerId: number;
@@ -32,11 +34,11 @@ export class ProjectEntity {
         return this.settings;
     }
 
-    public update(data: any) {
+    public update(data: UpdateData) {
         const {settings, ...dataWithoutParams} = data;
         
         for(const [key, value] of Object.entries(dataWithoutParams)) {
-            if(toString(value)) this[key] = value
+            if(value.toString()) (this as any)[key] = value
         }
 
         this.setParameters(settings);
@@ -48,7 +50,9 @@ export class ProjectEntity {
         };
     }
     
-    public checkAccess(userId: any) {
+    public checkAccess(user: any) {
+        const userId = this.resolveUserId(user);
+
         if(this.ownerId === userId) return true
 
         const editors = this.members.filter(member => member.role === 'editor')
@@ -76,7 +80,7 @@ export class ProjectEntity {
         })
     }
 
-    private async resolveUserId(user: any) {
+    private resolveUserId(user: any) {
         if (typeof user === "object" && user !== null) {
             return user.id;
         } else {
