@@ -8,10 +8,13 @@ export const schema = {
             pid: t.Number(),
             cid: t.Number()
         }),
-        query: t.Any(),
         response: {
             200: ResponseObjects,
             ...errorSchema
+        },
+        detail: {
+            tags: ['Транзации'],
+            description: 'Получить операции счета'
         }
     },
 
@@ -27,6 +30,10 @@ export const schema = {
         response: {
             200: t.Boolean(),
             ...errorSchema
+        },
+        detail: {
+            tags: ['Транзации'],
+            description: 'Перевод между счетами'
         }
     },
     external: {
@@ -41,6 +48,10 @@ export const schema = {
         response: {
             200: t.Boolean(),
             ...errorSchema
+        },
+        detail: {
+            tags: ['Транзации'],
+            description: 'Внешняя операция'
         }
     }
 }

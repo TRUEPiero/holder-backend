@@ -41,7 +41,7 @@ const projectBase = new DirectoryService<'project'>('project', ['owner']);
 const cashboxBase = new DirectoryService<'cashbox'>('cashbox', ['project']);
 const cashboxSettingBase = new DirectoryService<'cashboxSetting'>('cashboxSetting', [])
 const transactionBase = new DirectoryService<'transaction'>('transaction', ['cashbox']);
-const settingBase = new DirectoryService<'projectSetting'>('projectSetting', [])
+const projectSettingBase = new DirectoryService<'projectSetting'>('projectSetting', [])
 const memberBase = new DirectoryService<'projectMember'>('projectMember', ['user', 'project'])
 const inviteBase = new DirectoryService<'projectInvite'>('projectInvite', [])
 
@@ -52,7 +52,7 @@ const projectRepo = new ProjectRepository(projectBase);
 const cashboxRepo = new CashboxRepository(cashboxBase);
 const cashboxSettingRepo = new CashboxSettingsRepository(cashboxSettingBase);
 const transactionRepo = new TransactionRepository(transactionBase)
-const settingRepo = new SettingRepository(settingBase)
+const rpojectSettingRepo = new SettingRepository(projectSettingBase)
 const memberRepo = new MembershipRepository(memberBase);
 const inviteRepo = new InviteRepository(inviteBase);
 
@@ -60,13 +60,14 @@ const inviteRepo = new InviteRepository(inviteBase);
 const userService = new UserService(userRepo);
 const authService = new AuthService(userRepo);
 const registerService = new RegisterService(registerRepo, userRepo, mainService);
-const projectService = new ProjectService(projectRepo, userService);
+
+const projectService = new ProjectService(projectRepo);
 const cashboxService = new CashboxService(cashboxRepo, projectService);
 const cashboxSettingService = new CashboxSettingsService(cashboxSettingRepo, cashboxService);
 const transactionService = new TransactionService(transactionRepo, projectService)
 const transferService = new TransferService(cashboxService, transactionRepo, projectService)
 const memberService = new MembershipService(memberRepo, projectService);
-const projectSettingService = new SettingService(settingRepo, projectService)
+const projectSettingService = new SettingService(rpojectSettingRepo, projectService)
 const inviteService = new ProjectInviteService(inviteRepo, userRepo, memberService)
 
 export const container = {

@@ -1,18 +1,17 @@
 import { InlineKeyboard } from "grammy";
 import { Scene } from "grammy-scenes";
-import { TransactionType } from "@prisma/client";
 import { BotContext } from "../core/context";
 import { CommonKeyboard } from "../keyboards/common";
 import { render } from "../lib/render";
 import { EntityHandlerFactory } from "../lib/factory";
 import { CashboxHandler } from "../entities/cashbox.handler";
 import { TransactionHandler } from "../entities/transaction.handler";
-import { Step } from "../types";
+import { Step, TransactionTypes } from "../types";
 
 const scene = new Scene<BotContext>('moneyTransfer');
 
 scene.step(async(ctx) => {
-    const transactionType = ctx.match![1] as TransactionType;
+    const transactionType = ctx.match![1] as TransactionTypes;
 
     ctx.session.entityData = {
         type: transactionType
@@ -47,7 +46,7 @@ scene.label('choice_cashbox').step(async(ctx) => {
     const cashboxId = ctx.session.cashbox_id;
 
     await ctx.editMessageText('Выберите счет', {
-        reply_markup: (await handler.renderListForChoice(cashboxId, page))
+        reply_markup: (await handler.renderListForChoice(page, cashboxId))
             .append(CommonKeyboard.cancelCreate())
     })
 })

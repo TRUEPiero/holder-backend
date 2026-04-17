@@ -1,6 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-
-const db = new PrismaClient();
+import db from "@common/prisma";
 
 await db.project.createMany({
     data: [

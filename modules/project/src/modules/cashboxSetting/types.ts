@@ -1,6 +1,6 @@
 import { SettingType } from "@prisma/client"
 
-export type Setting = {
+type Setting = {
     id: number,
     code: string,
     description: string
@@ -8,3 +8,6 @@ export type Setting = {
     type: SettingType
     values: any[]
 }
+ export type {
+    Setting
+ }

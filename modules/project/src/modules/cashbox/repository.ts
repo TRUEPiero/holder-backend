@@ -1,6 +1,7 @@
 import { DirectoryService } from "@shared/DirectoryService";
 import { CashboxEntity } from "./entities/Cashbox";
 import type { Cashbox } from "./types";
+import { PaginationParam } from "@shared-types/index.ts";
 
 
 export class CashboxRepository {
@@ -29,7 +30,7 @@ export class CashboxRepository {
         return new CashboxEntity(data);
     }
 
-    async findWithPagination(parameters: any) {
+    async findWithPagination(parameters: PaginationParam) {
         const paginationData = await this.base.getWithPagination(parameters); 
         const { currentPage, totalPages, totalItems, hasNextPage } = paginationData;
         

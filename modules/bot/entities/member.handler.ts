@@ -1,10 +1,11 @@
-import { MemberRole } from "@prisma/client";
 import { container } from "../../containers";
 import { BotContext } from "../core/context";
 import { ItemsKeyboard } from "../keyboards/list";
 import { MenuKeyboard } from "../keyboards/menu";
 import { SettingKeyboard } from "../keyboards/settings";
 import { BaseEntityHandler } from "./base-entity.handler";
+import { Member } from "../../project/src/modules/member/types";
+import { MemberRoles } from "../types";
 
 export class MemberHandler extends BaseEntityHandler<any> {
     service = container.memberService;
@@ -53,7 +54,7 @@ export class MemberHandler extends BaseEntityHandler<any> {
     protected getFields() {
         return [
             { key: "user.name", title: "Имя", visible: true },
-            { key: "role", title: "Роль", visible: true, formatter: (value: MemberRole) => value === 'editor' ? "Редактор" : "Зритель"},
+            { key: "role", title: "Роль", visible: true, formatter: (value: MemberRoles) => value === 'editor' ? "Редактор" : "Зритель"},
             { key: "user.telegram", title: "TG", visible: true, formatter: (value: string) => `@${value}` }
         ];
     }
@@ -74,7 +75,7 @@ export class MemberHandler extends BaseEntityHandler<any> {
         return await SettingKeyboard.memberSetting();
     }
 
-    private getTitleKey(item: any) {
-        return `${item.user.name} (${item.role})`
+    private getTitleKey(item: Member) {
+        return `${item.user!.name} (${item.role})`
     }
 }

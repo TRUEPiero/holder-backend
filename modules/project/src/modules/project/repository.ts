@@ -1,6 +1,7 @@
 import { DirectoryService } from "@shared/DirectoryService";
 import { ProjectEntity } from "./entities/Project";
 import { Project } from "./types";
+import { PaginationParam } from "@shared-types/index.ts";
 
 export class ProjectRepository {
 
@@ -31,7 +32,7 @@ export class ProjectRepository {
         return new ProjectEntity(data);
     }
 
-    async findWithPagination(parameters: any) {
+    async findWithPagination(parameters: PaginationParam) {
         const paginationData = await this.base.getWithPagination(parameters); 
         const { currentPage, totalPages, totalItems, hasNextPage } = paginationData;
         

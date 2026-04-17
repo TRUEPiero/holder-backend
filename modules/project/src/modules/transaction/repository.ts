@@ -1,6 +1,7 @@
 import { DirectoryService } from "@shared/DirectoryService";
 import { TransactionEntity } from "./entities/Transaction";
 import { Transaction } from "./types";
+import { PaginationParam } from "@shared-types/index.ts";
 
 export class TransactionRepository {
     constructor(private base: DirectoryService<"transaction">) {}
@@ -12,23 +13,20 @@ export class TransactionRepository {
         return new TransactionEntity(data);
     }
     
-    public async findByCashbox(projectId: number, cashboxId: number, query: any) {
+    public async findByCashbox(projectId: number, cashboxId: number) {
         const data = await this.base.getByFields({
             AND: [
                 {cashboxId},
                 {cashbox: {
                     projectId
-                }},
-                {
-                    ...query
-                }
+                }}
             ]
         })
 
         return data.map((t: Transaction) => new TransactionEntity(t))
     }
 
-    async findWithPagination(parameters: any) {
+    async findWithPagination(parameters: PaginationParam) {
         const paginationData = await this.base.getWithPagination(parameters); 
         const { currentPage, totalPages, totalItems, hasNextPage } = paginationData;
         

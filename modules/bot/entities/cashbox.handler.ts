@@ -1,4 +1,3 @@
-import { Decimal } from "@prisma/client/runtime/library";
 import { container } from "../../containers";
 import { BotContext } from "../core/context";
 import { ItemsKeyboard } from "../keyboards/list";
@@ -6,6 +5,8 @@ import { MenuKeyboard } from "../keyboards/menu";
 import { SettingKeyboard } from "../keyboards/settings";
 import { BaseEntityHandler } from "./base-entity.handler";
 import { EntityListFlags, EntityListOptions } from "../types";
+import { Cashbox } from "../../project/src/modules/cashbox/types";
+import { DecimalClass as Decimal } from "@shared-types/index.ts";
 
 export class CashboxHandler extends BaseEntityHandler<any> {
   private userService = container.userService;
@@ -69,27 +70,24 @@ export class CashboxHandler extends BaseEntityHandler<any> {
     ];
   }
 
-  public async renderListForChoice(currentId: number, page: number) {
-    const flags: EntityListFlags = {
-      excludeId: currentId,
-      withBackButton: false
-    };
-
-    const options: EntityListOptions = {
-      limit: 5, 
-      page
-    }
-    
-    return ItemsKeyboard.entityList("cashbox", this.service, this.getFilter(), this.getTitleKey, options, flags);
+  public async renderListForChoice(page: number, currentId: number) {
+    return await this.renderList(page, currentId);
   }
 
-  protected async renderList(page: number) {
+  protected async renderList(page: number, currentId?: number) {
+    const flags: EntityListFlags = {};
+
+    if(currentId) {
+      flags.excludeId = currentId;
+      flags.withBackButton = false;
+    }
+
     const options: EntityListOptions = {
       limit: 5, 
       page
     }
 
-    return ItemsKeyboard.entityList("cashbox", this.service, this.getFilter(), this.getTitleKey, options);
+    return ItemsKeyboard.entityList("cashbox", this.service, this.getFilter(), this.getTitleKey, options, flags);
   }
 
   protected async renderItem() {
@@ -100,7 +98,7 @@ export class CashboxHandler extends BaseEntityHandler<any> {
     return await SettingKeyboard.cashboxSetting(this.getId(), this.settingService);
   }
 
-  private getTitleKey(item: any) {
+  private getTitleKey(item: Cashbox) {
     return item.title
   }
 }

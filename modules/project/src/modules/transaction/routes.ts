@@ -10,15 +10,27 @@ export const TransactionController = new Elysia({
 })
 .derive(deriveUser)
 
-.get('/', async({params: {pid, cid}, query}) => {
-    const transactions = await transactionService.getByCashbox(pid, cid, query)
-    return {data: transactions}
+.get('/', async({params: {pid, cid}, status}) => {
+    try {
+        const transactions = await transactionService.getByCashbox(pid, cid)
+        return {data: transactions}
+    } catch (error) {
+        return status(500, {code: "ERROR", description: ""})
+    }
 }, schema.get)
 
-.post('/transfer', async({params: {pid, cid}, body, user}) => {
-    return await transferService.transferMoneyBetweenCashbox(pid, cid, body, user);
+.post('/transfer', async({params: {pid, cid}, body, user, status}) => {
+    try {
+        return await transferService.transferMoneyBetweenCashbox(pid, cid, body, user);
+    } catch (error) {
+        return status(500, {code: "TRANSFER_NOT_COMPLETED", description: JSON.stringify(error)})
+    }
 }, schema.transfer)
 
-.post('/external', async({params: {pid, cid}, body, user}) => {
-    return await transferService.transferWithExternal(pid, cid, body, user)
+.post('/external', async({params: {pid, cid}, body, user, status}) => {
+    try {
+        return await transferService.transferWithExternal(pid, cid, body, user)
+    } catch (error) {
+        return status(500, {code: "TRANSFER_NOT_COMPLETED", description: JSON.stringify(error)})
+    }
 }, schema.external)

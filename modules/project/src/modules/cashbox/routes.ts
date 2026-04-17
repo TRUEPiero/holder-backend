@@ -10,14 +10,23 @@ export const CashboxController = new Elysia({
 })
 .derive(deriveUser)
 
-.get('/', async ({params: {pid}}) => {
-    const cashboxes = await cashboxService.getByProject(pid);
-    return {data: cashboxes}
+.get('/', async ({params: {pid}, status}) => {
+    try {
+        const cashboxes = await cashboxService.getByProject(pid);
+        return {data: cashboxes}
+    } catch (error: any) {
+        return status(500, {code: 'CASHBOX_NOT_FOUND', description: ''});
+    }
+
 },schema.getAll)
 
-.get('/:cid', async({params: {pid, cid}}) => {
-    const cashbox = await cashboxService.getDetail(cid);
-    return {data: cashbox}
+.get('/:cid', async({params: {pid, cid}, status}) => {
+    try {
+        const cashbox = await cashboxService.getDetail(cid);
+        return {data: cashbox}
+    } catch (error: any) {
+        return status(500, {code: 'CASHBOX_NOT_FOUND', description: ''});
+    }
 }, schema.detail)
 
 .post('/', async({params: {pid}, body, user, status}) => {
@@ -25,6 +34,7 @@ export const CashboxController = new Elysia({
         const cashbox = await cashboxService.create(pid, body, user);
         return {data: cashbox}
     } catch (error: any) {
+        if(error.message === 'ACCESS_DENIED') return status(403, {code: 'ACCESS_DENIED', description: ''});
         if(error.message === 'PROJECT_NOT_FOUND') return status(404, {code: 'PROJECT_NOT_FOUND', description: ''});
         return status(500, {code: 'CASHBOX_NOT_CREATED', description: ''});
     }
@@ -35,6 +45,7 @@ export const CashboxController = new Elysia({
         const cashbox = await cashboxService.update(pid, cid, body, user);
         return {data: cashbox}
     } catch (error: any) {
+        if(error.message === 'ACCESS_DENIED') return status(403, {code: 'ACCESS_DENIED', description: ''});
         if(error.message === 'CASHBOX_NOT_FOUND') return status(404, {code: 'CASHBOX_NOT_FOUND', description: ''});
         return status(500, {code: 'CASHBOX_NOT_UPDATED', description: JSON.stringify(error)});
     }
@@ -45,6 +56,7 @@ export const CashboxController = new Elysia({
         const cashbox = await cashboxService.delete(pid, cid, user);
         return {data: cashbox}
     } catch (error: any) {
+        if(error.message === 'ACCESS_DENIED') return status(403, {code: 'ACCESS_DENIED', description: ''});
         if(error.message === 'CASHBOX_NOT_FOUND') return status(404, {code: 'CASHBOX_NOT_FOUND', description: ''});
         return status(500, {code: 'CASHBOX_NOT_DELETED', description: ""});
     }

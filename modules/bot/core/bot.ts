@@ -4,28 +4,29 @@ import { errorHandler } from './error-handler';
 import { BotContext } from './context';
 import { setupHandlers } from '../handlers';
 import { scenes } from '../scenes/scenes';
-
-const token = process.env.BOT_TOKEN;
-
-if (!token) {
-  throw new Error('BOT_TOKEN is not defined');
-}
-
-const bot = new Bot<BotContext>(token);
-
-bot.use(session({
-    initial: () => ({
-        history: [] as any[],
-    })
-}))
-bot.use(scenes.manager());
-bot.use(scenes);
-
-bot.catch(errorHandler);
-setupHandlers(bot);
-
-BotService.init(bot);
+import { Step } from '../types';
 
 export async function startBot() {
+    const token = process.env.BOT_TOKEN;
+
+    if (!token) {
+    throw new Error('BOT_TOKEN is not defined');
+    }
+
+    const bot = new Bot<BotContext>(token);
+
+    bot.use(session({
+        initial: () => ({
+            history: [] as Step[],
+        })
+    }))
+    bot.use(scenes.manager());
+    bot.use(scenes);
+
+    bot.catch(errorHandler);
+    setupHandlers(bot);
+
+    BotService.init(bot);
+
     bot.start();
 }

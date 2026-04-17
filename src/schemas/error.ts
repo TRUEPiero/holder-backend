@@ -1,11 +1,15 @@
 import { t } from 'elysia';
 
-export const errorSchema = {
+const errorSchema = {
   400: t.Object({
     code: t.String(),
     description: t.String()
   }),
   401: t.Object({
+    code: t.String(),
+    description: t.String()
+  }),
+  403: t.Object({
     code: t.String(),
     description: t.String()
   }),
@@ -18,3 +22,7 @@ export const errorSchema = {
     description: t.String()
   })
 };
+
+export {
+  errorSchema,
+}

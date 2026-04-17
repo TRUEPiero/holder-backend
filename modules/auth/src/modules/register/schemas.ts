@@ -11,7 +11,7 @@ export const schema = {
         }),
         detail: {
             description: 'Регистрация',
-            tags: ['Авторизация']
+            tags: ['Регистрация']
         },
         response: {
             200: ResponseObject,
@@ -24,7 +24,7 @@ export const schema = {
         }),
         detail: {
             description: 'Регистрация',
-            tags: ['Авторизация']
+            tags: ['Регистрация']
         },
         response: {
             200: t.Boolean(),
@@ -37,7 +37,7 @@ export const schema = {
         }),
         detail: {
             description: 'Регистрация',
-            tags: ['Авторизация']
+            tags: ['Регистрация']
         },
         response: {
             200: t.Boolean(),

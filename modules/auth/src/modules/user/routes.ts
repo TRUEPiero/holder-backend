@@ -12,7 +12,7 @@ export const UserController = new Elysia({
 
 .get('/me', async ({user}) => {
     return {data: user.toJSON()}
-},schema.getUser)
+}, schema.getUser)
 
 .patch('/', async({user, body, status}) => { 
     try {

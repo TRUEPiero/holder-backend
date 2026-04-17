@@ -1,5 +1,5 @@
+import { PaginationParam } from "@shared-types/index.ts";
 import { UserEntity } from "../../../../auth/src/modules/user/entities/User";
-import { UserService } from "../../../../auth/src/modules/user/services";
 import { ProjectRepository } from "./repository";
 
 export class ProjectService {
@@ -8,7 +8,6 @@ export class ProjectService {
 
     constructor(
         private repo: ProjectRepository,
-        private userService: UserService
     ) {}
 
     public async getById(id: number) {
@@ -24,12 +23,14 @@ export class ProjectService {
     }
 
     public async getDetail(id: number) {
+        if(!id) throw new Error("ID_NOT_VALID");
+
         const project = await this.repo.findDetailedProject(id);
         if (!project) throw new Error("PROJECT_NOT_FOUND");
         return project;
     }
 
-    public async getWithPagination(parameters: any) {
+    public async getWithPagination(parameters: PaginationParam) {
         const projects = await this.repo.findWithPagination(parameters);
         return projects;
     }
@@ -54,8 +55,9 @@ export class ProjectService {
 
         const updated = project.update(data);
 
-        return this.repo.update(id, updated);
-
+        const res = await this.repo.update(id, updated);
+        if(!res) throw new Error("PROJECT_NOT_UPDATED");
+        return res
     }
 
     public async delete(user: UserEntity, id: number) {

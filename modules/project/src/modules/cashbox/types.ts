@@ -1,6 +1,7 @@
+import { setting, Setting } from "@schemas/common";
 import { t } from "elysia";
 
-export type Cashbox = {
+type Cashbox = {
     id: number,
     settings: any,
     title: string,
@@ -8,29 +9,35 @@ export type Cashbox = {
     balance: number,
 }
 
-export type UpdateData = {
+type UpdateData = {
     title?: string,
     settings?: Setting[],
     description?: string,
 }
 
-type Setting = {
-    code: string,
-    value: any
-} 
-
-export const ResponseCashbox = t.Object({
+const ResponseCashbox = t.Object({
     id: t.Number(),
-    settings: t.Any(),
+    settings: t.Array(setting),
     title: t.String(),
     description: t.Nullable(t.String()),
     balance: t.Any(),
 })
 
-export const ResponseObject = t.Record(
-    t.String() , t.Nullable(ResponseCashbox)
-)
+const ResponseObject = t.Object({
+    data: ResponseCashbox
+})
 
-export const ResponseObjects = t.Record(
-    t.String(), t.Array(ResponseCashbox)
-)
+const ResponseObjects = t.Object({
+    data: t.Array(ResponseCashbox)
+})
+
+export type {
+    Cashbox,
+    UpdateData,
+}
+
+export {
+    ResponseCashbox,
+    ResponseObject,
+    ResponseObjects
+}

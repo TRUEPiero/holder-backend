@@ -1,15 +1,23 @@
-import { TransactionType } from "@prisma/client"
-import { Decimal } from "@prisma/client/runtime/library"
+import { MemberRole, TransactionType } from "@prisma/client"
 
-export type EntityType = "project" | "cashbox" | "transaction" | "member"
+type EntityType = "project" | "cashbox" | "transaction" | "member"
+type EntityData = any
+type MemberRoles = MemberRole;
+type TransactionTypes = TransactionType;
 
-export type Step = {
+type Step = {
     entity?: EntityType,
     type: string,
     id?: number | null
 }
 
-export type EntityHandler = {
+type PaginationItem = {
+    id: number,
+    title?:  string,
+    createdAt: Date,
+}
+
+type EntityHandler = {
     service: any,
     filter: any
     customFields: any[],
@@ -19,22 +27,26 @@ export type EntityHandler = {
     }
 }
 
-export type PaginationItem = {
-    id: number,
-    title?:  string,
-    amount?: Decimal,
-    type?: TransactionType,
-    createdAt: Date,
-}
-
-export type EntityListFlags = {
+type EntityListFlags = {
     excludeId?: number | string;
     withBackButton?: boolean;
     isTransaction?: boolean;
     isMember?: boolean
 };
 
-export type EntityListOptions = {
+type EntityListOptions = {
     page?: number,
     limit?: number,
+}
+
+export {
+    EntityType,
+    EntityData,
+    EntityHandler,
+    PaginationItem,
+    EntityListFlags,
+    EntityListOptions,
+    Step,
+    MemberRoles,
+    TransactionTypes
 }

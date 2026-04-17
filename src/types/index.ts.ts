@@ -1,7 +1,10 @@
 import db from "@common/prisma";
+import { Decimal } from "@prisma/client/runtime/library";
 
 type PrismaModelName = keyof typeof db;
 type PrismaTxClient = Omit<typeof db, "$connect" | "$disconnect" | "$on" | "$transaction" | "$extends">;
+type DecimalType = Decimal;
+const DecimalClass = Decimal
 
 type QueryParam = {
     where?: Record<string, any>,
@@ -24,6 +27,11 @@ type PaginationParam = {
 export type {
     PrismaModelName,
     PrismaTxClient,
+    DecimalType,
     QueryParam,
     PaginationParam
+}
+
+export {
+    DecimalClass
 }

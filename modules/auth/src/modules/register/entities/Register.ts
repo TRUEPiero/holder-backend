@@ -15,7 +15,7 @@ export class RegisterEntity {
         this.updatedAt = params.updatedAt;
     }
 
-    public isExpired() {
+    public isActive() {
         return this.expiredAt > new Date();
     }
 

@@ -6,6 +6,7 @@ export class MemberEntity {
     public userId: number
     public user: UserEntity
     public role: any
+    public joinedAt: Date
 
     constructor(params: any) {
         this.id = params.id;
@@ -13,6 +14,7 @@ export class MemberEntity {
         this.userId = params.userId;
         this.user = params.user;
         this.role = params.role;
+        this.joinedAt = params.joinedAt;
     }
 
     public update(data: any) {

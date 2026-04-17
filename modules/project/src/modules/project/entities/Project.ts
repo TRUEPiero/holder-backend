@@ -1,12 +1,13 @@
+import { Setting } from "@schemas/common";
 import { UpdateData } from "../types";
 
 export class ProjectEntity {
     public id: number;
-    private title: string;
-    private settings: Record<string, any>[];
-    private ownerId: number;
-    private members: any[];
-    private cashboxes: any[];
+    public title: string;
+    public settings: Setting[];
+    public ownerId: number;
+    public members: any[];
+    public cashboxes: any[];
     
     constructor(params: any) {
         this.id = params.id;

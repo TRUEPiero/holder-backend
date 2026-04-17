@@ -1,6 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-
-const db = new PrismaClient();
+import db from "@common/prisma"
 
 const hash =  async (password: string) =>  await Bun.password.hash(password)
 

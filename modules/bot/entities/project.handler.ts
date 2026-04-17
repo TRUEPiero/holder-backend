@@ -5,6 +5,7 @@ import { MenuKeyboard } from "../keyboards/menu";
 import { container } from "../../containers";
 import { SettingKeyboard } from "../keyboards/settings";
 import { EntityListOptions } from "../types";
+import { Project } from "../../project/src/modules/project/types";
 
 export class ProjectHandler extends BaseEntityHandler<any> {
   private userService = container.userService;
@@ -83,7 +84,7 @@ export class ProjectHandler extends BaseEntityHandler<any> {
     return await SettingKeyboard.projectSettings(this.getId(), this.settingService);
   }
 
-    private getTitleKey(item: any) {
+    private getTitleKey(item: Project) {
       return item.title
     }
 }

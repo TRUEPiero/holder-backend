@@ -1,11 +1,11 @@
-import { Decimal } from "@prisma/client/runtime/library";
 import { UpdateData } from "../types";
 import { Money } from "./Money";
+import { DecimalClass as Decimal, DecimalType } from "@shared-types/index.ts";
 
 export class CashboxEntity {
     public id: number;
     public projectId: number;
-    public balance: Decimal;
+    public balance: DecimalType;
     public title: string;
     public description: string;
     public settings: any;

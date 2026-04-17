@@ -1,17 +1,17 @@
-import { TransactionType } from "@prisma/client";
 import { container } from "../../containers";
 import { BotContext } from "../core/context";
 import { ItemsKeyboard } from "../keyboards/list";
 import { MenuKeyboard } from "../keyboards/menu";
 import { SettingKeyboard } from "../keyboards/settings";
 import { BaseEntityHandler } from "./base-entity.handler";
-import { Decimal } from "@prisma/client/runtime/library";
 import { formatDate } from "../lib/formatter";
-import { EntityListOptions } from "../types";
+import { EntityListOptions, TransactionTypes } from "../types";
+import { Transaction } from "../../project/src/modules/transaction/types";
+import { DecimalClass as Decimal } from "@shared-types/index.ts";
 
 type CreateData = {
     amount: number,
-    type: TransactionType,
+    type: TransactionTypes,
     itemId?: number,
     description: string,
     requisites?: string  
@@ -124,7 +124,7 @@ export class TransactionHandler extends BaseEntityHandler<any> {
         return [cashboxId, data.itemId];
     }
 
-    private getTitleKey(item: any) {
+    private getTitleKey(item: Transaction) {
         const type = item.type === 'income' ? '+' : '-'
 
         const dateString = formatDate(item.createdAt);

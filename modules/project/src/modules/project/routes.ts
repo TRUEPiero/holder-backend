@@ -10,18 +10,23 @@ export const ProjectController = new Elysia({
 })
 .derive(deriveUser)
 
-.get('/', async({user}) => {
-    const projects = await projectService.getByUser(user);
-    return {data: projects}
+.get('/', async({user, status}) => {
+    try{
+        const projects = await projectService.getByUser(user);
+        return {data: projects}
+    } catch(error: any) {
+        if(error.message === 'PROJECT_NOT_FOUND') return status(404, {code: "PROJECT_NOT_FOUND", description: 'Project by ID not founded'});
+        return status (500, {code: 'ERROR', description: JSON.stringify(error)}) 
+    } 
 }, schema.getAll)
 
 .get('/:pid', async({params: {pid}, status}) => {
     try{
         const project = await projectService.getDetail(pid);
         return {data: project}
-    } catch(e: any) {
-        if(e.message === 'PROJECT_NOT_FOUND') return status(404, {code: "PROJECT_NOT_FOUND", description: 'Project by ID not founded'});
-        return status (500, {code: 'ERROR', description: JSON.stringify(e)}) 
+    } catch(error: any) {
+        if(error.message === 'PROJECT_NOT_FOUND') return status(404, {code: "PROJECT_NOT_FOUND", description: 'Project by ID not founded'});
+        return status (500, {code: 'ERROR', description: JSON.stringify(error)}) 
     } 
 
 }, schema.detail)
@@ -30,8 +35,8 @@ export const ProjectController = new Elysia({
     try{
         const project =  await projectService.create(user, body)
         return {data: project}
-    } catch(e: any) {
-        if(e.message === 'PROJECT_NOT_CREATED') return status(500, {code: "PROJECT_NOT_CREATED", description: "Error while create project"})
+    } catch(error: any) {
+        return status(500, {code: "PROJECT_NOT_CREATED", description: "Error while create project"})
     } 
 }, schema.create)
 
@@ -39,13 +44,20 @@ export const ProjectController = new Elysia({
     try{
         const project =  await projectService.update(user, pid, body);
         return {data: project}
-    } catch(e: any) {
-        if(e.message === 'PROJECT_NOT_FOUND') return status(404, {code: "PROJECT_NOT_FOUND", description: "Project by ID not founded"});
-        return status(500, {code: "PROJECT_NOT_UPDATED", description: JSON.stringify(e)});
+    } catch(error: any) {
+        if(error.message === 'ACCESS_DENIED') return status(403, {code: 'ACCESS_DENIED', description: ''});
+        if(error.message === 'PROJECT_NOT_FOUND') return status(404, {code: "PROJECT_NOT_FOUND", description: "Project by ID not founded"});
+        return status(500, {code: "PROJECT_NOT_UPDATED", description: JSON.stringify(error)});
     } 
 }, schema.update)
 
-.delete('/:pid', async({params: {pid}, user}) => {
-    const project =  await projectService.delete(user, pid)
-    return {data: project}
+.delete('/:pid', async({params: {pid}, user, status}) => {
+    try {
+        const project =  await projectService.delete(user, pid)
+        return {data: project}
+    } catch(error: any) {
+        if(error.message === 'ACCESS_DENIED') return status(403, {code: 'ACCESS_DENIED', description: ''});
+        if(error.message === 'PROJECT_NOT_FOUND') return status(404, {code: "PROJECT_NOT_FOUND", description: "Project by ID not founded"});
+        return status(500, {code: "PROJECT_NOT_DELETED", description: JSON.stringify(error)});
+    } 
 }, schema.delete)

@@ -3,8 +3,9 @@ import { Money } from "../../cashbox/entities/Money";
 import { TransactionRepository } from "../repository";
 import { CashboxService } from "../../cashbox/services";
 import { ProjectService } from "../../project/services";
-import { Prisma, TransactionType } from "@prisma/client";
 import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
+import { PrismaTxClient } from "@shared-types/index.ts";
+import { TransactionTypes } from "../types";
 
 type ParamsBetween = {
     amount: number,
@@ -13,7 +14,7 @@ type ParamsBetween = {
 
 type ParamsExternal = {
     amount: number,
-    type: TransactionType
+    type: TransactionTypes
 }
 
 export class TransferService {
@@ -72,7 +73,7 @@ export class TransferService {
         const amount = new Money(request.amount);
 
         return await this.execute(projectId, user, async(tx) => {
-            const transactionType = request.type as TransactionType;
+            const transactionType = request.type as TransactionTypes;
 
             const cashbox = await this.cashboxService.getById(cashboxId);
 
@@ -97,7 +98,7 @@ export class TransferService {
     private async execute(
         projectId: number, 
         user: UserEntity,
-        hadler: (tx: Prisma.TransactionClient) => Promise<any>
+        hadler: (tx: PrismaTxClient) => Promise<any>
     ) {
         const project = await this.projectService.getById(projectId);
 

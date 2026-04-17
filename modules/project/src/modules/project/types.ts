@@ -1,9 +1,12 @@
 import {t} from 'elysia';
+import { ResponseCashbox } from '../cashbox/types';
+import { ResponseMember } from '../member/types';
+import { setting } from '@schemas/common';
 
-export type Project = {
+type Project = {
     id: number,
     title: string,
-    settings: any,
+    settings: typeof setting[],
     ownerId: number,
     createdAt: Date,
     updatedAt: Date,
@@ -11,22 +14,35 @@ export type Project = {
     cashboxes: any,
 }
 
-export type UpdateData = {
+type UpdateData = {
     title?: string,
-    settings?: Setting[],
+    settings?: typeof setting[],
 }
 
-type Setting = {
-    code: string,
-    value: any
-} 
+const ResponseProject = t.Object({
+    id: t.Number(),
+    title: t.String(),
+    ownerId: t.Number(),
+    settings: t.Array(setting),
+    cashboxes: t.Array(ResponseCashbox),
+    members: t.Array(t.Any()),
+})
 
-export const ResponseProject = t.Any()
+const ResponseObject = t.Object({
+    data: ResponseProject
+})
 
-export const ResponseObject = t.Record(
-    t.String(), ResponseProject
-)
+const ResponseObjects = t.Object({
+    data: t.Array(ResponseProject)
+})
 
-export const ResponseObjects = t.Record(
-    t.String(), t.Array(ResponseObject)
-)
+export type {
+    UpdateData,
+    Project
+}
+
+export {
+    ResponseProject,
+    ResponseObject,
+    ResponseObjects
+}

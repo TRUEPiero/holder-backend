@@ -57,7 +57,7 @@ async function main() {
                     isRequired: setting.isRequired,
                     telegram: setting.telegram,
                     value: setting.value,
-                    values: setting.values
+                    values: setting.values,
                 }
             })
         }

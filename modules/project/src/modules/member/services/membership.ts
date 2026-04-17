@@ -43,7 +43,9 @@ export class MembershipService {
         const member = await this.getById(memberId);
         const updated = member.update(data);
 
-        return this.repo.update(memberId, updated);
+        const res = await this.repo.update(memberId, updated);
+        if(!res) throw new Error("MEMBER_NOT_UPDATED");
+        return res; 
     }
     
     public async delete(projectId: number, userId: number) {

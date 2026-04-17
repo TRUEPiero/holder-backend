@@ -1,5 +1,13 @@
 import { t } from "elysia";
 
+export type User = {
+    id: number
+    name: string
+    status: string,
+    telegram?: string
+    telegramId?: number
+}
+
 export const ResponseUser = t.Object({
     id: t.Number(),
     name: t.String(),

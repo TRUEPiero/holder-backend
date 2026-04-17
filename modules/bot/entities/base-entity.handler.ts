@@ -1,4 +1,4 @@
-import { Decimal } from "@prisma/client/runtime/library";
+import { InlineKeyboard } from "grammy";
 import { BotContext } from "../core/context";
 import { Step } from "../types";
 
@@ -15,9 +15,9 @@ export abstract class BaseEntityHandler<T> {
   protected abstract getId(): number 
   protected abstract getFields(): { key: keyof T; title: string; visible: boolean, formatter?:  any}[];
 
-  protected abstract renderList(page: number): Promise<any>;
-  protected abstract renderItem(): Promise<any>;
-  protected abstract renderSettings(): Promise<any>;
+  protected abstract renderList(page: number): Promise<InlineKeyboard>;
+  protected abstract renderItem(): Promise<InlineKeyboard>;
+  protected abstract renderSettings(): Promise<InlineKeyboard>;
 
   async render(step: Step, isCommand: boolean) {
     const id = Number(step.id);

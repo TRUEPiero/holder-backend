@@ -5,8 +5,8 @@ import { ResponseObject, ResponseObjects } from "./types";
 export const schema = {
     getAll: {
         detail: {
-            tag: [''],
-            description: 'Получить все элементы',
+            tags: ['Проект'],
+            description: 'Получить все проекты',
         },
         response: {
             200: ResponseObjects,
@@ -18,7 +18,7 @@ export const schema = {
             pid: t.Number()
         }),
         detail: {
-            tag: [''],
+            tags: ['Проект'],
             description: 'Получить проект по ID',
         },
         response: {
@@ -32,7 +32,7 @@ export const schema = {
             settings: t.Any()
         }),
         detail: {
-            tag: [''],
+            tags: ['Проект'],
             description: 'Создать проект',
         },
         response: {
@@ -46,7 +46,7 @@ export const schema = {
         }),
         body: t.Any(),
         detail: {
-            tag: [''],
+            tags: ['Проект'],
             description: 'Обновить проект'
         },
         response: {
@@ -59,7 +59,7 @@ export const schema = {
             pid: t.Number()
         }),
         detail: {
-            tag: [''],
+            tags: ['Проект'],
             description: 'Удалить проект'
         },
         response: {

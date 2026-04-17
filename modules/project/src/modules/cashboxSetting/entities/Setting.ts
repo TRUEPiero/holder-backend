@@ -1,4 +1,4 @@
-import { SettingType } from "@prisma/client";
+import { SettingTypes } from "../../projectSetting/types";
 
 export class CashboxSettingEntity {
     public id: number;
@@ -6,7 +6,7 @@ export class CashboxSettingEntity {
     public title: string;
     public description: string;
     public groupId: number;
-    public type: SettingType;
+    public type: SettingTypes;
     public value: any;
     public values: any[];
     public isDisable: boolean;

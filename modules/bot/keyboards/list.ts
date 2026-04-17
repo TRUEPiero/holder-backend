@@ -2,8 +2,6 @@ import { InlineKeyboard } from "grammy";
 import { CommonKeyboard } from "./common";
 import { EntityListOptions, EntityListFlags, EntityType, PaginationItem } from "../types";
 import { container } from "../../containers";
-import { Decimal } from "@prisma/client/runtime/library";
-import { formatDate } from "../lib/formatter";
 import { MenuKeyboard } from "./menu";
 
 const {cashboxService, projectService, transactionService, memberService} = container;
@@ -11,7 +9,7 @@ const {cashboxService, projectService, transactionService, memberService} = cont
 type Service = typeof projectService | typeof cashboxService | typeof transactionService | typeof memberService;
 
 export class ItemsKeyboard {
-    static pagination(object: EntityType, currentPage: any, hasNextPage?: boolean, totalPages?: number, totalItems?: any) {
+    static pagination(object: EntityType, currentPage: number, hasNextPage?: boolean, totalPages?: number, totalItems?: number) {
         
         const prevPage: number | null = currentPage > 1 ? currentPage - 1: null;
         const nextPage: number | null = hasNextPage ? currentPage + 1 : null
