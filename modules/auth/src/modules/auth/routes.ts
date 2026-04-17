@@ -1,15 +1,11 @@
-import { Elysia, t } from 'elysia'
-import { AuthService } from './services'
-import { schema } from './schemas';
+import { Elysia} from 'elysia'
 import jwt from "@elysiajs/jwt";
-import { DirectoryService } from '@shared/DirectoryService';
-import { UserRepository } from '../user/repository';
+import { schema } from './schemas';
 import { AuthTokenService } from '../../../common/services/token';
 import { AuthCookieService } from '../../../common/services/cookie';
+import { container } from '../../../../containers';
 
-const base = new DirectoryService<'user'>('user', [])
-const repo = new UserRepository(base);
-const service = new AuthService(repo);
+const {authService} = container;
 
 export const AuthController = new Elysia({
     prefix: '/auth'
@@ -17,13 +13,18 @@ export const AuthController = new Elysia({
 .use(jwt({secret: process.env.JWT_SECRET!}))
 
 .post('/login', async ({body: {email, password, remember}, jwt, cookie, status}) => {
-    const user = await service.login(email, password);
+    try {
+        const user = await authService.login(email, password);
 
-    const tokenService = new AuthTokenService(jwt);
-    const token = await tokenService.generate(user);
+        const tokenService = new AuthTokenService(jwt);
+        const token = await tokenService.generate(user);
 
-    const cookieService = new AuthCookieService(cookie);
-    await cookieService.set(token, remember) 
+        const cookieService = new AuthCookieService(cookie);
+        await cookieService.set(token, remember) 
 
-    return {data: user}
+        return {data: user}
+    } catch(error: any) {
+        if(error.message === 'INVALID_DATA') return status(401, {code: "INVALID_DATA", description: ""})
+        return status(500, {code: "ERROR", description: ''})
+    }
 }, schema.login)

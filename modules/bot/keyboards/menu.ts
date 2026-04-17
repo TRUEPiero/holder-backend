@@ -1,18 +1,55 @@
 import { InlineKeyboard } from "grammy";
+import { CommonKeyboard } from "./common";
 
 export class MenuKeyboard {
     static mainMenu() {
         return new InlineKeyboard()
-            .text('Список проектов','project_list')
+            .text('Список проектов','project_page_1')
+            .text('Добавить проект', 'project_create')
+            .row()
     }
 
     static projectMenu() {
         return new InlineKeyboard()
-            .text('Список счетов', 'cashbox_list');
+            .text('Список счетов', 'cashbox_page_1')
+            .text('Добавить счет', 'cashbox_create')
+            .row()
+            .text('Настройки', `project_settings`)
+            .row()
+            .text('Удалить', `project_delete`)
+            .append(CommonKeyboard.back())
     }
 
     static cashboxMenu() {
         return new InlineKeyboard()
-            .text('что то')
+            .text('Пополнить', 'cashbox_transaction_income')
+            .text('Переверсти', 'cashbox_transaction_expense')
+            .row()
+            .text('История операций', 'transaction_page_1')
+            .text('Настройки', `cashbox_settings`)
+            .row()
+            .text('Удалить', `cashbox_delete`)
+            .append(CommonKeyboard.back())
+    }
+
+    static transactionMenu() {
+        return new InlineKeyboard()
+            .text('Повторить', 'transaction_repeat')
+            .text('Удалить', 'transaction_delete')
+            .row()
+            .append(CommonKeyboard.back())
+    }
+
+    static memberMenu() {
+        return new InlineKeyboard()
+            .text('Сменить роль', 'member_set_role')
+            .text('Удалить', 'member_delete')
+            .append(CommonKeyboard.back())
+    }
+
+    static memberInvite() {
+        return new InlineKeyboard()
+            .text('Пригласить пользователя', 'member_invite')
+            .row()
     }
 }

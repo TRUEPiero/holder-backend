@@ -1,39 +1,53 @@
+import { PaginationParam } from "@shared-types/index.ts";
+import { UserEntity } from "../../../../auth/src/modules/user/entities/User";
 import { ProjectRepository } from "./repository";
 
 export class ProjectService {
 
     private lastError: any;
 
-    constructor(private repo: ProjectRepository) {}
+    constructor(
+        private repo: ProjectRepository,
+    ) {}
 
-    public async checjProjectExist(id: number) {
+    public async getById(id: number) {
+        if(!id) throw new Error("ID_NOT_VALID");
+
         const project = await this.repo.findById(id);
         if (!project) throw new Error("PROJECT_NOT_FOUND");
         return project;
     }
 
-    public async getByUser(user: any) {
+    public async getByUser(user: UserEntity) {
         return await this.repo.findUserProjects(user.id);
     }
 
     public async getDetail(id: number) {
+        if(!id) throw new Error("ID_NOT_VALID");
+
         const project = await this.repo.findDetailedProject(id);
         if (!project) throw new Error("PROJECT_NOT_FOUND");
         return project;
     }
 
-    public async getWithPagination(settings: any) {
-        const projects = await this.repo.findWithPagination(settings);
+    public async getWithPagination(parameters: PaginationParam) {
+        const projects = await this.repo.findWithPagination(parameters);
         return projects;
     }
 
-    public async create(user: any, body: any) {
-        const created = await this.repo.create({ ownerId: user.id, ...body });
+    public async create(user: UserEntity, body: any) {
+        const createData = { 
+            owner: user.id, 
+            ...body,
+            settings: body.settings ?? []
+        };
+
+        const created = await this.repo.create(createData);
         if(!created) throw new Error("PROJECT_NOT_CREATED");
         return created;
     }
 
-    public async update(user: any, id: number, data: any) {
+    public async update(user: UserEntity, id: number, data: any) {
         const project = await this.getDetail(id);
         
         const access = project.checkAccess(user)
@@ -41,14 +55,15 @@ export class ProjectService {
 
         const updated = project.update(data);
 
-        return this.repo.update(id, updated.toUpdate());
-
+        const res = await this.repo.update(id, updated);
+        if(!res) throw new Error("PROJECT_NOT_UPDATED");
+        return res
     }
 
-    public async delete(user: any, id: number) {
+    public async delete(user: UserEntity, id: number) {
         const project = await this.getDetail(id);
 
-        const access = project.checkAccess(user)
+        const access = project.checkAccess(user)       
         if(!access) throw new Error('ACCESS_DENIED')
 
         const deleted = await this.repo.delete(id);

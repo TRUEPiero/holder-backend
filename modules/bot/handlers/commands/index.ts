@@ -1,31 +1,37 @@
 import { Composer } from "grammy";
 import { BotContext } from "../../core/context";
-import { MenuKeyboard } from "../../keyboards/menu";
-import { DirectoryService } from "@shared/DirectoryService";
-import { UserRepository } from "../../../auth/src/modules/user/repository";
+import { render } from "../../lib/render";
+import { HistoryService } from "../../services/history";
+import { container } from "../../../containers";
 
-const base = new DirectoryService<'user'>('user', [])
-const repo = new UserRepository(base);
+const service = container.userService;
 
 const composer = new Composer<BotContext>();
 
 composer.command('start', async (ctx) => {
     const username = ctx.chat.username;
 
+    const history = new HistoryService(ctx);
+    history.setStartStep();
+
     if(ctx.session.user_id) {
-        await ctx.reply('Начало', {reply_markup: MenuKeyboard.mainMenu()});
-        return
+        await render(ctx, {type: 'start'}, true)
+        return;
     }
 
-    const user = (await repo.findByTelegram(username!))
+    const user = (await service.getTelegramUser(username!))
 
     if(!user) {
         await ctx.reply(`К сожалению, нам не удалось найти вас в системе. 
 Для использования данного бота зарегистрируйтесь на сайте holder.com`);
     } else {
         ctx.session.user_id = user.id;
-        await ctx.reply('Начало', {reply_markup: MenuKeyboard.mainMenu()});
+        await render(ctx, {type: 'start'}, true)
     }
+})
+
+composer.command('test', async(ctx) => {
+    console.log(ctx);
 })
 
 export default composer;

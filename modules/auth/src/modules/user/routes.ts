@@ -1,14 +1,9 @@
 import {Elysia, t} from 'elysia';
 import { schema } from './schemas';
 import { deriveUser } from '@plugins/deriveUser';
-import { UserService } from './services';
-import { DirectoryService } from '@shared/DirectoryService';
-import { UserRepository } from './repository';
+import { container } from '../../../../containers';
 
-const base = new DirectoryService<'user'>('user', [])
-const repo = new UserRepository(base);
-
-const service = new UserService(repo);
+const {userService} = container;
 
 export const UserController = new Elysia({
     prefix: '/user'
@@ -17,13 +12,13 @@ export const UserController = new Elysia({
 
 .get('/me', async ({user}) => {
     return {data: user.toJSON()}
-},schema.getUser)
+}, schema.getUser)
 
-.patch('/:uid', async({user, body, status}) => { 
+.patch('/', async({user, body, status}) => { 
     try {
-        const entity = await service.updateUser(user, body);
+        const entity = await userService.updateUser(user, body);
         return {data: entity}
-    } catch(e) {
+    } catch(e: any) {
         if(e.message === 'USER_NOT_FOUND') return status(404, {code: "USER_NOT_FOUND", description: 'USER by ID not founded'}); 
         return status(500, {code: "USER_NOT_FOUND", description: JSON.stringify(e)}); 
     }

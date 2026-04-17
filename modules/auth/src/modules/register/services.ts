@@ -24,8 +24,7 @@ export class RegisterService {
     public async sendVerify(email: string) {
 
         const verify = await this.getVerify({email});
-        console.log(verify)
-        // if(verify && !verify.isExpired()) return null;
+        if(verify && verify.isActive()) throw new Error('VERIFY_ALREADY_EXIST');
 
         const code = this.generateCode();
 
@@ -44,7 +43,7 @@ export class RegisterService {
     public async chechVerify(code: string) {
 
         const verify = await this.getVerify({code});
-        if (verify.isExpired()) return null;
+        if (!verify || !verify.isActive()) throw new Error("VERIVY_NOT_FOUND") ;
 
         verify.setExpiredDate()
         const updated = await this.repo.update(

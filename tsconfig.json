@@ -15,6 +15,9 @@
       "@shared/*": [
         "./src/shared/*"
       ],
+      "@shared-types/*": [
+        "./src/types/*"
+      ],
       "@schemas/*" : [
         "./src/schemas/*"
       ],

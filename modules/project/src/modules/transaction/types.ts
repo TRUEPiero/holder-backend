@@ -1,6 +1,7 @@
+import { TransactionType } from '@prisma/client';
 import {t} from 'elysia';
 
-export type Transaction = {
+type Transaction = {
     id: number;
     amount: number;
     description: string;
@@ -11,14 +12,41 @@ export type Transaction = {
     createdAt: Date;
 }
 
-export const ResponseTransaction = t.Any({
+type TransactionTypes = TransactionType
 
+type CreateData = {
+    amount: number;
+    description?: string;
+    type: string;
+    tags?: any[];
+    author?: any;
+    cashbox?: any;
+}
+
+const ResponseTransaction = t.Object({
+    id: t.Number(),
+    amount: t.Any(),
+    description: t.Nullable(t.String()),
+    tags: t.Array(t.Any()),
+    cashboxId: t.Number()
 })
 
-export const ResponseObject = t.Record(
-    t.String(), t.Nullable(ResponseTransaction)
-)
+const ResponseObject = t.Object({
+    data: t.Nullable(ResponseTransaction)
+})
 
-export const ResponseObjects = t.Record(
-    t.String(), t.Array(ResponseTransaction)
-)
+const ResponseObjects = t.Object({
+    data: t.Array(ResponseTransaction)
+})
+
+export type {
+    Transaction,
+    TransactionTypes,
+    CreateData,
+}
+
+export {
+    ResponseTransaction,
+    ResponseObject,
+    ResponseObjects,
+}

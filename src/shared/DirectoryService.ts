@@ -1,6 +1,6 @@
 import db from "@common/prisma";
 import { BaseService } from "./BaseService";
-import type { PrismaModelName, PrismaTxClient } from "../types/type";
+import type { PrismaModelName, PrismaTxClient } from "../types/index.ts";
 
 export class DirectoryService<modelName extends PrismaModelName> extends BaseService<modelName> {
 

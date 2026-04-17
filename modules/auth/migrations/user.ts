@@ -1,6 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-
-const db = new PrismaClient();
+import db from "@common/prisma"
 
 const hash =  async (password: string) =>  await Bun.password.hash(password)
 
@@ -10,13 +8,20 @@ await db.user.createMany({
             email: 'admin@test.su',
             name: 'Admin',
             password: await hash('adminuser'),
-            role: 'admin',
+            telegram: 'truepiero',
+            status: 'enterprise',
         },
         {
             email: 'demo@test.su',
             name: 'Demo',
             password: await hash('demouser'),
-            role: 'demo',
+            status: 'trial',
+        },
+        {
+            email: 'test@test.su',
+            name: 'Test',
+            password: await hash('demouser'),
+            status: 'personal',
         },
     ]
 })

@@ -1,19 +1,15 @@
-import { PrismaClient } from "@prisma/client";
-
-const db = new PrismaClient();
+import db from "@common/prisma";
 
 await db.project.createMany({
     data: [
         {
             title: 'Дефолтный проект',
-            default: true,
-            settings: JSON.stringify({}),
+            settings: [],
             ownerId: 1,
         },
         {
             title: 'Тестовый проект',
-            default: false,
-            settings: JSON.stringify({}),
+            settings: [],
             ownerId: 1,
         }
     ]

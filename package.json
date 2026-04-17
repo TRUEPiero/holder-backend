@@ -8,7 +8,7 @@
     "prisma:generate": "bunx prisma generate",
     "prisma:push": "bunx prisma db push --force-reset",
     "migrate:auth": "bun run modules/auth/migrations/user.ts",
-    "migrate:project": "bun run modules/project/migrations/project_seed.ts",
+    "migrate:project": "bun run modules/project/migrations/project_seed.ts && bun run modules/project/migrations/project_settings.ts",
     "migrate:all": "bun run migrate:auth && bun run migrate:project",
     "gpm": "bun run prisma:generate && bun run prisma:push && bun run migrate:all"
   },

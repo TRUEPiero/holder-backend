@@ -1,4 +1,5 @@
 import { errorSchema } from "@schemas/error";
+import { setting } from "@schemas/common";
 import { t } from "elysia";
 import { ResponseObject, ResponseObjects } from "./types";
 
@@ -8,8 +9,8 @@ export const schema = {
             pid: t.Number(),
         }),
         detail: {
-            tag: [''],
-            description: 'Получить все элементы',
+            tags: ['Счета'],
+            description: 'Получить все счета',
         },
         response: {
             200: ResponseObjects,
@@ -22,8 +23,8 @@ export const schema = {
             cid: t.Number()
         }),
         detail: {
-            tag: [''],
-            description: 'Получить элемент',
+            tags: ['Счета'],
+            description: 'Получить счет по ID',
         },
         response: {
             200: t.Any(),
@@ -38,8 +39,8 @@ export const schema = {
             title: t.String()
         }),
         detail: {
-            tag: [''],
-            description: 'Создать элемент',
+            tags: ['Счета'],
+            description: 'Создать счет',
         },
         response: {
             200: ResponseObject,
@@ -51,10 +52,14 @@ export const schema = {
             pid: t.Number(),
             cid: t.Number()
         }),
-        body: t.Any(),
+        body: t.Object({
+            title: t.String(),
+            settings: t.Array(setting),
+            balance: t.Nullable(t.Number())
+        }),
         detail: {
-            tag: [''],
-            description: 'Обновить элемент',
+            tags: ['Счета'],
+            description: 'Обновить счет',
         },
         response: {
             200: ResponseObject,
@@ -67,8 +72,8 @@ export const schema = {
             cid: t.Number()
         }),
         detail: {
-            tag: [''],
-            description: 'Удалить элемент'
+            tags: ['Счета'],
+            description: 'Удалить счет'
         },
         response: {
             200: ResponseObject,

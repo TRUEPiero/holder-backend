@@ -1,16 +1,17 @@
+import { Setting } from "@schemas/common";
+import { UpdateData } from "../types";
+
 export class ProjectEntity {
-    private readonly id: number;
-    private title: string;
-    private default: boolean;
-    private settings: Record<string, any>;
-    private ownerId: number;
-    private members: any[];
-    private cashboxes: any[];
+    public id: number;
+    public title: string;
+    public settings: Setting[];
+    public ownerId: number;
+    public members: any[];
+    public cashboxes: any[];
     
     constructor(params: any) {
         this.id = params.id;
         this.title = params.title;
-        this.default = params.default;
         this.settings = params.settings;
         this.ownerId = params.ownerId;
         this.members = params.members;
@@ -21,7 +22,6 @@ export class ProjectEntity {
         return {
             id: this.id,
             title: this.title,
-            default: this.default,
             settings: this.settings,
             ownerId: this.ownerId,
             members: this.formatMembers(this.members),
@@ -29,38 +29,37 @@ export class ProjectEntity {
         }
     }
 
-    public toUpdate() {
-        return {
-            id: this.id,
-            title: this.title,
-            default: this.default,
-            settings: this.settings,
-        }
-    }
-
     public getSettings() {
+        if(typeof this.settings === 'string') return JSON.parse(this.settings);
+        
         return this.settings;
     }
 
-    public update(data: any): ProjectEntity {
+    public update(data: UpdateData) {
         const {settings, ...dataWithoutParams} = data;
         
         for(const [key, value] of Object.entries(dataWithoutParams)) {
-            if(toString(value)) this[key] = value
+            if(value.toString()) (this as any)[key] = value
         }
 
         this.setParameters(settings);
 
-        return this;
+        return {
+            title: this.title,
+            ownerId: this.ownerId,
+            settings: this.settings,
+        };
     }
     
     public checkAccess(user: any) {
-        if(this.ownerId === user.id) return true
+        const userId = this.resolveUserId(user);
+
+        if(this.ownerId === userId) return true
 
         const editors = this.members.filter(member => member.role === 'editor')
                                     .map(member => member.user)
         
-        const inEditors = editors.some(i => i.id === user.id)
+        const inEditors = editors.some(i => i.id === userId)
         
         return inEditors;
     }
@@ -81,4 +80,12 @@ export class ProjectEntity {
             }
         })
     }
+
+    private resolveUserId(user: any) {
+        if (typeof user === "object" && user !== null) {
+            return user.id;
+        } else {
+            return Number(user);
+        }
+    } 
 }

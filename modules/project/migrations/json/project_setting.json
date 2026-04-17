@@ -1,0 +1,19 @@
+[
+    {
+        "code": "main",
+        "title": "основ",
+        "description": "",
+        "settings": [
+            {
+                "code": "notification",
+                "title": "Уведомления",
+                "type": "boolean",
+                "value": false,
+                "description": "Присылать уведомления",
+                "isDisable": false,
+                "isRequired": false,
+                "telegram": true
+            }
+        ] 
+    }
+]
