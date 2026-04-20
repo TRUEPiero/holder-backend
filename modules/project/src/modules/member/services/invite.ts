@@ -31,6 +31,8 @@ export class ProjectInviteService {
             projectId
         });
 
+        if(!createdInvite) throw new Error("INVITE_NOT_CREATED");
+
         return true;
     }
 
@@ -53,8 +55,7 @@ export class ProjectInviteService {
         const user = await this.userRepo.findByEmail(email);
         if(!user) throw new Error("USER_UNDEFINED");
 
-        const member =  await this.memberService.create(projectId, user);
-        return member;
+        return  await this.memberService.create(projectId, user);
     }
 
     private generateCode() {

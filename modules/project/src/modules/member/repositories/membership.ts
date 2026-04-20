@@ -43,6 +43,8 @@ export class MembershipRepository {
 
     public async create(data: any) {
         const created = await this.base.createItem(data);
+        if(!created) return null;
+        
         return new MemberEntity(created);
     }
 
