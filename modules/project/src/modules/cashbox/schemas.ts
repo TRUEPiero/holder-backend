@@ -27,7 +27,7 @@ export const schema = {
             description: 'Получить счет по ID',
         },
         response: {
-            200: t.Any(),
+            200: ResponseObject,
             ...errorSchema
         }
     },

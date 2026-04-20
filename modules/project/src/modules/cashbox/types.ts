@@ -17,7 +17,7 @@ type UpdateData = {
 
 const ResponseCashbox = t.Object({
     id: t.Number(),
-    settings: t.Array(setting),
+    settings: t.Nullable(t.Array(setting)),
     title: t.String(),
     description: t.Nullable(t.String()),
     balance: t.Any(),

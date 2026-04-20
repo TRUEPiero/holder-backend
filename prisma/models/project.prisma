@@ -1,0 +1,27 @@
+model Project {
+  id    Int    @id @default(autoincrement())
+  title String
+
+  settings Json?
+
+  ownerId Int  @map("owner_id")
+  owner   User @relation(name: "ProjectOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+
+  cashboxes Cashbox[]
+  members   ProjectMember[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([id, ownerId])
+  @@map("projects")
+}
+
+
+model ProjectField {
+  id    Int    @id @default(autoincrement())
+  title String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

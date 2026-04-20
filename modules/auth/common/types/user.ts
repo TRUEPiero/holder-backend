@@ -16,6 +16,6 @@ export const ResponseUser = t.Object({
     telegramId: t.Nullable(t.Any()),
 })
 
-export const ResponseObject = t.Record(
-    t.String(), t.Nullable(ResponseUser)
-)
+export const ResponseObject = t.Object({
+    data: t.Nullable(ResponseUser)
+})
