@@ -1,3 +1,4 @@
+import { Transaction } from "../../transaction/types";
 import { UpdateData } from "../types";
 import { Money } from "./Money";
 import { DecimalClass as Decimal, DecimalType } from "@shared-types/index.ts";
@@ -9,7 +10,7 @@ export class CashboxEntity {
     public title: string;
     public description: string;
     public settings: any;
-    public transactions: any[];
+    public transactions: Transaction[];
     
     constructor(
         params: any

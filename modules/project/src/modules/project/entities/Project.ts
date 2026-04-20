@@ -1,5 +1,6 @@
 import { Setting } from "@schemas/common";
 import { UpdateData } from "../types";
+import { Cashbox } from "../../cashbox/types";
 
 export class ProjectEntity {
     public id: number;
@@ -7,7 +8,7 @@ export class ProjectEntity {
     public settings: Setting[];
     public ownerId: number;
     public members: any[];
-    public cashboxes: any[];
+    public cashboxes: Cashbox[];
     
     constructor(params: any) {
         this.id = params.id;

@@ -1,7 +1,7 @@
 import { PaginationParam } from "@shared-types/index.ts";
 import { ProjectService } from "../project/services";
 import { CashboxRepository } from "./repository";
-import { SettingsOwner } from "../../interfaices/SettingOwner";
+import { SettingsOwner } from "../../interfaices/SettingsOwner";
 import { SettingTargets } from "../settings/types";
 
 export class CashboxService implements SettingsOwner{
@@ -42,7 +42,13 @@ export class CashboxService implements SettingsOwner{
         const access = project.checkAccess(user)       
         if(!access) throw new Error('ACCESS_DENIED')
 
-        const created = await this.repo.create({ projectId, ...body });
+        const createData = { 
+            projectId, 
+            ...body,
+            settings: body.settings ?? this.getDefaultSetting()
+        };
+
+        const created = await this.repo.create(createData);
         if(!created) throw new Error("CASHBOX_NOT_CREATED")
         return created;
     }
@@ -74,5 +80,9 @@ export class CashboxService implements SettingsOwner{
 
     public getSettingTarget(): SettingTargets {
         return 'cashbox'
+    }
+
+    private getDefaultSetting() {
+        return [];
     }
 }

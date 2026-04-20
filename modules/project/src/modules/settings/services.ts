@@ -1,4 +1,4 @@
-import { SettingOwner } from "../../interfaices/SettingOwner";
+import { SettingOwner } from "../../interfaices/SettingsOwner";
 import { SettingEntity } from "./entities/Setting";
 import { SettingRepository } from "./repository";
 import { EntitySetting, GetSettingFilter } from "./types";

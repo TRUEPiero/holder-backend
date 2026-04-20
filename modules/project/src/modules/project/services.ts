@@ -1,7 +1,7 @@
 import { PaginationParam } from "@shared-types/index.ts";
 import { UserEntity } from "../../../../auth/src/modules/user/entities/User";
 import { ProjectRepository } from "./repository";
-import { SettingsOwner } from "../../interfaices/SettingOwner";
+import { SettingsOwner } from "../../interfaices/SettingsOwner";
 import { SettingTargets } from "../settings/types";
 
 export class ProjectService implements SettingsOwner{
@@ -41,7 +41,7 @@ export class ProjectService implements SettingsOwner{
         const createData = { 
             owner: user.id, 
             ...body,
-            settings: body.settings ?? []
+            settings: body.settings ?? this.getDefaultSetting()
         };
 
         const created = await this.repo.create(createData);
@@ -76,5 +76,9 @@ export class ProjectService implements SettingsOwner{
     
     public getSettingTarget(): SettingTargets {
         return 'project'
+    }
+
+    private getDefaultSetting() {
+        return [];
     }
 }
