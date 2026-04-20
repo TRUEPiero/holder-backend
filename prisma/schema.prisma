@@ -34,17 +34,23 @@ enum SettingType {
   float
 }
 
+enum SettingTarget {
+  project
+  cashbox
+  both
+}
+
 model User {
-  id       Int      @id @default(autoincrement())
+  id       Int        @id @default(autoincrement())
   name     String
   password String
   status   UserStatus
-  email    String   @unique
+  email    String     @unique
 
   telegram   String? @unique
   telegramId Int?    @unique @map("telegram_id")
 
-  OwnedProjects Project[]           @relation("ProjectOwner")
+  OwnedProjects Project[]       @relation("ProjectOwner")
   projects      ProjectMember[]
   transactions  Transaction[]
 
@@ -60,7 +66,7 @@ model registerVerify {
   email     String
   code      String
   expiredAt DateTime
-  
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -87,15 +93,16 @@ model Project {
 }
 
 model SettingGroup {
-  id              Int              @id @default(autoincrement())
-  code            String
-  title           String
-  description     String
+  id          Int    @id @default(autoincrement())
+  code        String
+  title       String
+  description String
 
   projectSettings ProjectSetting[]
 
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  settingDefinitions SettingDefinition[]
 
   @@map("setting_group")
 }
@@ -128,7 +135,7 @@ model ProjectInvite {
   projectId Int    @map("project_id")
 
   expiredAt DateTime
-  
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -145,10 +152,10 @@ model ProjectMember {
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
-  joinedAt  DateTime @default(now())
-  
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  joinedAt DateTime @default(now())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([projectId, userId])
   @@index([id, projectId, userId])
@@ -186,7 +193,7 @@ model CashboxLink {
 
   parent   Cashbox @relation(fields: [parentId], references: [id], onDelete: Cascade, name: "parent")
   children Cashbox @relation(fields: [childrenId], references: [id], onDelete: Cascade, name: "children")
-  
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -249,14 +256,38 @@ model ProjectField {
   id    Int    @id @default(autoincrement())
   title String
 
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model CashboxField {
   id    Int    @id @default(autoincrement())
   title String
 
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SettingDefinition {
+  id   Int         @id @default(autoincrement())
+  code String      @unique
+  type SettingType
+
+  title       String
+  description String?
+
+  values Json?
+  value  Json?
+
+  target SettingTarget
+
+  isRequired Boolean @default(false)
+  isDisabled Boolean @default(false)
+  isTelegram Boolean @default(false)
+
+  groupId Int?
+  group   SettingGroup? @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

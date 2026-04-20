@@ -19,7 +19,7 @@ export class CashboxEntity {
         this.balance = new Decimal(params.balance);
         this.title = params.title;
         this.description = params.description || '';
-        this.settings = params.settings || {}
+        this.settings = params.settings || []
         this.transactions = params.transactions || [];
     }
 
