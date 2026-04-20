@@ -1,8 +1,10 @@
 import { PaginationParam } from "@shared-types/index.ts";
 import { ProjectService } from "../project/services";
 import { CashboxRepository } from "./repository";
+import { SettingsOwner } from "../../interfaices/SettingOwner";
+import { SettingTargets } from "../settings/types";
 
-export class CashboxService{
+export class CashboxService implements SettingsOwner{
 
     constructor(
         private repo: CashboxRepository,
@@ -68,5 +70,9 @@ export class CashboxService{
         const deleted = await this.repo.delete(id);
         if(!deleted) throw new Error("CASHBOX_NOT_CREATED")
         return deleted;
+    }
+
+    public getSettingTarget(): SettingTargets {
+        return 'cashbox'
     }
 }

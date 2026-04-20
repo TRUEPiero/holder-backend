@@ -1,8 +1,10 @@
 import { PaginationParam } from "@shared-types/index.ts";
 import { UserEntity } from "../../../../auth/src/modules/user/entities/User";
 import { ProjectRepository } from "./repository";
+import { SettingsOwner } from "../../interfaices/SettingOwner";
+import { SettingTargets } from "../settings/types";
 
-export class ProjectService {
+export class ProjectService implements SettingsOwner{
 
     private lastError: any;
 
@@ -70,5 +72,9 @@ export class ProjectService {
         if(!deleted) throw new Error("PROJECT_NOT_DELETED");
 
         return deleted;
+    }
+    
+    public getSettingTarget(): SettingTargets {
+        return 'project'
     }
 }

@@ -43,19 +43,20 @@ async function main() {
         })
 
         for(const setting of group.settings) {
-            const createdSetting = await db.projectSetting.create({
+            const createdSetting = await db.settingDefinition.create({
                 data: {
                     code: setting.code,
                     title: setting.title,
                     type: setting.type,
+                    target: 'project',
                     group: {
                         connect: {
                             id: createdGroup.id
                         }
                     },
-                    isDisable: setting.isDisable,
+                    isDisabled: setting.isDisable,
                     isRequired: setting.isRequired,
-                    telegram: setting.telegram,
+                    isTelegram: setting.telegram,
                     value: setting.value,
                     values: setting.values,
                 }
