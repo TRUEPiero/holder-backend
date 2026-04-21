@@ -1,7 +1,6 @@
-import { BaseService } from "@shared/BaseService";
 import { UserService } from "../../modules/auth/src/modules/user/services";
 import { UserRepository } from "../../modules/auth/src/modules/user/repository";
-import { DirectoryService } from "@shared/DirectoryService";
+import { DirectoryService } from "@services/DirectoryService";
 
 const base = new DirectoryService<'user'>('user', [])
 const repo = new UserRepository(base);

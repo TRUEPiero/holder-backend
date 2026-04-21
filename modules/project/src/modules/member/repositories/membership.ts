@@ -1,4 +1,4 @@
-import { DirectoryService } from "@shared/DirectoryService";
+import { DirectoryService } from "@services/DirectoryService";
 import { MemberEntity } from "../entities/membership";
 import { Member } from "../types";
 

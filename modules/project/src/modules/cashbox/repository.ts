@@ -1,4 +1,4 @@
-import { DirectoryService } from "@shared/DirectoryService";
+import { DirectoryService } from "@services/DirectoryService";
 import { CashboxEntity } from "./entities/Cashbox";
 import type { Cashbox } from "./types";
 import { PaginationParam } from "@shared-types/index.ts";

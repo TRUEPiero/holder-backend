@@ -5,6 +5,10 @@ import { BotController } from "../modules/bot";
 import { app as authApp } from "../modules/auth/src/app";
 import { app as projectApp } from "../modules/project/src/app";
 
+const PORT = process.env.SERVER_PORT;
+
+if(!PORT) throw new Error("SERVER_PORT Undefined");
+
 await BotController.start();
 
 const app = new Elysia()
@@ -12,9 +16,9 @@ const app = new Elysia()
   .use(corsPlugin)
   .use(authApp)
   .use(projectApp)
-  // .get("/", () => "Hello Elysia")
+  .get("/", () => "Hello Elysia")
 
-  .listen(3080);
+  .listen(PORT);
 
 export type App = typeof app
 

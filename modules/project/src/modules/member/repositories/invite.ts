@@ -1,4 +1,4 @@
-import { DirectoryService } from "@shared/DirectoryService";
+import { DirectoryService } from "@services/DirectoryService";
 import { InviteEntity } from "../entities/Invite";
 
 export class InviteRepository {

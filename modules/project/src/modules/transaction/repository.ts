@@ -1,4 +1,4 @@
-import { DirectoryService } from "@shared/DirectoryService";
+import { DirectoryService } from "@services/DirectoryService";
 import { TransactionEntity } from "./entities/Transaction";
 import { Transaction } from "./types";
 import { PaginationParam } from "@shared-types/index.ts";

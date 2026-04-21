@@ -1,4 +1,4 @@
-import { DirectoryService } from "@shared/DirectoryService";
+import { DirectoryService } from "@services/DirectoryService";
 import { RegisterEntity } from "./entities/Register";
 
 export class RegisterRepository {
