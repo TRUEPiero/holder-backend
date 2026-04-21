@@ -5,7 +5,7 @@ type Cashbox = {
     id: number,
     settings: any,
     title: string,
-    description?: string,
+    description: string,
     balance: number,
 }
 
@@ -17,9 +17,9 @@ type UpdateData = {
 
 const ResponseCashbox = t.Object({
     id: t.Number(),
-    settings: t.Nullable(t.Array(setting)),
+    settings: t.Array(setting),
     title: t.String(),
-    description: t.Nullable(t.String()),
+    description: t.String(),
     balance: t.Any(),
 })
 

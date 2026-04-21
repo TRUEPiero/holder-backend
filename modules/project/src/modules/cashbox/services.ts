@@ -14,16 +14,8 @@ export class CashboxService implements SettingsOwner{
     public async getById(id: number) {
         if(!id) throw new Error("ID_NOT_VALID");
         
-        const cashbox = await this.repo.findById(id);
-        if (!cashbox) throw new Error("CASHBOX_NOT_FOUND");
-        return cashbox;
-    }
-
-    public async getDetail(id: number) {
-        if(!id) throw new Error("ID_NOT_VALID");
-
         const cashbox = await this.repo.findDetailed(id);
-        if(!cashbox) throw new Error("CASHBOX_NOT_FOUND");
+        if (!cashbox) throw new Error("CASHBOX_NOT_FOUND");
         return cashbox;
     }
 

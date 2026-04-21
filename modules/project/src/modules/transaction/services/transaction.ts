@@ -33,7 +33,7 @@ export class TransactionService {
     }
 
     public async delete(projectId: number, id: number, user: any) {
-        const project = await this.projectService.getDetail(projectId);
+        const project = await this.projectService.getById(projectId);
 
         const access = project.checkAccess(user)       
         if(!access) throw new Error('ACCESS_DENIED')

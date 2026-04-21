@@ -22,11 +22,11 @@ export const ProjectController = new Elysia({
 
 .get('/:pid', async({params: {pid}, status}) => {
     try{
-        const project = await projectService.getDetail(pid);
+        const project = await projectService.getById(pid);
         return {data: project}
     } catch(error: any) {
         if(error.message === 'PROJECT_NOT_FOUND') return status(404, {code: "PROJECT_NOT_FOUND", description: 'Project by ID not founded'});
-        return status (500, {code: 'ERROR', description: JSON.stringify(error)}) 
+        return status(500, {code: 'ERROR', description: JSON.stringify(error)}) 
     } 
 
 }, schema.detail)

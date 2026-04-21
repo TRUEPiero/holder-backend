@@ -22,7 +22,7 @@ export const CashboxController = new Elysia({
 
 .get('/:cid', async({params: {pid, cid}, status}) => {
     try {
-        const cashbox = await cashboxService.getDetail(cid);
+        const cashbox = await cashboxService.getById(cid);
         return {data: cashbox}
     } catch (error: any) {
         return status(500, {code: 'CASHBOX_NOT_FOUND', description: ''});
