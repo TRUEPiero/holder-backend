@@ -23,7 +23,8 @@
     "elysia": "latest",
     "grammy": "^1.39.3",
     "grammy-scenes": "^10.2.0",
-    "prisma": "^6.19.0"
+    "prisma": "^6.19.0",
+    "redis": "^5.12.1"
   },
   "devDependencies": {
     "@types/node": "^25.0.9",

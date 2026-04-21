@@ -27,6 +27,7 @@ import { ProjectInviteService } from "../project/src/modules/member/services/inv
 
 import { SettingRepository } from "../project/src/modules/settings/repository";
 import { SettingService } from "../project/src/modules/settings/services";
+import { CasheService } from "@services/CashService";
 
 const mainService = new MailService();
 
@@ -53,11 +54,13 @@ const settingRepo = new SettingRepository(settingBase);
 const transactionRepo = new TransactionRepository(transactionBase);
 
 // services
+const casheService = new CasheService();
+
 const userService = new UserService(userRepo);
 const authService = new AuthService(userRepo);
 const registerService = new RegisterService(registerRepo, userRepo, mainService);
 
-const projectService = new ProjectService(projectRepo);
+const projectService = new ProjectService(projectRepo, casheService);
 const memberService = new MembershipService(memberRepo, projectService);
 const inviteService = new ProjectInviteService(inviteRepo, userRepo, memberService)
 const cashboxService = new CashboxService(cashboxRepo, projectService);
