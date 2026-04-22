@@ -5,6 +5,7 @@ import { BotController } from "../modules/bot";
 import { app as authApp } from "../modules/auth/src/app";
 import { app as projectApp } from "../modules/project/src/app";
 import { initRedis } from "@common/redis";
+import { errorHandler } from "@plugins/errorHandler";
 
 const PORT = process.env.SERVER_PORT;
 
@@ -14,6 +15,7 @@ await BotController.start();
 await initRedis();
 
 const app = new Elysia()
+  .onError(errorHandler)
   .use(swaggerPlugin)
   .use(corsPlugin)
   .use(authApp)

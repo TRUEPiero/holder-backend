@@ -5,6 +5,7 @@ import { SettingsOwner } from "../../interfaices/SettingsOwner";
 import { SettingTargets } from "../settings/types";
 import { CasheService } from "@services/CashService";
 import { ProjectEntity } from "./entities/Project";
+import { AccessDeniedError, NotCreatedError, NotDeletedError, NotFoundError, NotUpdatedError } from "@common/errors";
 
 export class ProjectService implements SettingsOwner{
 
@@ -20,7 +21,7 @@ export class ProjectService implements SettingsOwner{
         if(cashed) return new ProjectEntity(cashed);
 
         const project = await this.repo.findDetailedProject(id);
-        if (!project) throw new Error("PROJECT_NOT_FOUND");
+        if (!project) throw new NotFoundError('PROJECT');
 
         await this.cashe.set(`project:${id}`, project.toJSON())
 
@@ -32,8 +33,7 @@ export class ProjectService implements SettingsOwner{
     }
 
     public async getWithPagination(parameters: PaginationParam) {
-        const projects = await this.repo.findWithPagination(parameters);
-        return projects;
+        return await this.repo.findWithPagination(parameters);
     }
 
     public async create(user: UserEntity, body: any) {
@@ -44,7 +44,7 @@ export class ProjectService implements SettingsOwner{
         };
 
         const created = await this.repo.create(createData);
-        if(!created) throw new Error("PROJECT_NOT_CREATED");
+        if(!created) throw new NotCreatedError('PROJECT');
         return created;
     }
 
@@ -52,12 +52,12 @@ export class ProjectService implements SettingsOwner{
         const project = await this.getById(id);
         
         const access = project.checkAccess(user)
-        if(!access) throw new Error('ACCESS_DENIED')
+        if(!access) throw new AccessDeniedError();
 
         const updated = project.update(data);
 
         const res = await this.repo.update(id, updated);
-        if(!res) throw new Error("PROJECT_NOT_UPDATED");
+        if(!res) throw new NotUpdatedError('PROJECT');
 
         await this.cashe.del(`project:${id}`)
 
@@ -68,10 +68,10 @@ export class ProjectService implements SettingsOwner{
         const project = await this.getById(id);
 
         const access = project.checkAccess(user)       
-        if(!access) throw new Error('ACCESS_DENIED')
+        if(!access) throw new AccessDeniedError();
 
         const deleted = await this.repo.delete(id);
-        if(!deleted) throw new Error("PROJECT_NOT_DELETED");
+        if(!deleted) throw new NotDeletedError('PROJECT');
 
         await this.cashe.del(`project:${id}`)
 
