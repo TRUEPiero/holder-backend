@@ -1,11 +1,6 @@
-import { UserService } from "../../modules/auth/src/modules/user/services";
-import { UserRepository } from "../../modules/auth/src/modules/user/repository";
-import { DirectoryService } from "@services/DirectoryService";
+import { container } from "../../modules/containers";
 
-const base = new DirectoryService<'user'>('user', [])
-const repo = new UserRepository(base);
-
-const userService = new UserService(repo);
+const {userService} = container;
 
 export const deriveUser = async ({cookie, jwt, status}: any) => {
     const token = cookie['auth-token'].value;

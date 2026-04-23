@@ -2,12 +2,14 @@ import { AccessDeniedError, AlreadyExistError, NotCreatedError, NotFoundError, N
 import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
 import { ProjectService } from "../../project/services";
 import { MembershipRepository } from "../repositories/membership";
+import { CasheService } from "@services/CashService";
 
 export class MembershipService {
 
     constructor(
         private repo: MembershipRepository,
         private projectService: ProjectService,
+        private cashe: CasheService
     ) {};
 
     public async getById(id: number) {
@@ -31,6 +33,9 @@ export class MembershipService {
             role: 'editor'
         })
         if(!member) throw new NotCreatedError('MEMBER');
+
+        await this.cashe.del(`project:${projectId}`);
+
         return member
     }
 
@@ -46,6 +51,9 @@ export class MembershipService {
 
         const res = await this.repo.update(memberId, updated);
         if(!res) throw new NotUpdatedError("MEMBER");
+        
+        await this.cashe.del(`project:${projectId}`);
+        
         return res; 
     }
     

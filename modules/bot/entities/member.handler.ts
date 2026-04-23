@@ -22,7 +22,6 @@ export class MemberHandler extends BaseEntityHandler<any> {
 
     //
     public async create() {
-
         const username = this.ctx.session.entityData.username;
         const user = await this.userService.getTelegramUser(username);
         const projectId = this.ctx.session.project_id;
@@ -72,7 +71,7 @@ export class MemberHandler extends BaseEntityHandler<any> {
     }
 
     protected async renderSettings() {
-        return await SettingKeyboard.memberSetting();
+        return await SettingKeyboard.memberSettings();
     }
 
     private getTitleKey(item: Member) {

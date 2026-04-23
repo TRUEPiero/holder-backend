@@ -1,4 +1,4 @@
-import { MailService } from "../../../lib/mail";
+import { MailService } from "../../lib/mail";
 import { RegisterRepository } from "./repository";
 import { UserService } from "../user/services";
 import { AlreadyExistError, NotFoundError, NotUpdatedError } from "@common/errors";

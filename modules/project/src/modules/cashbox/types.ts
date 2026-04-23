@@ -13,6 +13,7 @@ type UpdateData = {
     title?: string,
     settings?: Setting[],
     description?: string,
+    balance?: number | string
 }
 
 const ResponseCashbox = t.Object({

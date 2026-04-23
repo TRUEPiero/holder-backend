@@ -1,8 +1,8 @@
 import { Elysia} from 'elysia'
 import jwt from "@elysiajs/jwt";
 import { schema } from './schemas';
-import { AuthTokenService } from '../../../common/services/token';
-import { AuthCookieService } from '../../../common/services/cookie';
+import { AuthTokenService } from '../../common/services/token';
+import { AuthCookieService } from '../../common/services/cookie';
 import { container } from '../../../../containers';
 
 const {authService} = container;

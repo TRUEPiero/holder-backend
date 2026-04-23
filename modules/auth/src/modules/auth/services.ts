@@ -1,5 +1,5 @@
 import { InvalidFieldError } from "@common/errors";
-import { checkValidPass } from "../../../lib/passVerify";
+import { checkValidPass } from "../../lib/passVerify";
 import { UserService } from "../user/services";
 
 export class AuthService{

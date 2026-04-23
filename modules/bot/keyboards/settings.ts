@@ -20,7 +20,7 @@ export class SettingKeyboard {
         return InlineKeyboard.from(keyboard)
     }
 
-    static async cashboxSetting(cashboxId: number, settingService: SettingService) {
+    static async cashboxSettings(cashboxId: number, settingService: SettingService) {
 
         const keyboard = new InlineKeyboard();
         
@@ -32,11 +32,11 @@ export class SettingKeyboard {
         return InlineKeyboard.from(keyboard)
     }
 
-    static async transactionSetting() {
+    static async transactionSettings() {
         return new InlineKeyboard();
     }
 
-    static async memberSetting() {
+    static async memberSettings() {
         return new InlineKeyboard();
     }
 

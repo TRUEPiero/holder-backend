@@ -1,6 +1,6 @@
 import { DirectoryService } from "@services/DirectoryService";
 
-import { MailService } from "../auth/lib/mail";
+import { MailService } from "../auth/src/lib/mail";
 
 // auth
 import { UserRepository } from "../auth/src/modules/user/repository";
@@ -61,9 +61,9 @@ const authService = new AuthService(userService);
 const registerService = new RegisterService(registerRepo, userService, mainService);
 
 const projectService = new ProjectService(projectRepo, casheService);
-const memberService = new MembershipService(memberRepo, projectService);
+const memberService = new MembershipService(memberRepo, projectService, casheService);
 const inviteService = new ProjectInviteService(inviteRepo, userService, memberService)
-const cashboxService = new CashboxService(cashboxRepo, projectService);
+const cashboxService = new CashboxService(cashboxRepo, projectService, casheService);
 const transactionService = new TransactionService(transactionRepo, projectService)
 const transferService = new TransferService(cashboxService, transactionRepo, projectService)
 const cashboxSettingService = new SettingService(settingRepo, cashboxService);

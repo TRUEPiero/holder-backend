@@ -20,7 +20,7 @@ type CreateData = {
 export class TransactionHandler extends BaseEntityHandler<any> {
     protected service = container.transactionService;
     protected settingService = undefined;
-    private userService = container.userService;
+    protected userService = container.userService;
     private transferService = container.transferService;
 
     constructor(protected ctx: BotContext) {
@@ -30,8 +30,6 @@ export class TransactionHandler extends BaseEntityHandler<any> {
     public getFilter() {
         return { cashboxId: this.ctx.session.cashbox_id };
     }
-
-
 
     public async create() {
         const createData = this.ctx.session.entityData;
@@ -106,7 +104,7 @@ export class TransactionHandler extends BaseEntityHandler<any> {
     }
 
     protected async renderSettings() {
-        return await SettingKeyboard.transactionSetting();
+        return await SettingKeyboard.transactionSettings();
     }
 
     private getCorrectCashboxes(data: CreateData) {

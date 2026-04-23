@@ -4,7 +4,7 @@ import { HistoryService } from "../services/history";
 import { Step } from "../types";
 import { EntityHandlerFactory } from "./factory";
 
-export const render = async (ctx: BotContext, step: Step, isCommand = false) => {
+async function render(ctx: BotContext, step: Step, isCommand = false) {
     const entity = step?.entity || '';
     const handler = EntityHandlerFactory.create(ctx, entity);
 
@@ -23,4 +23,8 @@ export const render = async (ctx: BotContext, step: Step, isCommand = false) => 
     }
 
     await handler.render(step, isCommand)
+}
+
+export {
+    render
 }

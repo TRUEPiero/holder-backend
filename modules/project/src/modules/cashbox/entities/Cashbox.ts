@@ -40,15 +40,12 @@ export class CashboxEntity {
         const {settings, ...dataWithoutParams} = data;
         
         for(const [key, value] of Object.entries(dataWithoutParams)) {
-            if(value.toString()) (this as any)[key] = value
+            (this as any)[key] = value
         }
 
         this.setParameters(settings);
 
-        return {
-            title: this.title,
-            settings: this.settings,
-        };
+        return this.toJSON();
     }
 
     public getSettings() {

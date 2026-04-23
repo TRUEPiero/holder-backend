@@ -4,12 +4,14 @@ import { CashboxRepository } from "./repository";
 import { SettingsOwner } from "../../interfaices/SettingsOwner";
 import { SettingTargets } from "../settings/types";
 import { AccessDeniedError, InvalidFieldError, NotCreatedError, NotDeletedError, NotFoundError, NotUpdatedError } from "@common/errors";
+import { CasheService } from "@services/CashService";
 
 export class CashboxService implements SettingsOwner{
 
     constructor(
         private repo: CashboxRepository,
-        private projectService: ProjectService
+        private projectService: ProjectService,
+        private cashe: CasheService
     ) {}
 
     public async getById(id: number) {
@@ -38,11 +40,15 @@ export class CashboxService implements SettingsOwner{
         const createData = { 
             projectId, 
             ...body,
+            description: body.desciption ?? '',
             settings: body.settings ?? this.getDefaultSetting()
         };
 
         const created = await this.repo.create(createData);
         if(!created) throw new NotCreatedError("CASHBOX")
+
+        await this.cashe.del(`project:${projectId}`);
+
         return created;
     }
 
@@ -54,8 +60,12 @@ export class CashboxService implements SettingsOwner{
 
         const cashbox = await this.getById(id);
         const updated = cashbox.update(data);
+
         const res = await this.repo.update(id, updated);
         if(!res) throw new NotUpdatedError("CASHBOX")
+        
+        await this.cashe.del(`project:${projectId}`);
+        
         return res;
     }
 
@@ -68,6 +78,9 @@ export class CashboxService implements SettingsOwner{
         await this.getById(id); 
         const deleted = await this.repo.delete(id);
         if(!deleted) throw new NotDeletedError("CASHBOX")
+        
+        await this.cashe.del(`project:${projectId}`);
+        
         return deleted;
     }
 

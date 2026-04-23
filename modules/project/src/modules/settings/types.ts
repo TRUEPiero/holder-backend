@@ -1,4 +1,5 @@
 import { Prisma, SettingTarget, SettingType } from "@prisma/client"
+import { t } from "elysia"
 
 type SettingTypes  = SettingType
 type SettingTargets = SettingTarget
@@ -24,10 +25,32 @@ type EntitySetting = {
     value: string
 }
 
+const SettingEntity = t.Object({
+    code: t.String(),
+    value: t.String(), 
+})
+
+const ResponseSetting = t.Any()
+
+const ResponseObject = t.Object({
+    data: ResponseSetting
+})
+
+const ResponseObjects = t.Object({
+    data: t.Array(ResponseSetting)
+})
+
 export type {
     Setting,
     EntitySetting,
     SettingTypes,
     SettingTargets,
     GetSettingFilter
+}
+
+export {
+    SettingEntity,
+    ResponseSetting,
+    ResponseObject,
+    ResponseObjects
 }

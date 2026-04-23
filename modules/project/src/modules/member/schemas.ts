@@ -1,6 +1,6 @@
 import { errorSchema } from "@schemas/error";
 import {t} from 'elysia';
-import { ResponseMember, ResponseObject } from "./types";
+import { memberRole, ResponseMember, ResponseObject } from "./types";
 
 export const schema = {
     invite: {    
@@ -39,9 +39,11 @@ export const schema = {
             pid: t.Number(),
             mid: t.Number(),
         }),
-        body: t.Object({
-            role: t.Any()
-        }),
+        body: t.Partial(
+            t.Object({
+                role: memberRole
+            })
+        ),
         response: {
             200: ResponseObject,
             ...errorSchema

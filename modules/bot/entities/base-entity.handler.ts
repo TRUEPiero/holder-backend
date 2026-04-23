@@ -5,6 +5,7 @@ import { Step } from "../types";
 export abstract class BaseEntityHandler<T> {
   protected abstract service: any;
   protected abstract settingService: any;
+  protected abstract userService: any
   protected abstract ctx: BotContext
 
   public abstract getFilter(ctx: BotContext): Record<string, any>;

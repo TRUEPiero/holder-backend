@@ -9,6 +9,12 @@ export class SettingService {
         private entityService: SettingsOwner
     ) {}
 
+    public async getById(id: number, entityId: number) {
+        const setting = await this.getSettings(entityId, {id});
+
+        return setting[0];
+    }
+
     public async getAll(entityId: number) {
         return await this.getSettings(entityId, {});
     }

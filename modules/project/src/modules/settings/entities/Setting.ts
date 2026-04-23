@@ -23,9 +23,9 @@ export class SettingEntity {
         this.type = params.type;
         this.value = params.value
         this.values = params.values;
-        this.isDisabled = params.isDisable;
+        this.isDisabled = params.isDisabled;
         this.isRequired = params.isRequired;
-        this.isTelegram = params.telegram;
+        this.isTelegram = params.isTelegram;
     }
 
     public toJSON() {

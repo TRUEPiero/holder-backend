@@ -8,7 +8,7 @@ import { EntityListOptions } from "../types";
 import { Project } from "../../project/src/modules/project/types";
 
 export class ProjectHandler extends BaseEntityHandler<any> {
-  private userService = container.userService;
+  protected userService = container.userService;
   protected service = container.projectService;
   protected settingService = container.projectSettingService;
 
@@ -30,6 +30,11 @@ export class ProjectHandler extends BaseEntityHandler<any> {
       ]
     };
   }       
+
+  public async getSetting(id: number) {
+    const setting = await this.settingService.getById(id, this.getId());
+    return setting;
+  }
 
   public async create() {
     const user = await this.userService.getUser(this.ctx.session.user_id);
@@ -84,7 +89,7 @@ export class ProjectHandler extends BaseEntityHandler<any> {
     return await SettingKeyboard.projectSettings(this.getId(), this.settingService);
   }
 
-    private getTitleKey(item: Project) {
-      return item.title
-    }
+  private getTitleKey(item: Project) {
+    return item.title
+  }
 }

@@ -39,7 +39,7 @@ services:
     image: redis:8
     container_name: holder_redis
     environment:
-      - REDIS_URL=redis://redis:6379
+      - REDIS_URL=${REDIS_URL:?lost REDIS_URL variable}
     ports:
       - "6379:6379"
     volumes:

@@ -9,7 +9,6 @@ enum SettingType {
 enum SettingTarget {
   project
   cashbox
-  both
 }
 
 model SettingGroup {

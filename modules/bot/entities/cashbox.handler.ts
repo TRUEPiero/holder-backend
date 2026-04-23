@@ -9,7 +9,7 @@ import { Cashbox } from "../../project/src/modules/cashbox/types";
 import { DecimalClass as Decimal } from "@shared-types/index.ts";
 
 export class CashboxHandler extends BaseEntityHandler<any> {
-  private userService = container.userService;
+  protected userService = container.userService;
   protected service = container.cashboxService;
   protected settingService = container.cashboxSettingService;
 
@@ -95,7 +95,7 @@ export class CashboxHandler extends BaseEntityHandler<any> {
   }
 
   protected async renderSettings() {
-    return await SettingKeyboard.cashboxSetting(this.getId(), this.settingService);
+    return await SettingKeyboard.cashboxSettings(this.getId(), this.settingService);
   }
 
   private getTitleKey(item: Cashbox) {
