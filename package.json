@@ -1,9 +1,6 @@
 {
   "name": "holder-backend",
   "version": "1.0.50",
-  "prisma": {
-    "schema": "./prisma"
-  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "bun run --watch src/index.ts",

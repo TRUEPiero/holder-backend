@@ -5,9 +5,9 @@ export class BotController {
     static async start() {
         try {
             await startBot();
-            console.log('🤖 Bot has be started');
+            console.log('[Bot] started');
         } catch (error) {
-            console.error(`Error while starting bot ${error}`)
+            console.error(`[Bot] Error while starting ${error}`)
         }
     }
 }
