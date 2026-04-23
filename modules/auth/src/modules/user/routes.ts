@@ -14,12 +14,7 @@ export const UserController = new Elysia({
     return {data: user.toJSON()}
 }, schema.getUser)
 
-.patch('/', async({user, body, status}) => { 
-    try {
-        const entity = await userService.updateUser(user, body);
-        return {data: entity}
-    } catch(e: any) {
-        if(e.message === 'USER_NOT_FOUND') return status(404, {code: "USER_NOT_FOUND", description: 'USER by ID not founded'}); 
-        return status(500, {code: "USER_NOT_FOUND", description: JSON.stringify(e)}); 
-    }
+.patch('/', async({user, body}) => { 
+    const entity = await userService.updateUser(user, body);
+    return {data: entity}
 }, schema.updateUser)

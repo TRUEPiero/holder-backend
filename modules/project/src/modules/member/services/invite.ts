@@ -1,11 +1,12 @@
-import { UserRepository } from "../../../../../auth/src/modules/user/repository";
+import { AlreadyExistError, NotCreatedError, NotFoundError, NotUpdatedError } from "@common/errors";
+import { UserService } from "../../../../../auth/src/modules/user/services";
 import { InviteRepository } from "../repositories/invite";
 import { MembershipService } from "./membership";
 
 export class ProjectInviteService {
     constructor(
         private inviteRepo: InviteRepository,
-        private userRepo: UserRepository,
+        private userService: UserService,
         private memberService: MembershipService
     ) {}
 
@@ -14,16 +15,12 @@ export class ProjectInviteService {
     }
 
     public async sendInviteToUser(projectId: number, email: string) { 
-        const user = await this.userRepo.findByEmail(email);
-        if(!user) throw new Error("USER_UNDEFINED");
+        await this.userService.getUserByEmail(email);
 
         const invite = await this.getInvite({email});
-
-
-        if(invite && !invite.isExpired()) throw new Error("INVITE_ALREADY_EXIST");
+        if(invite && !invite.isExpired()) throw new AlreadyExistError("INVITE");
 
         const code = this.generateCode();
-
         const createdInvite = await this.inviteRepo.create({
             email,
             code,
@@ -31,15 +28,14 @@ export class ProjectInviteService {
             projectId
         });
 
-        if(!createdInvite) throw new Error("INVITE_NOT_CREATED");
+        if(!createdInvite) throw new NotCreatedError("INVITE");
 
         return true;
     }
 
     public async acceptInvite(projectId: number, code: string) {
         const invite = await this.getInvite({code});
-        if(!invite) throw new Error("INVITE_ERROR");
-        if(invite.isExpired()) throw new Error("INVITE_ERROR");
+        if(!invite || invite.isExpired()) throw new NotFoundError("INVITE");
 
         invite.setExpiredDate();
 
@@ -47,13 +43,11 @@ export class ProjectInviteService {
             {code}, 
             invite.toJSON()
         )
-        if(!updated) throw new Error("UPDATE_ERROR");
+        if(!updated) throw new NotUpdatedError("INVITE");
 
 
         const email = invite.getEmail();
-
-        const user = await this.userRepo.findByEmail(email);
-        if(!user) throw new Error("USER_UNDEFINED");
+        const user = await this.userService.getUserByEmail(email);
 
         return  await this.memberService.create(projectId, user);
     }

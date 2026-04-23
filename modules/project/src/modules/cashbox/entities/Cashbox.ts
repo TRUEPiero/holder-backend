@@ -1,4 +1,5 @@
 import { Transaction } from "../../transaction/types";
+import { LessBalanceError } from "../errors";
 import { UpdateData } from "../types";
 import { Money } from "./Money";
 import { DecimalClass as Decimal, DecimalType } from "@shared-types/index.ts";
@@ -26,7 +27,7 @@ export class CashboxEntity {
 
     public debit(amount: Money) {
         if (this.balance.lessThan(amount.get())) {
-            throw new Error("BALANSE_LESS_AMOUNT");
+            throw new LessBalanceError();
         }
         this.balance = this.balance.sub(new Decimal(amount.get()));
     }

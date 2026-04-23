@@ -1,3 +1,4 @@
+import { NotCreatedError, NotFoundError, NotUpdatedError } from "@common/errors";
 import { UserRepository } from "./repository";
 
 export class UserService{
@@ -6,26 +7,43 @@ export class UserService{
 
     public async getUser(id: number) {
         const user = await this.repo.findById(id);
-        if(!user) throw new Error("USER_NOT_FOUND");
+        if(!user) throw new NotFoundError('USER')
         return user;
     }
 
     public async getUserByEmail(email: string) {
-        const user = await this.repo.findByEmail(email);
-        if(!user) throw new Error("USER_NOT_FOUND");
+        const filter = {
+            email
+        }
+
+        const user = await this.repo.findByFilter(filter);
+        if(!user) throw new NotFoundError('USER')
         return user;
     }
 
     public async getTelegramUser(telegram: string) {
-        const user = await this.repo.findByTelegram(telegram);
-        if(!user) throw new Error("USER_NOT_FOUND");
+        const filter = {
+            telegram
+        }
+
+        const user = await this.repo.findByFilter(filter);
+        if(!user) throw new NotFoundError('USER')
         return user
     }
 
+    public async create(data: any) {
+        const created = await this.repo.create(data);
+        if(created) throw new NotCreatedError('USER');
+
+        return created;
+    }
+
     public async updateUser(user: any, data: any) {
-        if(!user) throw new Error("USER_NOT_FOUND");
         user.update(data)
 
-        return await this.repo.update(user.id, user.toJSON());
+        const updated = await this.repo.update(user.id, user.toJSON());
+        if(!updated) throw new NotUpdatedError('USER');
+
+        return updated;
     }
 }

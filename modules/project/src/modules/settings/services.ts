@@ -1,4 +1,4 @@
-import { SettingOwner } from "../../interfaices/SettingsOwner";
+import { SettingsOwner } from "../../interfaices/SettingsOwner";
 import { SettingEntity } from "./entities/Setting";
 import { SettingRepository } from "./repository";
 import { EntitySetting, GetSettingFilter } from "./types";
@@ -6,7 +6,7 @@ import { EntitySetting, GetSettingFilter } from "./types";
 export class SettingService {
     constructor(
         private repo: SettingRepository,
-        private entityService: SettingOwner
+        private entityService: SettingsOwner
     ) {}
 
     public async getAll(entityId: number) {

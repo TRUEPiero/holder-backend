@@ -2,6 +2,7 @@ import { PaginationParam } from "@shared-types/index.ts";
 import { ProjectService } from "../../project/services";
 import { TransactionRepository } from "../repository";
 import { CreateData } from "../types";
+import { AccessDeniedError, InvalidFieldError, NotCreatedError, NotDeletedError, NotFoundError } from "@common/errors";
 
 export class TransactionService {
 
@@ -11,10 +12,10 @@ export class TransactionService {
     ) {}
 
     public async getById(id: number) {
-        if(!id) throw new Error("ID_NOT_VALID");
+        if(!id) throw new InvalidFieldError('ID');
         
         const transaction = await this.repo.findById(id);
-        if (!transaction) throw new Error("TRANSACTION_NOT_FOUND");
+        if (!transaction) throw new NotFoundError("TRANSACTION");
         return transaction;
     }
 
@@ -29,17 +30,17 @@ export class TransactionService {
 
     public async create(body: CreateData) {
         const created = await this.repo.create(body);
-        if(!created) throw new Error("TRANSACTION_NOT_CREATED");
+        if(!created) throw new NotCreatedError("TRANSACTION");
     }
 
     public async delete(projectId: number, id: number, user: any) {
         const project = await this.projectService.getById(projectId);
 
         const access = project.checkAccess(user)       
-        if(!access) throw new Error('ACCESS_DENIED')
+        if(!access) throw new AccessDeniedError();
 
         const deleted = await this.repo.delete(id);
-        if(!deleted) throw new Error("TRANSACTION_NOT_DELETED");
+        if(!deleted) throw new NotDeletedError("TRANSACTION");
 
         return deleted;
     }

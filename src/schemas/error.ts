@@ -17,6 +17,14 @@ const errorSchema = {
     code: t.String(),
     description: t.String()
   }),
+  409: t.Object({
+    code: t.String(),
+    description: t.String()
+  }),
+  422: t.Object({
+    code: t.String(),
+    description: t.String()
+  }),
   500: t.Object({
     code: t.String(),
     description: t.String()

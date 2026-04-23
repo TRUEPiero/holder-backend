@@ -57,12 +57,12 @@ const transactionRepo = new TransactionRepository(transactionBase);
 const casheService = new CasheService();
 
 const userService = new UserService(userRepo);
-const authService = new AuthService(userRepo);
-const registerService = new RegisterService(registerRepo, userRepo, mainService);
+const authService = new AuthService(userService);
+const registerService = new RegisterService(registerRepo, userService, mainService);
 
 const projectService = new ProjectService(projectRepo, casheService);
 const memberService = new MembershipService(memberRepo, projectService);
-const inviteService = new ProjectInviteService(inviteRepo, userRepo, memberService)
+const inviteService = new ProjectInviteService(inviteRepo, userService, memberService)
 const cashboxService = new CashboxService(cashboxRepo, projectService);
 const transactionService = new TransactionService(transactionRepo, projectService)
 const transferService = new TransferService(cashboxService, transactionRepo, projectService)

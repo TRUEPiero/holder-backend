@@ -5,7 +5,7 @@ import { SettingsOwner } from "../../interfaices/SettingsOwner";
 import { SettingTargets } from "../settings/types";
 import { CasheService } from "@services/CashService";
 import { ProjectEntity } from "./entities/Project";
-import { AccessDeniedError, NotCreatedError, NotDeletedError, NotFoundError, NotUpdatedError } from "@common/errors";
+import { AccessDeniedError, InvalidFieldError, NotCreatedError, NotDeletedError, NotFoundError, NotUpdatedError } from "@common/errors";
 
 export class ProjectService implements SettingsOwner{
 
@@ -15,7 +15,7 @@ export class ProjectService implements SettingsOwner{
     ) {}
 
     public async getById(id: number): Promise<ProjectEntity> {
-        if(!id) throw new Error("ID_NOT_VALID");
+        if(!id) throw new InvalidFieldError('ID');
 
         const cashed = await this.cashe.get(`project:${id}`)
         if(cashed) return new ProjectEntity(cashed);

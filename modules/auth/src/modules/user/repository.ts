@@ -9,13 +9,8 @@ export class UserRepository {
         return data ? new UserEntity(data) : null;
     }
 
-    public async findByEmail(email: string) {
-        const data = await this.base.getFirstByFields({email});
-        return data ? new UserEntity(data) : null;
-    }
-
-    public async findByTelegram(telegram: string) {
-        const data = await this.base.getFirstByFields({telegram});
+    public async findByFilter(filter: any) {
+        const data = await this.base.getFirstByFields(filter);
         return data ? new UserEntity(data) : null;
     }
 

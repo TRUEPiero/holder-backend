@@ -9,7 +9,7 @@ import { errorHandler } from "@plugins/errorHandler";
 
 const PORT = process.env.SERVER_PORT;
 
-if(!PORT) throw new Error("SERVER_PORT Undefined");
+if(!PORT) throw new Error("SERVER_PORT is not defined");
 
 await BotController.start();
 await initRedis();

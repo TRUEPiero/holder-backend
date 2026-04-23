@@ -6,6 +6,8 @@ import { ProjectService } from "../../project/services";
 import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
 import { PrismaTxClient } from "@shared-types/index.ts";
 import { TransactionTypes } from "../types";
+import { AccessDeniedError, NotFoundError } from "@common/errors";
+import { SameIdError } from "../errors";
 
 type ParamsBetween = {
     amount: number,
@@ -30,14 +32,14 @@ export class TransferService {
         const amount = new Money(request.amount);
         
         return await this.execute(projectId, user, async (tx) => {
-            if(cashboxId === request.to) throw new Error('SAME_ID');
+            if(cashboxId === request.to) throw new SameIdError();
 
             const [from, to] = await Promise.all([
                 this.cashboxService.getById(cashboxId),
                 this.cashboxService.getById(request.to)
             ]);
 
-            if(!from || !to) throw new Error('CASHBOX_NOT_FOUND');
+            if(!from || !to) throw new NotFoundError('CASHBOX');
 
             from.debit(amount);
             to.credit(amount)
@@ -103,7 +105,7 @@ export class TransferService {
         const project = await this.projectService.getById(projectId);
 
         if(!project.checkAccess(user)) {
-            throw new Error('ACCESS_DENIED');
+            throw new AccessDeniedError();
         }
 
         return db.$transaction(hadler);

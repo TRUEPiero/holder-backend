@@ -1,6 +1,14 @@
 import { AppError } from "@common/errors";
 
-export const errorHandler = async ({ error, set }: any) => {
+export const errorHandler = async ({ error, code, set }: any) => {
+    if (code === 'VALIDATION') {
+      set.status = 422
+      return {
+        code: 'VALIDATION_ERROR',
+        description: error.message
+      }
+    };
+
     if (error instanceof AppError) {
       set.status = error.status;
       return {

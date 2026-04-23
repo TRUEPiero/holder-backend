@@ -1,12 +1,15 @@
+import { InvalidFieldError } from "@common/errors";
+import { NegativeAmountError } from "../errors";
+
 export class Money {
     constructor (
         private amount: number
     ) {
         if (!Number.isFinite(amount)) {
-            throw new Error("INVALID_AMOUNT");
+            throw new InvalidFieldError("AMOUNT");
         }
         if (amount <= 0) {
-            throw new Error("AMOUNT_MUST_BE_POSITIVE");
+            throw new NegativeAmountError();
         }
     }
 

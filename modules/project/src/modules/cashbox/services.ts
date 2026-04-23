@@ -3,6 +3,7 @@ import { ProjectService } from "../project/services";
 import { CashboxRepository } from "./repository";
 import { SettingsOwner } from "../../interfaices/SettingsOwner";
 import { SettingTargets } from "../settings/types";
+import { AccessDeniedError, InvalidFieldError, NotCreatedError, NotDeletedError, NotFoundError, NotUpdatedError } from "@common/errors";
 
 export class CashboxService implements SettingsOwner{
 
@@ -12,10 +13,10 @@ export class CashboxService implements SettingsOwner{
     ) {}
 
     public async getById(id: number) {
-        if(!id) throw new Error("ID_NOT_VALID");
+        if(!id) throw new InvalidFieldError("ID");
         
         const cashbox = await this.repo.findDetailed(id);
-        if (!cashbox) throw new Error("CASHBOX_NOT_FOUND");
+        if (!cashbox) throw new NotFoundError("CASHBOX");
         return cashbox;
     }
 
@@ -32,7 +33,7 @@ export class CashboxService implements SettingsOwner{
         const project = await this.projectService.getById(projectId);
         
         const access = project.checkAccess(user)       
-        if(!access) throw new Error('ACCESS_DENIED')
+        if(!access) throw new AccessDeniedError()
 
         const createData = { 
             projectId, 
@@ -41,7 +42,7 @@ export class CashboxService implements SettingsOwner{
         };
 
         const created = await this.repo.create(createData);
-        if(!created) throw new Error("CASHBOX_NOT_CREATED")
+        if(!created) throw new NotCreatedError("CASHBOX")
         return created;
     }
 
@@ -49,12 +50,12 @@ export class CashboxService implements SettingsOwner{
         const project = await this.projectService.getById(projectId);
         
         const access = project.checkAccess(user)       
-        if(!access) throw new Error('ACCESS_DENIED')
+        if(!access) throw new AccessDeniedError()
 
         const cashbox = await this.getById(id);
         const updated = cashbox.update(data);
         const res = await this.repo.update(id, updated);
-        if(!res) throw new Error("CASHBOX_NOT_CREATED")
+        if(!res) throw new NotUpdatedError("CASHBOX")
         return res;
     }
 
@@ -62,11 +63,11 @@ export class CashboxService implements SettingsOwner{
         const project = await this.projectService.getById(projectId);
         
         const access = project.checkAccess(user)       
-        if(!access) throw new Error('ACCESS_DENIED')
+        if(!access) throw new AccessDeniedError()
 
         await this.getById(id); 
         const deleted = await this.repo.delete(id);
-        if(!deleted) throw new Error("CASHBOX_NOT_CREATED")
+        if(!deleted) throw new NotDeletedError("CASHBOX")
         return deleted;
     }
 

@@ -1,3 +1,4 @@
+import { AccessDeniedError, AlreadyExistError, NotCreatedError, NotFoundError, NotUpdatedError } from "@common/errors";
 import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
 import { ProjectService } from "../../project/services";
 import { MembershipRepository } from "../repositories/membership";
@@ -11,7 +12,7 @@ export class MembershipService {
 
     public async getById(id: number) {
         const member = await this.repo.findById(id);
-        if(!member) throw new Error("MEMBER_NOT_FOUND");
+        if(!member) throw new NotFoundError("MEMBER");
         return member;
     }
 
@@ -22,14 +23,14 @@ export class MembershipService {
 
     public async create(projectId: number, user: UserEntity) {
         const exist = await this.repo.findByFilter({projectId, userId: user.id})
-        if(exist) throw new Error('MEMBER_ALREADY_EXIST');
+        if(exist) throw new AlreadyExistError('MEMBER');
 
         const member = await this.repo.create({
             projectId,
             userId: user.id,
             role: 'editor'
         })
-        if(!member) throw new Error('MEMBER_NOT_CREATED')
+        if(!member) throw new NotCreatedError('MEMBER');
         return member
     }
 
@@ -37,14 +38,14 @@ export class MembershipService {
         const project = await this.projectService.getById(projectId);
 
         if(!project.checkAccess(user)) {
-            throw new Error("ACCESS_DENIED");
+            throw new AccessDeniedError();
         }
 
         const member = await this.getById(memberId);
         const updated = member.update(data);
 
         const res = await this.repo.update(memberId, updated);
-        if(!res) throw new Error("MEMBER_NOT_UPDATED");
+        if(!res) throw new NotUpdatedError("MEMBER");
         return res; 
     }
     

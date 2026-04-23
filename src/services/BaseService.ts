@@ -95,8 +95,6 @@ export class BaseService<ModelName extends PrismaModelName> {
     ): Promise<any | null> {
         const item = await (this.model as any).update({where: {id}, data})
 
-        if(!item) throw new Error('Wrong ID'); 
-
         return item || null
     }
 
