@@ -2,7 +2,7 @@ import { Scene } from "grammy-scenes";
 import { BotContext } from "../core/context";
 import { render } from "../lib/render";
 import { CommonKeyboard } from "../keyboards/common";
-import { EntityHandlerFactory } from "../lib/factory";
+import { EntityServiceFactory } from "../lib/factory";
 import { Step } from "../types";
 
 const scene = new Scene<BotContext>('inviteMember');
@@ -24,7 +24,11 @@ scene.wait('wait_username').on(['message:text', 'callback_query'], async(ctx) =>
     const choice = ctx.callbackQuery?.data;
     if(choice && choice === 'create_cancel') {
         ctx.answerCallbackQuery();
-        await render(ctx, {type: 'start'});
+        await render(ctx, {
+            type: 'page',
+            entity: 'member',
+            id: 1
+        });
         ctx.scene.exit();
         return;
     }
@@ -40,11 +44,10 @@ scene.wait('wait_username').on(['message:text', 'callback_query'], async(ctx) =>
 
 scene.label('add_member').step(async(ctx) => {
     const createData = ctx.session.entityData;
-    const handler = EntityHandlerFactory.create(ctx, createData.entity);
+    const service = EntityServiceFactory.create(createData.entity);
 
-    if(!handler) return;
     try{     
-        const item = await handler.create()
+        const item = await service.create(ctx)
         if(!item) throw new Error("MEMBER_NOT_CREATED");
 
         const step: Step = {

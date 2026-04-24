@@ -1,12 +1,7 @@
 import { InlineKeyboard } from "grammy";
 import { CommonKeyboard } from "./common";
-import { EntityListOptions, EntityListFlags, EntityType, PaginationItem } from "../types";
-import { container } from "../../containers";
+import { EntityListFlags, EntityType, PaginationItem } from "../types";
 import { MenuKeyboard } from "./menu";
-
-const {cashboxService, projectService, transactionService, memberService} = container;
-
-type Service = typeof projectService | typeof cashboxService | typeof transactionService | typeof memberService;
 
 export class ItemsKeyboard {
     static pagination(object: EntityType, currentPage: number, hasNextPage?: boolean, totalPages?: number, totalItems?: number) {
@@ -21,26 +16,18 @@ export class ItemsKeyboard {
 
     }
 
-    static async entityList(entity: EntityType, service: Service, filter: any, getTitle?: any, options: EntityListOptions = {}, flags: EntityListFlags = {}) {
-        const {limit = 5, page = 1} = options;
-        const { excludeId = null, withBackButton = true, isMember = false } = flags;
-
-        if(excludeId) filter.id = {not: excludeId}
+    static async entityList(entity: EntityType, data: any, flags: EntityListFlags = {}) {
+        const { withBackButton = true, isMember = false } = flags;
 
         const keyboard = new InlineKeyboard();
 
         if(isMember) keyboard.append(MenuKeyboard.memberInvite());
 
-        const fieldFilter = filter;
-        const data = await service.getWithPagination({page, limit, fieldFilter});
-
-        data!.items.forEach((item: PaginationItem) => {
-            const title = getTitle(item);
-
-            return keyboard.text(title, `${entity}_${item.id}`).row()
+        data.items.forEach((item: PaginationItem) => {
+            return keyboard.text(item.title, `${entity}_${item.id}`).row()
         });
 
-        if(data!.pagination) {
+        if(data.pagination) {
             const { currentPage, totalPages, totalItems, hasNextPage } = data!.pagination;
             const paginationKeyboard = this.pagination(entity, currentPage, hasNextPage, totalPages, totalItems)
             

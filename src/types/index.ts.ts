@@ -21,7 +21,7 @@ type PaginationParam = {
     include?: string, 
     textCheck?: string, 
     fieldIn?: string,
-    fieldFilter?: string 
+    fieldFilter?: any 
 }
 
 export type {

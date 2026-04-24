@@ -2,31 +2,32 @@ import { InlineKeyboard } from "grammy";
 import { container } from "../../containers";
 import { CommonKeyboard } from "./common";
 import { EntityType } from "../types";
+import { SettingEntity } from "../../project/src/modules/settings/entities/Setting";
 
 const {projectSettingService, cashboxSettingService} = container;
 
 type SettingService = typeof projectSettingService | typeof cashboxSettingService;
 
 export class SettingKeyboard {
-    static async projectSettings(projectId: number, settingService: SettingService) {
+    static async projectSettings(data: SettingEntity[]) {
         const keyboard = new InlineKeyboard();
         
         keyboard.text('Пользователи', 'member_page_1')
                 .text('Переименовать', 'project_rename')
 
-        const settings = await this.commonSettings('project', projectId, settingService);
+        const settings = await this.commonSettings('project', data);
 
         keyboard.append(settings, CommonKeyboard.back())
         return InlineKeyboard.from(keyboard)
     }
 
-    static async cashboxSettings(cashboxId: number, settingService: SettingService) {
+    static async cashboxSettings(data: SettingEntity[]) {
 
         const keyboard = new InlineKeyboard();
         
         keyboard.text('Переименовать', 'cashbox_rename')
 
-        const settings = await this.commonSettings('cashbox', cashboxId, settingService);
+        const settings = await this.commonSettings('cashbox', data);
 
         keyboard.append(settings, CommonKeyboard.back())
         return InlineKeyboard.from(keyboard)
@@ -40,11 +41,9 @@ export class SettingKeyboard {
         return new InlineKeyboard();
     }
 
-    private static async commonSettings(entity: EntityType, entityId: number, service: SettingService) {
+    private static async commonSettings(entity: EntityType, data: SettingEntity[]) {
         const keyboard = new InlineKeyboard();
-        
-        const data = await service.getForTelegram(entityId);
-        
+                
         data.forEach((setting, index) => {
             const key = keyboard.text(`Edit ${setting.title}`, `${entity}_setting_${setting.id}`)
 

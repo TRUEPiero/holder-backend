@@ -2,11 +2,11 @@ import { InlineKeyboard } from "grammy";
 import { Scene } from "grammy-scenes";
 import { BotContext } from "../core/context";
 import { CommonKeyboard } from "../keyboards/common";
-import { render } from "../lib/render";
-import { EntityHandlerFactory } from "../lib/factory";
-import { CashboxHandler } from "../entities/cashbox.handler";
-import { TransactionHandler } from "../entities/transaction.handler";
+import { render, renderListForChoice } from "../lib/render";
 import { Step, TransactionTypes } from "../types";
+import { MoneyTransfer } from "../interfaces/money-transfer";
+import { EntityService } from "../interfaces/entity.service";
+import { EntityServiceFactory } from "../lib/factory";
 
 const scene = new Scene<BotContext>('moneyTransfer');
 
@@ -40,13 +40,11 @@ scene.wait('check_operation').on('callback_query', async(ctx) => {
 })
 
 scene.label('choice_cashbox').step(async(ctx) => {
-    const handler = EntityHandlerFactory.create(ctx, 'cashbox') as CashboxHandler;
-
-    const page = ctx.session.entityData.page || 1;
+    const page = ctx.session.entityData.page ?? 1;
     const cashboxId = ctx.session.cashbox_id;
 
     await ctx.editMessageText('Выберите счет', {
-        reply_markup: (await handler.renderListForChoice(page, cashboxId))
+        reply_markup: (await renderListForChoice(ctx, page, cashboxId))
             .append(CommonKeyboard.cancelCreate())
     })
 })
@@ -144,10 +142,10 @@ scene.wait('wait_amount').on(['message:text', 'callback_query'], async(ctx) => {
 })
 
 scene.label('create_transfer').step(async(ctx) => {
-    const handler = EntityHandlerFactory.create(ctx, 'transaction') as TransactionHandler;
+    const service = EntityServiceFactory.create('transaction') as EntityService<'transaction'> & MoneyTransfer;;
 
     try {
-        const res = await handler.moneyTransfer();
+        const res = await service.moneyTransfer(ctx);
         if(!res) {
             throw new Error('TRANSACTION_NOT_CREATED')
         }

@@ -1,7 +1,6 @@
 import { Composer } from "grammy";
 import { BotContext } from "../../core/context";
 import { render } from "../../lib/render";
-import { HistoryService } from "../../services/history";
 import { container } from "../../../containers";
 
 const service = container.userService;
@@ -10,9 +9,6 @@ const composer = new Composer<BotContext>();
 
 composer.command('start', async (ctx) => {
     const username = ctx.chat.username;
-
-    const history = new HistoryService(ctx);
-    history.setStartStep();
 
     if(ctx.session.user_id) {
         await render(ctx, {type: 'start'}, true)
