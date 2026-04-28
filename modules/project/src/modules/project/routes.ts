@@ -15,8 +15,8 @@ export const ProjectController = new Elysia({
     return {data: projects} 
 }, schema.getAll)
 
-.get('/:pid', async({params: {pid}}) => {
-    const project = await projectService.getById(pid);
+.get('/:pid', async({params: {pid}, user}) => {
+    const project = await projectService.getById(pid, user);
     return {data: project}
 }, schema.detail)
 

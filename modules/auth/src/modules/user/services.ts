@@ -33,7 +33,7 @@ export class UserService{
 
     public async create(data: any) {
         const created = await this.repo.create(data);
-        if(created) throw new NotCreatedError('USER');
+        if(!created) throw new NotCreatedError('USER');
 
         return created;
     }
@@ -41,7 +41,13 @@ export class UserService{
     public async updateUser(user: any, data: any) {
         user.update(data)
 
-        const updated = await this.repo.update(user.id, user.toJSON());
+        const updateData = {
+            ...user.toJSON(),
+            password: user.getPassword()
+        }
+
+        const updated = await this.repo.update(user.id, updateData);
+        
         if(!updated) throw new NotUpdatedError('USER');
 
         return updated;

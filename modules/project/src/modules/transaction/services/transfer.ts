@@ -7,7 +7,7 @@ import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
 import { PrismaTxClient } from "@shared-types/index.ts";
 import { TransactionTypes } from "../types";
 import { AccessDeniedError, NotFoundError } from "@common/errors";
-import { SameIdError } from "../errors";
+import { SameIdError, SameProjectError } from "../errors";
 
 type ParamsBetween = {
     amount: number,
@@ -40,6 +40,7 @@ export class TransferService {
             ]);
 
             if(!from || !to) throw new NotFoundError('CASHBOX');
+            if(from.projectId !== to.projectId ) throw new SameProjectError();
 
             from.debit(amount);
             to.credit(amount)
@@ -102,11 +103,7 @@ export class TransferService {
         user: UserEntity,
         hadler: (tx: PrismaTxClient) => Promise<any>
     ) {
-        const project = await this.projectService.getById(projectId);
-
-        if(!project.checkAccess(user)) {
-            throw new AccessDeniedError();
-        }
+        await this.projectService.checkAccess(projectId, user);
 
         return db.$transaction(hadler);
     }

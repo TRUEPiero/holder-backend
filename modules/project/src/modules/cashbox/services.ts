@@ -3,7 +3,7 @@ import { ProjectService } from "../project/services";
 import { CashboxRepository } from "./repository";
 import { SettingsOwner } from "../../interfaices/SettingsOwner";
 import { SettingTargets } from "../settings/types";
-import { AccessDeniedError, InvalidFieldError, NotCreatedError, NotDeletedError, NotFoundError, NotUpdatedError } from "@common/errors";
+import { InvalidFieldError, NotCreatedError, NotDeletedError, NotFoundError, NotUpdatedError } from "@common/errors";
 import { CasheService } from "@services/CashService";
 
 export class CashboxService implements SettingsOwner{
@@ -32,10 +32,7 @@ export class CashboxService implements SettingsOwner{
     }
 
     public async create(projectId: number, body: any, user: any) {
-        const project = await this.projectService.getById(projectId);
-        
-        const access = project.checkAccess(user)       
-        if(!access) throw new AccessDeniedError()
+        await this.projectService.checkAccess(projectId, user);
 
         const createData = { 
             projectId, 
@@ -53,10 +50,7 @@ export class CashboxService implements SettingsOwner{
     }
 
     public async update(projectId: number, id: number, data: any, user: any) {
-        const project = await this.projectService.getById(projectId);
-        
-        const access = project.checkAccess(user)       
-        if(!access) throw new AccessDeniedError()
+        await this.projectService.checkAccess(projectId, user);
 
         const cashbox = await this.getById(id);
         const updated = cashbox.update(data);
@@ -70,10 +64,7 @@ export class CashboxService implements SettingsOwner{
     }
 
     public async delete(projectId: number, id: number, user: any) {
-        const project = await this.projectService.getById(projectId);
-        
-        const access = project.checkAccess(user)       
-        if(!access) throw new AccessDeniedError()
+        await this.projectService.checkAccess(projectId, user);
 
         await this.getById(id); 
         const deleted = await this.repo.delete(id);

@@ -9,14 +9,20 @@ const projectServiceTg: EntityService<'project'> = {
     settingService: projectSettingService,
     userService: userService,
 
-    getItem(id: number) {
-        return this.baseService.getById(id)
+    async getItem(ctx: BotContext) {
+        const user = await this.userService.getUser(ctx.session.user_id);
+        const id = ctx.session.project_id;
+
+        return this.baseService.getById(id, user)
     },
     getList(filter) {
         return this.baseService.getWithPagination(filter)
     },
-    getSettings(id: number) {
-        return this.settingService!.getForTelegram(id);
+    async getSettings(ctx: BotContext) {
+        const user = await this.userService.getUser(ctx.session.user_id);
+        const id = ctx.session.project_id;
+        
+        return this.settingService!.getForTelegram(id, user);
     },
     async create(ctx: BotContext) {
         const user = await this.userService.getUser(ctx.session.user_id);

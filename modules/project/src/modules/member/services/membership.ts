@@ -40,11 +40,7 @@ export class MembershipService {
     }
 
     public async update(projectId: number, memberId: number, data: any, user: UserEntity) {
-        const project = await this.projectService.getById(projectId);
-
-        if(!project.checkAccess(user)) {
-            throw new AccessDeniedError();
-        }
+        await this.projectService.checkAccess(projectId, user);
 
         const member = await this.getById(memberId);
         const updated = member.update(data);

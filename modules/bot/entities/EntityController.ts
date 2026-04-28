@@ -34,7 +34,7 @@ class EntityController {
     }
 
     private async renderItem(ctx: BotContext, id: number, isCommand: boolean) {
-        const item = await this.service.getItem(id);
+        const item = await this.service.getItem(ctx);
         const text = buildItemMessage(item, this.config.fields);
 
         const method = replyOrEdit(ctx, isCommand);
@@ -64,7 +64,7 @@ class EntityController {
     }
 
     private async renderSettings(ctx: BotContext, id: number, isCommand: boolean) {
-        const settings = await this.service.getSettings(this.config.getId(ctx));
+        const settings = await this.service.getSettings(ctx);
         const text = buildSettingsMessage(settings);
 
         const method = replyOrEdit(ctx, isCommand);

@@ -6,6 +6,13 @@ class SameIdError extends AppError {
     }
 }
 
+class SameProjectError extends AppError {
+    constructor() {
+        super('SAME_ID', 422, 'ERROR');
+    }
+}
+
 export {
-    SameIdError
+    SameIdError,
+    SameProjectError
 }

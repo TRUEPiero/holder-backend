@@ -14,16 +14,29 @@ export class ProjectService implements SettingsOwner{
         private cashe: CasheService
     ) {}
 
-    public async getById(id: number): Promise<ProjectEntity> {
+    public async checkAccess(id: number, user: UserEntity) {
+        await this.getById(id, user);
+    }
+
+    public async getById(id: number, user: UserEntity): Promise<ProjectEntity> {
         if(!id) throw new InvalidFieldError('ID');
 
+        let project: ProjectEntity | null = null;
+        
         const cashed = await this.cashe.get(`project:${id}`)
-        if(cashed) return new ProjectEntity(cashed);
+        if(cashed) {
+            project = new ProjectEntity(cashed);
+        } else {
+            const dbProject = await this.repo.findDetailedProject(id);
+            if (!dbProject) throw new NotFoundError('PROJECT');
 
-        const project = await this.repo.findDetailedProject(id);
-        if (!project) throw new NotFoundError('PROJECT');
+            project = dbProject;
 
-        await this.cashe.set(`project:${id}`, project.toJSON())
+            await this.cashe.set(`project:${id}`, project.toJSON())
+        }
+
+        const access = project.checkAccess(user);
+        if (!access) throw new AccessDeniedError();
 
         return project;
     }
@@ -49,10 +62,7 @@ export class ProjectService implements SettingsOwner{
     }
 
     public async update(user: UserEntity, id: number, data: any) {
-        const project = await this.getById(id);
-        
-        const access = project.checkAccess(user)
-        if(!access) throw new AccessDeniedError();
+        const project = await this.getById(id, user);
 
         const updated = project.update(data);
 
@@ -65,10 +75,7 @@ export class ProjectService implements SettingsOwner{
     }
 
     public async delete(user: UserEntity, id: number) {
-        const project = await this.getById(id);
-
-        const access = project.checkAccess(user)       
-        if(!access) throw new AccessDeniedError();
+        await this.getById(id, user);
 
         const deleted = await this.repo.delete(id);
         if(!deleted) throw new NotDeletedError('PROJECT');

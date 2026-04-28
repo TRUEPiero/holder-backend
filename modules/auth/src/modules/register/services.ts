@@ -2,6 +2,7 @@ import { MailService } from "../../lib/mail";
 import { RegisterRepository } from "./repository";
 import { UserService } from "../user/services";
 import { AlreadyExistError, NotFoundError, NotUpdatedError } from "@common/errors";
+import { setExpiredDate } from "../../../../../src/helpers/expiredDate";
 
 export class RegisterService {
     constructor(
@@ -29,7 +30,7 @@ export class RegisterService {
         await this.repo.create({
                 email,
                 code,
-                expiredAt: new Date(Date.now() + 10 * 60 * 1000),
+                expiredAt: setExpiredDate(),
             }
         );
 

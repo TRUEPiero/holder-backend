@@ -18,7 +18,7 @@ export class InviteRepository {
     }
 
     public async update(filter: any, data: any) {
-        const updated = await this.base.updateByFields(filter, data);
+        const updated = await this.base.updateFirstByFields(filter, data);
         if(!updated) return null;
         
         return new InviteEntity(updated);

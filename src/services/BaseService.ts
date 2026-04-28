@@ -105,6 +105,13 @@ export class BaseService<ModelName extends PrismaModelName> {
         return await (this.model as any).updateMany({where: {...fields}, data}) || []
     }
 
+    public async updateFirstByFields(
+        fields: any,
+        data: any
+    ): Promise<any> {
+        return await (this.model as any).update({where: {...fields}, data}) || []
+    }
+
     public async deleteItem(id: number): Promise<any | null> {
         return await (this.model as any).delete({where: { id }}) || {}
     }

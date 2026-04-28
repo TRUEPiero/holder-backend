@@ -9,14 +9,19 @@ const cashboxServiceTg: EntityService<'cashbox'> = {
     settingService: cashboxSettingService,
     userService: userService,
 
-    getItem(id: number) {
+    async getItem(ctx) {
+        const id = ctx.session.cashbox_id;
+
         return this.baseService.getById(id)
     },
     getList(filter) {
         return this.baseService.getWithPagination(filter)
     },
-    getSettings(id: number) {
-        return this.settingService!.getForTelegram(id);
+    async getSettings(ctx) {
+        const user = await this.userService.getUser(ctx.session.user_id);
+        const id = ctx.session.cashbox_id;
+
+        return this.settingService!.getForTelegram(id, user);
     },
     async create(ctx: BotContext) {
         const user = await this.userService.getUser(ctx.session.user_id);

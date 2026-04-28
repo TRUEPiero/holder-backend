@@ -15,7 +15,18 @@ export class ProjectRepository {
     }
 
     async findUserProjects(userId: number): Promise<ProjectEntity[]> {
-        const data = await this.base.getByFields({ ownerId: userId });
+        const filter = {
+            OR: [
+                {ownerId: userId},
+                {members: {
+                    some: {
+                        userId
+                    }
+                }}
+            ]
+        }
+
+        const data = await this.base.getByFields(filter);
         return data.map((p: Project) => new ProjectEntity(p));
     }
 

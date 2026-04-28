@@ -2,6 +2,7 @@ import { AlreadyExistError, NotCreatedError, NotFoundError, NotUpdatedError } fr
 import { UserService } from "../../../../../auth/src/modules/user/services";
 import { InviteRepository } from "../repositories/invite";
 import { MembershipService } from "./membership";
+import { setExpiredDate } from "../../../../../../src/helpers/expiredDate";
 
 export class ProjectInviteService {
     constructor(
@@ -17,14 +18,14 @@ export class ProjectInviteService {
     public async sendInviteToUser(projectId: number, email: string) { 
         await this.userService.getUserByEmail(email);
 
-        const invite = await this.getInvite({email});
-        if(invite && !invite.isExpired()) throw new AlreadyExistError("INVITE");
+        const invite = await this.getInvite({email, projectId});
+        if(invite && invite.isActive()) throw new AlreadyExistError("INVITE");
 
         const code = this.generateCode();
         const createdInvite = await this.inviteRepo.create({
             email,
             code,
-            expiredAt: new Date(),
+            expiredAt: setExpiredDate(),
             projectId
         });
 
@@ -34,8 +35,8 @@ export class ProjectInviteService {
     }
 
     public async acceptInvite(projectId: number, code: string) {
-        const invite = await this.getInvite({code});
-        if(!invite || invite.isExpired()) throw new NotFoundError("INVITE");
+        const invite = await this.getInvite({code, projectId});
+        if(!invite || !invite.isActive()) throw new NotFoundError("INVITE");
 
         invite.setExpiredDate();
 
