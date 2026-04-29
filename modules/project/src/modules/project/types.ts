@@ -1,6 +1,7 @@
 import {t} from 'elysia';
 import { ResponseCashbox } from '../cashbox/types';
 import { setting } from '@schemas/common';
+import { MemberRole } from '@prisma/client';
 
 type Project = {
     id: number,
@@ -47,6 +48,7 @@ const ResponseObjects = t.Object({
 })
 
 export type {
+    MemberRole,
     UpdateData,
     Project
 }

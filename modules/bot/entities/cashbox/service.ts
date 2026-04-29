@@ -11,8 +11,10 @@ const cashboxServiceTg: EntityService<'cashbox'> = {
 
     async getItem(ctx) {
         const id = ctx.session.cashbox_id;
+        const project_id = ctx.session.project_id;
+        const user = await this.userService.getUser(ctx.session.user_id);
 
-        return this.baseService.getById(id)
+        return this.baseService.getById(id, user, project_id)
     },
     getList(filter) {
         return this.baseService.getWithPagination(filter)

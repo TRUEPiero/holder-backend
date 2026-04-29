@@ -29,7 +29,7 @@ export const RegisterController = new Elysia({
 }, schema.sendVerify)
 
 .post('/check', async({body: {verify_code}}) => {
-    return await registerService.chechVerify(verify_code)
+    return await registerService.checkVerify(verify_code)
 }, schema.checkVerify)
 
 

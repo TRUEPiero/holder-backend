@@ -23,6 +23,16 @@ type CreateData = {
     cashbox?: any;
 }
 
+type ParamsBetween = {
+    amount: number,
+    to: number,
+}
+
+type ParamsExternal = {
+    amount: number,
+    type: TransactionTypes
+}
+
 const ResponseTransaction = t.Object({
     id: t.Number(),
     amount: t.Any(),
@@ -43,6 +53,8 @@ export type {
     Transaction,
     TransactionTypes,
     CreateData,
+    ParamsBetween,
+    ParamsExternal
 }
 
 export {

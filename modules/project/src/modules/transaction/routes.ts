@@ -10,8 +10,8 @@ export const TransactionController = new Elysia({
 })
 .derive(deriveUser)
 
-.get('/', async({params: {pid, cid}}) => {
-    const transactions = await transactionService.getByCashbox(pid, cid)
+.get('/', async({params: {pid, cid}, user}) => {
+    const transactions = await transactionService.getByCashbox(pid, cid, user)
     return {data: transactions}
 }, schema.get)
 

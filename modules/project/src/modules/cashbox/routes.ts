@@ -10,13 +10,13 @@ export const CashboxController = new Elysia({
 })
 .derive(deriveUser)
 
-.get('/', async ({params: {pid}}) => {
-    const cashboxes = await cashboxService.getByProject(pid);
+.get('/', async ({params: {pid}, user}) => {
+    const cashboxes = await cashboxService.getByProject(pid, user);
     return {data: cashboxes}
 },schema.getAll)
 
-.get('/:cid', async({params: {pid, cid}}) => {
-    const cashbox = await cashboxService.getById(cid);
+.get('/:cid', async({params: {pid, cid}, user}) => {
+    const cashbox = await cashboxService.getById(cid, user, pid);
     return {data: cashbox}
 }, schema.detail)
 

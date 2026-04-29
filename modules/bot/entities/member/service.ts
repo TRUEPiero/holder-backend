@@ -9,13 +9,15 @@ const memberServiceTg: EntityService<'member'> = {
     settingService: null,
     userService: userService,
 
-    getItem(id: number) {
+    async getItem(ctx) {
+        const id = ctx.session.member_id;
+        
         return this.baseService.getById(id)
     },
     getList(filter) {
         return this.baseService.getWithPagination(filter)
     },
-    async getSettings(id: number) {
+    async getSettings(ctx) {
         return [];
     },
     async create(ctx: BotContext) {

@@ -2,7 +2,7 @@ import { MailService } from "../../lib/mail";
 import { RegisterRepository } from "./repository";
 import { UserService } from "../user/services";
 import { AlreadyExistError, NotFoundError, NotUpdatedError } from "@common/errors";
-import { setExpiredDate } from "../../../../../src/helpers/expiredDate";
+import { getExpiredDate } from "../../../../../src/helpers/expiredDate";
 
 export class RegisterService {
     constructor(
@@ -30,7 +30,7 @@ export class RegisterService {
         await this.repo.create({
                 email,
                 code,
-                expiredAt: setExpiredDate(),
+                expiredAt: getExpiredDate(),
             }
         );
 
@@ -39,12 +39,12 @@ export class RegisterService {
         return true
     }
 
-    public async chechVerify(code: string) {
+    public async checkVerify(code: string) {
 
         const verify = await this.getVerify({code});
         if (!verify || !verify.isActive()) throw new NotFoundError("VERIFY") ;
 
-        verify.setExpiredDate()
+        verify.setChecked()
         const updated = await this.repo.update(
             {code}, 
             verify.toJSON()

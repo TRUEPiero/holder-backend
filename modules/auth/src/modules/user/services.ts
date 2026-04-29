@@ -32,7 +32,12 @@ export class UserService{
     }
 
     public async create(data: any) {
-        const created = await this.repo.create(data);
+        const createData = {
+            ...data,
+            password: await Bun.password.hash(data.password)
+        }
+
+        const created = await this.repo.create(createData);
         if(!created) throw new NotCreatedError('USER');
 
         return created;

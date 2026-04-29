@@ -5,7 +5,8 @@ import { SettingsOwner } from "../../interfaices/SettingsOwner";
 import { SettingTargets } from "../settings/types";
 import { CasheService } from "@services/CashService";
 import { ProjectEntity } from "./entities/Project";
-import { AccessDeniedError, InvalidFieldError, NotCreatedError, NotDeletedError, NotFoundError, NotUpdatedError } from "@common/errors";
+import { InvalidFieldError, NotCreatedError, NotDeletedError, NotFoundError, NotUpdatedError } from "@common/errors";
+import { ProjectPermission, ProjectPolicy } from "../../policies/project.policy";
 
 export class ProjectService implements SettingsOwner{
 
@@ -14,11 +15,19 @@ export class ProjectService implements SettingsOwner{
         private cashe: CasheService
     ) {}
 
-    public async checkAccess(id: number, user: UserEntity) {
-        await this.getById(id, user);
+    public async authorize(
+        projectId: number,
+        user: UserEntity,
+        permission: ProjectPermission
+    ) {
+        const project = await this.getById(projectId);
+
+        ProjectPolicy.authorize(project, user, permission);
+
+        return project;
     }
 
-    public async getById(id: number, user: UserEntity): Promise<ProjectEntity> {
+    public async getById(id: number): Promise<ProjectEntity> {
         if(!id) throw new InvalidFieldError('ID');
 
         let project: ProjectEntity | null = null;
@@ -34,9 +43,6 @@ export class ProjectService implements SettingsOwner{
 
             await this.cashe.set(`project:${id}`, project.toJSON())
         }
-
-        const access = project.checkAccess(user);
-        if (!access) throw new AccessDeniedError();
 
         return project;
     }
@@ -61,8 +67,8 @@ export class ProjectService implements SettingsOwner{
         return created;
     }
 
-    public async update(user: UserEntity, id: number, data: any) {
-        const project = await this.getById(id, user);
+    public async update(id: number, user: UserEntity, data: any) {
+        const project = await this.authorize(id, user, 'project:update');
 
         const updated = project.update(data);
 
@@ -74,8 +80,8 @@ export class ProjectService implements SettingsOwner{
         return res
     }
 
-    public async delete(user: UserEntity, id: number) {
-        await this.getById(id, user);
+    public async delete(id: number, user: UserEntity) {
+        await this.authorize(id, user, 'project:delete');
 
         const deleted = await this.repo.delete(id);
         if(!deleted) throw new NotDeletedError('PROJECT');

@@ -16,7 +16,7 @@ export const ProjectController = new Elysia({
 }, schema.getAll)
 
 .get('/:pid', async({params: {pid}, user}) => {
-    const project = await projectService.getById(pid, user);
+    const project = await projectService.authorize(pid, user, 'project:read');
     return {data: project}
 }, schema.detail)
 
@@ -26,11 +26,11 @@ export const ProjectController = new Elysia({
 }, schema.create)
 
 .patch('/:pid', async({params: {pid}, user, body}) => {
-    const project =  await projectService.update(user, pid, body);
+    const project =  await projectService.update(pid, user,body);
     return {data: project}
 }, schema.update)
 
 .delete('/:pid', async({params: {pid}, user}) => {
-    const project =  await projectService.delete(user, pid)
+    const project =  await projectService.delete(pid, user)
     return {data: project}
 }, schema.delete)

@@ -21,7 +21,7 @@ export class InviteEntity {
         return this.expiredAt > new Date();
     }
 
-    public setExpiredDate(date?: Date) {
+    public setChecked(date?: Date) {
         this.expiredAt = date ?? new Date();
     }
 

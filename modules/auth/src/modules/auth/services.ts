@@ -12,7 +12,7 @@ export class AuthService{
 
         const user = await this.userService.getUserByEmail(email);
 
-        const passwordValid = checkValidPass(password, user);
+        const passwordValid = await checkValidPass(password, user);
         if(!passwordValid) throw new InvalidFieldError('PASSWORD');
 
         return user;

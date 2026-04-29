@@ -5,19 +5,9 @@ import { CashboxService } from "../../cashbox/services";
 import { ProjectService } from "../../project/services";
 import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
 import { PrismaTxClient } from "@shared-types/index.ts";
-import { TransactionTypes } from "../types";
-import { AccessDeniedError, NotFoundError } from "@common/errors";
+import { ParamsBetween, ParamsExternal, TransactionTypes } from "../types";
+import { NotFoundError } from "@common/errors";
 import { SameIdError, SameProjectError } from "../errors";
-
-type ParamsBetween = {
-    amount: number,
-    to: number,
-}
-
-type ParamsExternal = {
-    amount: number,
-    type: TransactionTypes
-}
 
 export class TransferService {
 
@@ -27,16 +17,15 @@ export class TransferService {
         private projectService: ProjectService,
     ) {}
 
-    public async transferMoneyBetweenCashbox(projectId: number, cashboxId: number, request: ParamsBetween, user: any) {      
-        
+    public async transferMoneyBetweenCashbox(projectId: number, cashboxId: number, request: ParamsBetween, user: UserEntity) {      
         const amount = new Money(request.amount);
         
         return await this.execute(projectId, user, async (tx) => {
             if(cashboxId === request.to) throw new SameIdError();
 
             const [from, to] = await Promise.all([
-                this.cashboxService.getById(cashboxId),
-                this.cashboxService.getById(request.to)
+                this.cashboxService.getById(cashboxId, user, projectId),
+                this.cashboxService.getById(request.to, user, projectId)
             ]);
 
             if(!from || !to) throw new NotFoundError('CASHBOX');
@@ -71,14 +60,13 @@ export class TransferService {
         })        
     }
 
-    public async transferWithExternal(projectId: number, cashboxId: number, request: ParamsExternal, user: any) {
-        
+    public async transferWithExternal(projectId: number, cashboxId: number, request: ParamsExternal, user: UserEntity) {
         const amount = new Money(request.amount);
 
         return await this.execute(projectId, user, async(tx) => {
             const transactionType = request.type as TransactionTypes;
 
-            const cashbox = await this.cashboxService.getById(cashboxId);
+            const cashbox = await this.cashboxService.getById(cashboxId, user, projectId);
 
             transactionType === 'income' ? cashbox.credit(amount) : cashbox.debit(amount);
             
@@ -103,7 +91,7 @@ export class TransferService {
         user: UserEntity,
         hadler: (tx: PrismaTxClient) => Promise<any>
     ) {
-        await this.projectService.checkAccess(projectId, user);
+        await this.projectService.authorize(projectId, user, 'transaction:create');
 
         return db.$transaction(hadler);
     }

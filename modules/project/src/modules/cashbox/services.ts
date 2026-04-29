@@ -5,6 +5,7 @@ import { SettingsOwner } from "../../interfaices/SettingsOwner";
 import { SettingTargets } from "../settings/types";
 import { InvalidFieldError, NotCreatedError, NotDeletedError, NotFoundError, NotUpdatedError } from "@common/errors";
 import { CasheService } from "@services/CashService";
+import { UserEntity } from "../../../../auth/src/modules/user/entities/User";
 
 export class CashboxService implements SettingsOwner{
 
@@ -14,15 +15,19 @@ export class CashboxService implements SettingsOwner{
         private cashe: CasheService
     ) {}
 
-    public async getById(id: number) {
+    public async getById(id: number, user: UserEntity, projectId: number) {
         if(!id) throw new InvalidFieldError("ID");
+
+        await this.projectService.authorize(projectId, user, 'cashbox:read')
         
         const cashbox = await this.repo.findDetailed(id);
         if (!cashbox) throw new NotFoundError("CASHBOX");
         return cashbox;
     }
 
-    public async getByProject(projectId: number) {
+    public async getByProject(projectId: number, user: UserEntity) {
+        await this.projectService.authorize(projectId, user, 'cashbox:read');
+
         return await this.repo.findByProject(projectId);
     }
 
@@ -32,7 +37,7 @@ export class CashboxService implements SettingsOwner{
     }
 
     public async create(projectId: number, body: any, user: any) {
-        await this.projectService.checkAccess(projectId, user);
+        await this.projectService.authorize(projectId, user, 'cashbox:create');
 
         const createData = { 
             projectId, 
@@ -50,9 +55,9 @@ export class CashboxService implements SettingsOwner{
     }
 
     public async update(projectId: number, id: number, data: any, user: any) {
-        await this.projectService.checkAccess(projectId, user);
+        await this.projectService.authorize(projectId, user, 'cashbox:update');
 
-        const cashbox = await this.getById(id);
+        const cashbox = await this.getById(id, user, projectId);
         const updated = cashbox.update(data);
 
         const res = await this.repo.update(id, updated);
@@ -64,9 +69,9 @@ export class CashboxService implements SettingsOwner{
     }
 
     public async delete(projectId: number, id: number, user: any) {
-        await this.projectService.checkAccess(projectId, user);
+        await this.projectService.authorize(projectId, user, 'cashbox:delete');
 
-        await this.getById(id); 
+        await this.getById(id, user, projectId); 
         const deleted = await this.repo.delete(id);
         if(!deleted) throw new NotDeletedError("CASHBOX")
         

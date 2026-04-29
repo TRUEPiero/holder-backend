@@ -5,7 +5,7 @@ export class AuthCookieService {
         this.cookie['auth-token'].set({
              value: token,
             httpOnly: true,
-            secure: false,
+            secure: true,
             sameSite: 'lax',
             maxAge: remember ? 60 * 60 * 24 * 7 : undefined,
             path: '/'

@@ -11,8 +11,8 @@ const PORT = process.env.SERVER_PORT;
 
 if(!PORT) throw new Error("SERVER_PORT is not defined");
 
-await BotController.start();
 await initRedis();
+await BotController.start();
 
 const app = new Elysia()
   .onError(errorHandler)

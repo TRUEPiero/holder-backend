@@ -13,7 +13,7 @@ const projectServiceTg: EntityService<'project'> = {
         const user = await this.userService.getUser(ctx.session.user_id);
         const id = ctx.session.project_id;
 
-        return this.baseService.getById(id, user)
+        return this.baseService.authorize(id, user, 'project:read')
     },
     getList(filter) {
         return this.baseService.getWithPagination(filter)
@@ -41,13 +41,13 @@ const projectServiceTg: EntityService<'project'> = {
             title: updateData.title
         }
 
-        return await this.baseService.update(user, projectId, data);
+        return await this.baseService.update(projectId, user, data);
     },
     async delete(ctx: BotContext){
         const projectId = ctx.session.project_id;
         const user = await this.userService.getUser(ctx.session.user_id);
 
-        return await this.baseService.delete(user, projectId);
+        return await this.baseService.delete(projectId, user);
     },
 }
 

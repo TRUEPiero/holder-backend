@@ -19,8 +19,8 @@ export class RegisterEntity {
         return this.expiredAt > new Date();
     }
 
-    public setExpiredDate() {
-        this.expiredAt = new Date();
+    public setChecked(date?: Date) {
+        this.expiredAt = date ?? new Date();
     }
 
     public toJSON() {

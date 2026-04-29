@@ -20,16 +20,22 @@ const transactionServiveTg: EntityService<'transaction'> & MoneyTransfer = {
     userService: userService,
     transferService: transferService,
 
-    getItem(id: number) {
+    async getItem(ctx) {
+        const id = ctx.session.transaction_id;
+        
         return this.baseService.getById(id)
     },
     getList(filter) {
         return this.baseService.getWithPagination(filter)
     },
-    async getSettings(id: number) {
+    async getSettings(ctx) {
         return [];
     },
     async create(ctx: BotContext) {
+        const project_id = ctx.session.project_id;
+        const cashbox_id = ctx.session.project_id;
+        const user = await userService.getUser(ctx.session.user_id);
+
         const createData = ctx.session.entityData;
         
         const data = {
@@ -37,7 +43,7 @@ const transactionServiveTg: EntityService<'transaction'> & MoneyTransfer = {
             type: createData.type
         }
 
-        return await this.baseService.create(data)
+        return await this.baseService.create(project_id, cashbox_id, data, user)
     },
     async update(ctx: BotContext){
 

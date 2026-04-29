@@ -2,20 +2,25 @@ import { AlreadyExistError, NotCreatedError, NotFoundError, NotUpdatedError } fr
 import { UserService } from "../../../../../auth/src/modules/user/services";
 import { InviteRepository } from "../repositories/invite";
 import { MembershipService } from "./membership";
-import { setExpiredDate } from "../../../../../../src/helpers/expiredDate";
+import { getExpiredDate } from "../../../../../../src/helpers/expiredDate";
+import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
+import { ProjectService } from "../../project/services";
 
 export class ProjectInviteService {
     constructor(
         private inviteRepo: InviteRepository,
         private userService: UserService,
-        private memberService: MembershipService
+        private memberService: MembershipService,
+        private projectService: ProjectService
     ) {}
 
     public async getInvite(filter: any) {
         return await this.inviteRepo.getByFilter(filter);
     }
 
-    public async sendInviteToUser(projectId: number, email: string) { 
+    public async sendInviteToUser(projectId: number, email: string, user: UserEntity) { 
+        await this.projectService.authorize(projectId, user, 'member:invite');
+
         await this.userService.getUserByEmail(email);
 
         const invite = await this.getInvite({email, projectId});
@@ -25,7 +30,7 @@ export class ProjectInviteService {
         const createdInvite = await this.inviteRepo.create({
             email,
             code,
-            expiredAt: setExpiredDate(),
+            expiredAt: getExpiredDate(),
             projectId
         });
 
@@ -34,21 +39,18 @@ export class ProjectInviteService {
         return true;
     }
 
-    public async acceptInvite(projectId: number, code: string) {
+    public async acceptInvite(projectId: number, code: string, user: UserEntity) {
         const invite = await this.getInvite({code, projectId});
         if(!invite || !invite.isActive()) throw new NotFoundError("INVITE");
+        if(invite.getEmail() !== user.email) throw new NotFoundError("INVITE");
 
-        invite.setExpiredDate();
+        invite.setChecked();
 
         const updated = await this.inviteRepo.update(
             {code}, 
             invite.toJSON()
         )
         if(!updated) throw new NotUpdatedError("INVITE");
-
-
-        const email = invite.getEmail();
-        const user = await this.userService.getUserByEmail(email);
 
         return  await this.memberService.create(projectId, user);
     }

@@ -11,13 +11,13 @@ export const MembershipController = new Elysia({
 
 .derive(deriveUser)
 
-.post('/invite/send', async ({params: {pid}, body: {email}}) => {
-    return await inviteService.sendInviteToUser(pid, email)
+.post('/invite/send', async ({params: {pid}, body: {email}, user}) => {
+    return await inviteService.sendInviteToUser(pid, email, user)
     
 }, schema.invite) 
 
-.post('/invite/accept', async ({params: {pid},body: {code}}) => {
-    const member =  await inviteService.acceptInvite(pid, code);
+.post('/invite/accept', async ({params: {pid},body: {code}, user}) => {
+    const member =  await inviteService.acceptInvite(pid, code, user);
     return {data: member}
 }, schema.accept)
 
