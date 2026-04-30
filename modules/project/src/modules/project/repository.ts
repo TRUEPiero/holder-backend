@@ -1,4 +1,4 @@
-import { DirectoryService } from "@shared/DirectoryService";
+import { DirectoryService } from "@services/DirectoryService";
 import { ProjectEntity } from "./entities/Project";
 import { Project } from "./types";
 import { PaginationParam } from "@shared-types/index.ts";
@@ -15,11 +15,22 @@ export class ProjectRepository {
     }
 
     async findUserProjects(userId: number): Promise<ProjectEntity[]> {
-        const data = await this.base.getByFields({ ownerId: userId });
+        const filter = {
+            OR: [
+                {ownerId: userId},
+                {members: {
+                    some: {
+                        userId
+                    }
+                }}
+            ]
+        }
+
+        const data = await this.base.getByFields(filter);
         return data.map((p: Project) => new ProjectEntity(p));
     }
 
-    async findDetailedProject(id: number) {
+    async findDetailed(id: number) {
         const data = await this.base.getFirstByFields(
             { id },
             {

@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: ./docker/development.dockerfile
     ports:
-      - "3080:3000"
+      - "3000:3000"
     volumes:
       - .:/app
       - /app/node_modules
@@ -16,6 +16,7 @@ services:
     command: sh -c "bun run prisma:push && bun run --watch dev"
     depends_on:
       - postgres
+      - redis
     networks:
       - local
       - web
@@ -34,6 +35,19 @@ services:
     networks:
       - local
 
+  redis:
+    image: redis:8
+    container_name: holder_redis
+    environment:
+      - REDIS_URL=${REDIS_URL:?lost REDIS_URL variable}
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    networks:
+      - local
+
 networks:
   web:
     driver: bridge
@@ -42,3 +56,4 @@ networks:
 
 volumes:
   postgres_data:
+  redis_data:

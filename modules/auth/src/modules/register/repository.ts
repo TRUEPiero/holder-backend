@@ -1,11 +1,13 @@
-import { DirectoryService } from "@shared/DirectoryService";
+import { DirectoryService } from "@services/DirectoryService";
 import { RegisterEntity } from "./entities/Register";
 
 export class RegisterRepository {
     constructor(private base: DirectoryService<'registerVerify'>) {}
 
     public async getByFilter(filter: any) {
-        const data = await this.base.getByFields(filter);
+        const data = await this.base.getFirstByFields(filter);
+        if(!data) return null;
+        
         return new RegisterEntity(data);
     }
 
@@ -15,7 +17,9 @@ export class RegisterRepository {
     }
 
     public async update(filter: any, data: any) {
-        const updated = await this.base.updateByFields(filter, data);
+        const updated = await this.base.updateFirstByFields(filter, data);
+        if(!updated) return null;
+        
         return new RegisterEntity(updated);
     }
 }

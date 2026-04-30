@@ -1,7 +1,7 @@
 import {t} from 'elysia';
 import { ResponseCashbox } from '../cashbox/types';
-import { ResponseMember } from '../member/types';
 import { setting } from '@schemas/common';
+import { MemberRole } from '@prisma/client';
 
 type Project = {
     id: number,
@@ -19,13 +19,24 @@ type UpdateData = {
     settings?: typeof setting[],
 }
 
-const ResponseProject = t.Object({
+const ResponseDetailProject = t.Object({
     id: t.Number(),
     title: t.String(),
     ownerId: t.Number(),
     settings: t.Array(setting),
     cashboxes: t.Array(ResponseCashbox),
     members: t.Array(t.Any()),
+})
+
+const ResponseProject = t.Object({
+    id: t.Number(),
+    title: t.String(),
+    ownerId: t.Number(),
+    settings: t.Array(setting),
+})
+
+const ResponseDetailObject = t.Object({
+    data: ResponseDetailProject
 })
 
 const ResponseObject = t.Object({
@@ -37,12 +48,15 @@ const ResponseObjects = t.Object({
 })
 
 export type {
+    MemberRole,
     UpdateData,
     Project
 }
 
 export {
     ResponseProject,
+    ResponseDetailProject,
     ResponseObject,
+    ResponseDetailObject,
     ResponseObjects
 }

@@ -9,9 +9,9 @@ export class SettingEntity {
     public type: SettingTypes;
     public value: any;
     public values: any[];
-    public isDisable: boolean;
+    public isDisabled: boolean;
     public isRequired: boolean;
-    public telegram: boolean;
+    public isTelegram: boolean;
 
 
     constructor(params: any) {
@@ -23,9 +23,9 @@ export class SettingEntity {
         this.type = params.type;
         this.value = params.value
         this.values = params.values;
-        this.isDisable = params.isDisable;
+        this.isDisabled = params.isDisabled;
         this.isRequired = params.isRequired;
-        this.telegram = params.telegram;
+        this.isTelegram = params.isTelegram;
     }
 
     public toJSON() {

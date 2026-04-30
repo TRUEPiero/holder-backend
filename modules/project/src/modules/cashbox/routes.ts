@@ -10,54 +10,27 @@ export const CashboxController = new Elysia({
 })
 .derive(deriveUser)
 
-.get('/', async ({params: {pid}, status}) => {
-    try {
-        const cashboxes = await cashboxService.getByProject(pid);
-        return {data: cashboxes}
-    } catch (error: any) {
-        return status(500, {code: 'CASHBOX_NOT_FOUND', description: ''});
-    }
-
+.get('/', async ({params: {pid}, user}) => {
+    const cashboxes = await cashboxService.getByProject(pid, user);
+    return {data: cashboxes}
 },schema.getAll)
 
-.get('/:cid', async({params: {pid, cid}, status}) => {
-    try {
-        const cashbox = await cashboxService.getDetail(cid);
-        return {data: cashbox}
-    } catch (error: any) {
-        return status(500, {code: 'CASHBOX_NOT_FOUND', description: ''});
-    }
+.get('/:cid', async({params: {pid, cid}, user}) => {
+    const cashbox = await cashboxService.getById(cid, user, pid);
+    return {data: cashbox}
 }, schema.detail)
 
-.post('/', async({params: {pid}, body, user, status}) => {
-    try {
-        const cashbox = await cashboxService.create(pid, body, user);
-        return {data: cashbox}
-    } catch (error: any) {
-        if(error.message === 'ACCESS_DENIED') return status(403, {code: 'ACCESS_DENIED', description: ''});
-        if(error.message === 'PROJECT_NOT_FOUND') return status(404, {code: 'PROJECT_NOT_FOUND', description: ''});
-        return status(500, {code: 'CASHBOX_NOT_CREATED', description: ''});
-    }
+.post('/', async({params: {pid}, body, user}) => {
+    const cashbox = await cashboxService.create(pid, body, user);
+    return {data: cashbox}
 }, schema.create)
 
-.patch('/:cid', async({params: {pid, cid}, body, user, status}) => {
-    try {
-        const cashbox = await cashboxService.update(pid, cid, body, user);
-        return {data: cashbox}
-    } catch (error: any) {
-        if(error.message === 'ACCESS_DENIED') return status(403, {code: 'ACCESS_DENIED', description: ''});
-        if(error.message === 'CASHBOX_NOT_FOUND') return status(404, {code: 'CASHBOX_NOT_FOUND', description: ''});
-        return status(500, {code: 'CASHBOX_NOT_UPDATED', description: JSON.stringify(error)});
-    }
+.patch('/:cid', async({params: {pid, cid}, body, user}) => {
+    const cashbox = await cashboxService.update(pid, cid, body, user);
+    return {data: cashbox}
 }, schema.update)
 
-.delete('/:cid', async({params: {pid, cid}, user, status}) => {
-    try {
-        const cashbox = await cashboxService.delete(pid, cid, user);
-        return {data: cashbox}
-    } catch (error: any) {
-        if(error.message === 'ACCESS_DENIED') return status(403, {code: 'ACCESS_DENIED', description: ''});
-        if(error.message === 'CASHBOX_NOT_FOUND') return status(404, {code: 'CASHBOX_NOT_FOUND', description: ''});
-        return status(500, {code: 'CASHBOX_NOT_DELETED', description: ""});
-    }
+.delete('/:cid', async({params: {pid, cid}, user}) => {
+    const cashbox = await cashboxService.delete(pid, cid, user);
+    return {data: cashbox}
 }, schema.delete)

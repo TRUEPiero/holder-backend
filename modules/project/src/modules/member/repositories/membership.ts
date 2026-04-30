@@ -1,4 +1,4 @@
-import { DirectoryService } from "@shared/DirectoryService";
+import { DirectoryService } from "@services/DirectoryService";
 import { MemberEntity } from "../entities/membership";
 import { Member } from "../types";
 
@@ -8,8 +8,9 @@ export class MembershipRepository {
     
     public async findById(id: number) {
         const include = {user: true};
-        const data = await this.base.getFirstByFields(id, include);
+        const data = await this.base.getFirstByFields({id}, include);
         if(!data) return null;
+
         return new MemberEntity(data);        
     }
 
@@ -43,6 +44,8 @@ export class MembershipRepository {
 
     public async create(data: any) {
         const created = await this.base.createItem(data);
+        if(!created) return null;
+        
         return new MemberEntity(created);
     }
 

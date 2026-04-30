@@ -27,7 +27,7 @@ export const schema = {
             description: 'Получить счет по ID',
         },
         response: {
-            200: t.Any(),
+            200: ResponseObject,
             ...errorSchema
         }
     },
@@ -36,7 +36,8 @@ export const schema = {
             pid: t.Number(),
         }),
         body: t.Object({
-            title: t.String()
+            title: t.String(),
+            description: t.Optional(t.String())
         }),
         detail: {
             tags: ['Счета'],
@@ -52,11 +53,14 @@ export const schema = {
             pid: t.Number(),
             cid: t.Number()
         }),
-        body: t.Object({
-            title: t.String(),
-            settings: t.Array(setting),
-            balance: t.Nullable(t.Number())
-        }),
+        body: t.Partial(
+            t.Object({
+                title: t.String(),
+                settings: t.Array(setting),
+                balance: t.Number(),
+                description: t.String()
+            })
+        ),
         detail: {
             tags: ['Счета'],
             description: 'Обновить счет',

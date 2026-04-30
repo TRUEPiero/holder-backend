@@ -13,6 +13,26 @@
                 "isDisable": false,
                 "isRequired": false,
                 "telegram": true
+            },
+            {
+                "code": "number",
+                "title": "test number",
+                "type": "number",
+                "value": 10,
+                "description": "Присылать уведомления",
+                "isDisable": false,
+                "isRequired": false,
+                "telegram": true
+            },
+            {
+                "code": "string",
+                "title": "test str",
+                "type": "string",
+                "value": "test",
+                "description": "Присылать уведомления",
+                "isDisable": false,
+                "isRequired": false,
+                "telegram": true
             }
         ] 
     }

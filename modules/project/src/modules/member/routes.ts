@@ -11,21 +11,17 @@ export const MembershipController = new Elysia({
 
 .derive(deriveUser)
 
-.post('/invite/send', async ({params: {pid}, body: {email}, status}) => {
-    return await inviteService.sendInviteToUser(pid, email)
+.post('/invite/send', async ({params: {pid}, body: {email}, user}) => {
+    return await inviteService.sendInviteToUser(pid, email, user)
     
 }, schema.invite) 
 
-.post('/invite/accept', async ({params: {pid},body: {code}}) => {
-    const member =  await inviteService.acceptInvite(pid, code);
+.post('/invite/accept', async ({params: {pid},body: {code}, user}) => {
+    const member =  await inviteService.acceptInvite(pid, code, user);
     return {data: member}
 }, schema.accept)
 
-.patch('/:mid/role', async({params: {pid, mid}, body: {role}, user, status}) => {
-    try {
-        const member = await memberService.update(pid, mid, {role}, user); 
-        return {data: member}
-    } catch (error) {
-        return status(500, {code: "ERROR", description: ''})
-    }
+.patch('/:mid/role', async({params: {pid, mid}, body: {role}, user}) => {
+    const member = await memberService.update(pid, mid, {role}, user); 
+    return {data: member}
 }, schema.updateRole)

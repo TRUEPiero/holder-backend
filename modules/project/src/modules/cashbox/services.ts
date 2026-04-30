@@ -1,31 +1,33 @@
 import { PaginationParam } from "@shared-types/index.ts";
 import { ProjectService } from "../project/services";
 import { CashboxRepository } from "./repository";
+import { SettingsOwner } from "../../interfaices/SettingsOwner";
+import { SettingTargets } from "../settings/types";
+import { InvalidFieldError, NotCreatedError, NotDeletedError, NotFoundError, NotUpdatedError } from "@common/errors";
+import { CasheService } from "@services/CasheService";
+import { UserEntity } from "../../../../auth/src/modules/user/entities/User";
 
-export class CashboxService{
+export class CashboxService implements SettingsOwner{
 
     constructor(
         private repo: CashboxRepository,
-        private projectService: ProjectService
+        private projectService: ProjectService,
+        private cashe: CasheService
     ) {}
 
-    public async getById(id: number) {
-        if(!id) throw new Error("ID_NOT_VALID");
+    public async getById(id: number, user: UserEntity, projectId: number) {
+        if(!id) throw new InvalidFieldError("ID");
+
+        await this.projectService.authorize(projectId, user, 'cashbox:read')
         
-        const cashbox = await this.repo.findById(id);
-        if (!cashbox) throw new Error("CASHBOX_NOT_FOUND");
+        const cashbox = await this.repo.findDetailed({id, projectId});
+        if (!cashbox) throw new NotFoundError("CASHBOX");
         return cashbox;
     }
 
-    public async getDetail(id: number) {
-        if(!id) throw new Error("ID_NOT_VALID");
+    public async getByProject(projectId: number, user: UserEntity) {
+        await this.projectService.authorize(projectId, user, 'cashbox:read');
 
-        const cashbox = await this.repo.findDetailed(id);
-        if(!cashbox) throw new Error("CASHBOX_NOT_FOUND");
-        return cashbox;
-    }
-
-    public async getByProject(projectId: number) {
         return await this.repo.findByProject(projectId);
     }
 
@@ -35,38 +37,54 @@ export class CashboxService{
     }
 
     public async create(projectId: number, body: any, user: any) {
-        const project = await this.projectService.getById(projectId);
-        
-        const access = project.checkAccess(user)       
-        if(!access) throw new Error('ACCESS_DENIED')
+        await this.projectService.authorize(projectId, user, 'cashbox:create');
 
-        const created = await this.repo.create({ projectId, ...body });
-        if(!created) throw new Error("CASHBOX_NOT_CREATED")
+        const createData = { 
+            projectId, 
+            ...body,
+            description: body.desciption ?? '',
+            settings: body.settings ?? this.getDefaultSetting()
+        };
+
+        const created = await this.repo.create(createData);
+        if(!created) throw new NotCreatedError("CASHBOX")
+
+        await this.cashe.del(`project:${projectId}`);
+
         return created;
     }
 
     public async update(projectId: number, id: number, data: any, user: any) {
-        const project = await this.projectService.getById(projectId);
-        
-        const access = project.checkAccess(user)       
-        if(!access) throw new Error('ACCESS_DENIED')
+        await this.projectService.authorize(projectId, user, 'cashbox:update');
 
-        const cashbox = await this.getById(id);
+        const cashbox = await this.getById(id, user, projectId);
         const updated = cashbox.update(data);
+
         const res = await this.repo.update(id, updated);
-        if(!res) throw new Error("CASHBOX_NOT_CREATED")
+        if(!res) throw new NotUpdatedError("CASHBOX")
+        
+        await this.cashe.del(`project:${projectId}`);
+        
         return res;
     }
 
     public async delete(projectId: number, id: number, user: any) {
-        const project = await this.projectService.getById(projectId);
-        
-        const access = project.checkAccess(user)       
-        if(!access) throw new Error('ACCESS_DENIED')
+        await this.projectService.authorize(projectId, user, 'cashbox:delete');
 
-        await this.getById(id); 
+        await this.getById(id, user, projectId); 
         const deleted = await this.repo.delete(id);
-        if(!deleted) throw new Error("CASHBOX_NOT_CREATED")
+        if(!deleted) throw new NotDeletedError("CASHBOX")
+        
+        await this.cashe.del(`project:${projectId}`);
+        
         return deleted;
+    }
+
+    public getSettingTarget(): SettingTargets {
+        return 'cashbox'
+    }
+
+    private getDefaultSetting() {
+        return [];
     }
 }

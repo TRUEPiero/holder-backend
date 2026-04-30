@@ -23,6 +23,16 @@ type CreateData = {
     cashbox?: any;
 }
 
+type ParamsBetween = {
+    amount: number,
+    to: number,
+}
+
+type ParamsExternal = {
+    amount: number,
+    type: TransactionTypes
+}
+
 const ResponseTransaction = t.Object({
     id: t.Number(),
     amount: t.Any(),
@@ -30,6 +40,11 @@ const ResponseTransaction = t.Object({
     tags: t.Array(t.Any()),
     cashboxId: t.Number()
 })
+
+const TypesUnion = t.Union([
+    t.Literal("income"),
+    t.Literal("expense")
+]);
 
 const ResponseObject = t.Object({
     data: t.Nullable(ResponseTransaction)
@@ -43,9 +58,12 @@ export type {
     Transaction,
     TransactionTypes,
     CreateData,
+    ParamsBetween,
+    ParamsExternal
 }
 
 export {
+    TypesUnion,
     ResponseTransaction,
     ResponseObject,
     ResponseObjects,

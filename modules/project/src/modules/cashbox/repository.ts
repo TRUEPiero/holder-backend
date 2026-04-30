@@ -1,4 +1,4 @@
-import { DirectoryService } from "@shared/DirectoryService";
+import { DirectoryService } from "@services/DirectoryService";
 import { CashboxEntity } from "./entities/Cashbox";
 import type { Cashbox } from "./types";
 import { PaginationParam } from "@shared-types/index.ts";
@@ -18,9 +18,9 @@ export class CashboxRepository {
         return data.map((p: Cashbox) => new CashboxEntity(p));
     }
 
-    async findDetailed(id: number):Promise<CashboxEntity|null> {
+    async findDetailed(filter: any):Promise<CashboxEntity|null> {
         const data = await this.base.getFirstByFields(
-            { id },
+            filter,
             {
                 transactions: true
             }

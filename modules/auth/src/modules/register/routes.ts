@@ -1,49 +1,42 @@
-import { Elysia, t } from 'elysia';
-import jwt from '@elysiajs/jwt';
+import { Elysia } from 'elysia';
 import { schema } from './schemas';
-import { AuthTokenService } from '../../../common/services/token';
-import { AuthCookieService } from '../../../common/services/cookie';
+import { AuthTokenService } from '../../common/services/token';
+import { AuthCookieService } from '../../common/services/cookie';
 import { container } from '../../../../containers';
+import { jwtPlugin } from '@plugins/jwt';
+import { SessionService } from '../../common/services/session';
 
-const {registerService} = container;
+const {registerService, casheService} = container;
 
 export const RegisterController = new Elysia({
     prefix: '/register'
 })
-.use(jwt({secret: process.env.JWT_SECRET!}))
+.use(jwtPlugin)
 
-.post('/', async({body, jwt, cookie, status}) => {
-    try {
-        const user = await registerService.registerNewUser(body)
+.post('/', async({body, jwt, cookie}) => {
+    const user = await registerService.registerNewUser(body)
 
-        const tokenService = new AuthTokenService(jwt);
-        const token = await tokenService.generate(user);
+    const tokenService = new AuthTokenService(jwt);
+    const sessionService = new SessionService(
+        casheService,
+        tokenService
+    )
 
-        const cookieService = new AuthCookieService(cookie);
-        await cookieService.set(token)
+    const {access, refresh} = await sessionService.create(user);
+    
+    const cookieService = new AuthCookieService(cookie);
+    cookieService.setAccess(access);
+    cookieService.setRefresh(refresh);
 
-        return {data: user}
-    } catch(error: any) {
-        if(error.message === "VERIFY_ALREADY_EXIST") return status(401, {code: "VERIFY_ALREADY_EXIST", description: ''})
-        return status(500, {code: "USER_NOT_CREATED", description: ''})
-    }
+    return {data: user}
 }, schema.register)
 
-.post('/send', async({body: {email}, status}) => {
-    try {
-        return await registerService.sendVerify(email);
-    } catch (error: any) {
-        if(error.message === "VERIVY_NOT_FOUND") return status(404, {code: "VERIVY_NOT_FOUND", description: ''})
-        return status(500, {code: "ERROR", description:""})
-    }
+.post('/send', async({body: {email}}) => {
+    return await registerService.sendVerify(email);
 }, schema.sendVerify)
 
-.post('/check', async({body: {verify_code}, status}) => {
-    try{
-        return await registerService.chechVerify(verify_code)
-    } catch (error) {
-        return status(500, {code: "ERROR", description:""})
-    }
+.post('/check', async({body: {verify_code}}) => {
+    return await registerService.checkVerify(verify_code)
 }, schema.checkVerify)
 
 

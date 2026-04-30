@@ -2,16 +2,17 @@ import { BotContext } from "../core/context";
 import { MenuKeyboard } from "../keyboards/menu";
 import { HistoryService } from "../services/history";
 import { Step } from "../types";
-import { EntityHandlerFactory } from "./factory";
+import { EntityControllerFactory } from "./factory";
+import { replyOrEdit } from "./send-method";
+import { cashboxConfig } from "../entities/cashbox/config";
+import { cashboxServiceTg } from "../entities/cashbox/service";
+import { cashboxKeyboard } from "../entities/cashbox/keyboard";
 
-export const render = async (ctx: BotContext, step: Step, isCommand = false) => {
-    const entity = step?.entity || '';
-    const handler = EntityHandlerFactory.create(ctx, entity);
-
+async function render(ctx: BotContext, step: Step, isCommand = false) {
+    const entity = step?.entity;
     const history = new HistoryService(ctx);
-    history.add(step)
 
-    if(!handler) {
+    if(!entity) {
         history.setStartStep();
 
         const welcomeMsg = 'Начало';
@@ -19,8 +20,39 @@ export const render = async (ctx: BotContext, step: Step, isCommand = false) => 
             reply_markup: MenuKeyboard.mainMenu(),
         }
         
-        return isCommand ? await ctx.reply(welcomeMsg, options) : await ctx.editMessageText(welcomeMsg, options);
+        const method = replyOrEdit(ctx, isCommand);
+        await method(welcomeMsg, options);
+
+        return;
     }
 
-    await handler.render(step, isCommand)
+    history.add(step)
+
+    const handler = EntityControllerFactory.create(entity);
+
+    await handler.render(ctx, step, isCommand)
+}
+
+async function renderListForChoice(ctx: BotContext, page: number, currentId: number) {
+    const filter = cashboxConfig.getFilter(ctx);
+    filter.id = {not: currentId};
+
+    const params = {
+        page, 
+        limit: 5,
+        fieldFilter: filter
+    }
+
+    const flags = {
+        withBackButton: false
+    };
+
+    const data = await cashboxServiceTg.getList(params); 
+
+    return cashboxKeyboard.list(data, flags);
+}
+
+export {
+    render,
+    renderListForChoice
 }

@@ -7,7 +7,7 @@ export const swaggerPlugin = swagger({
                 auth: {
                     type: 'apiKey',
                     in: 'cookie',
-                    name: 'auth-token',
+                    name: 'access_token',
                     description: 'JWT в cookie',
                 }
             }

@@ -1,22 +1,62 @@
-import { BotContext } from "../core/context";
-import { CashboxHandler } from "../entities/cashbox.handler";
-import { MemberHandler } from "../entities/member.handler";
-import { ProjectHandler } from "../entities/project.handler";
-import { TransactionHandler } from "../entities/transaction.handler";
+import { EntityController } from "../entities/EntityController";
+import { cashboxConfig } from "../entities/cashbox/config";
+import { cashboxKeyboard } from "../entities/cashbox/keyboard";
+import { cashboxServiceTg } from "../entities/cashbox/service";
+import { memberConfig } from "../entities/member/config";
+import { memberServiceTg } from "../entities/member/service";
+import { memberKeyboard } from "../entities/member/keyboard";
+import { projectConfig } from "../entities/project/config";
+import { projectKeyboard } from "../entities/project/keyboard";
+import { projectServiceTg } from "../entities/project/service";
+import { transactionConfig } from "../entities/transaction/config";
+import { transactionKeyboard } from "../entities/transaction/keyboard";
+import { transactionServiveTg } from "../entities/transaction/service";
+import { EntityType } from "../types";
 
-export class EntityHandlerFactory {
-    static create(ctx: BotContext, entity: string) {
-        switch (entity) {
-        case "project":
-            return new ProjectHandler(ctx);
-        case "cashbox":
-            return new CashboxHandler(ctx);
-        case "transaction":
-            return new TransactionHandler(ctx);
-        case "member":
-            return new MemberHandler(ctx);
-        default:
-            return null;
-        }
+const config = {
+    project: {
+        config: projectConfig,
+        service: projectServiceTg,
+        keyboard: projectKeyboard
+    },
+    cashbox: {
+        config: cashboxConfig,
+        service: cashboxServiceTg,
+        keyboard: cashboxKeyboard
+    },
+    transaction: {
+        config: transactionConfig,
+        service: transactionServiveTg,
+        keyboard: transactionKeyboard
+    },
+    member: {
+        config: memberConfig,
+        service: memberServiceTg,
+        keyboard: memberKeyboard
     }
+}
+
+const services = {
+    project: projectServiceTg,
+    cashbox: cashboxServiceTg,
+    transaction: transactionServiveTg,
+    member: memberServiceTg
+}
+
+class EntityControllerFactory {
+    static create(entity: EntityType) {
+        const params = config[entity];
+        return new EntityController(params);
+    }
+}
+
+class EntityServiceFactory {
+    static create(entity: EntityType) {
+        return services[entity];
+    }
+}
+
+export {
+    EntityControllerFactory,
+    EntityServiceFactory
 }

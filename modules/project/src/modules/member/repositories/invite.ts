@@ -1,4 +1,4 @@
-import { DirectoryService } from "@shared/DirectoryService";
+import { DirectoryService } from "@services/DirectoryService";
 import { InviteEntity } from "../entities/Invite";
 
 export class InviteRepository {
@@ -12,11 +12,15 @@ export class InviteRepository {
 
     public async create(data:any) {
         const created = await this.base.createItem(data);
+        if(!created) return null;
+
         return new InviteEntity(created);   
     }
 
     public async update(filter: any, data: any) {
-        const updated = await this.base.updateByFields(filter, data);
+        const updated = await this.base.updateFirstByFields(filter, data);
+        if(!updated) return null;
+        
         return new InviteEntity(updated);
     }
 }

@@ -1,21 +1,21 @@
-import { BaseService } from "@shared/BaseService";
-import { UserService } from "../../modules/auth/src/modules/user/services";
-import { UserRepository } from "../../modules/auth/src/modules/user/repository";
-import { DirectoryService } from "@shared/DirectoryService";
+import { container } from "../../modules/containers";
+import { UnautorizedError } from "@common/errors";
 
-const base = new DirectoryService<'user'>('user', [])
-const repo = new UserRepository(base);
+const { userService } = container;
 
-const userService = new UserService(repo);
+export const deriveUser = async ({cookie, jwt}: any) => {
+    const accessToken = cookie['access_token']?.value;
+    if(!accessToken) throw new UnautorizedError();
 
-export const deriveUser = async ({cookie, jwt, status}: any) => {
-    const token = cookie['auth-token'].value;
-    if(!token) return status(401, {code: "UNAUTORIZED", description: ""});
+    let payload = null;
+    try {
+        payload = await jwt.verify(accessToken);
+    } catch (error) {
+        console.error(error);
+        throw new UnautorizedError();
+    }
+    if (!payload?.sub) throw new UnautorizedError();
 
-    const payload = await jwt.verify(token)
-    if(!payload) return  status(401, {code: "UNAUTORIZED", description: ""});
-
-    const user = await userService.getUser(payload.id)
-
-    return {user}
+    const user = await userService.getUser(Number(payload.sub));
+    return { user };
 }

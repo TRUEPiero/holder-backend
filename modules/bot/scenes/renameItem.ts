@@ -1,21 +1,18 @@
 import { Scene } from "grammy-scenes";
 import { BotContext } from "../core/context";
-import { EntityHandlerFactory } from "../lib/factory";
+import { EntityServiceFactory } from "../lib/factory";
 import { CommonKeyboard } from "../keyboards/common";
-import { Step } from "../types";
+import { EntityType, Step } from "../types";
 import { render } from "../lib/render";
 
 const scene = new Scene<BotContext>('renameEntity')
 
 scene.step(async(ctx) => {
-    const entity = ctx.match![1]
-    const handler = EntityHandlerFactory.create(ctx, entity);
-    if(!handler) return;
+    const entity = ctx.match![1] as EntityType | undefined;
 
     ctx.session.entityData = {
         entity,
         title: '',
-        filter: handler.getFilter()
     };
 
 })
@@ -47,12 +44,10 @@ scene.wait('wait_title').on(['message:text', 'callback_query'], async(ctx) => {
 scene.label('rename_item').step(async(ctx) => {
 
     const updateData = ctx.session.entityData;
-    const handler = EntityHandlerFactory.create(ctx, updateData.entity);
-
-    if(!handler) return;
+    const service = EntityServiceFactory.create(updateData.entity);
 
     try{     
-        const item = await handler.update()
+        const item = await service.update(ctx)
         if(!item) throw new Error("ITEM_NOT_UPDATED");
 
         const step: Step = {

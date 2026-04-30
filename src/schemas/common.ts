@@ -1,13 +1,21 @@
 import { t } from "elysia"
 
+const settingValue = t.Union([
+  t.String(),
+  t.Boolean(),
+  t.Number()
+])
+
+type SettingValue = string | boolean | number
+
 type Setting = {
   code: string,
-  value: string
+  value: SettingValue
 }
 
 const setting = t.Object({
     code: t.String(),
-    value: t.String(),
+    value: settingValue,
 })
 
 export type {

@@ -1,4 +1,4 @@
-import { DirectoryService } from "@shared/DirectoryService";
+import { DirectoryService } from "@services/DirectoryService";
 import { TransactionEntity } from "./entities/Transaction";
 import { Transaction } from "./types";
 import { PaginationParam } from "@shared-types/index.ts";
@@ -30,7 +30,7 @@ export class TransactionRepository {
         const paginationData = await this.base.getWithPagination(parameters); 
         const { currentPage, totalPages, totalItems, hasNextPage } = paginationData;
         
-        const items = paginationData.items.map((t: Transaction) => new TransactionEntity(t));
+        const items: TransactionEntity[] = paginationData.items.map((t: Transaction) => new TransactionEntity(t));
         return {
             items,
             pagination: {

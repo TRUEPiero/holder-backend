@@ -27,11 +27,14 @@ export class UserEntity {
         return {
             id: this.id,
             name: this.name,
-            password: this.password,
             status: this.status,
             email: this.email,
             telegram: this.telegram,
             telegramId: this.telegramId,
         }
+    }
+
+    public getPassword() {
+        return this.password;
     }
 }

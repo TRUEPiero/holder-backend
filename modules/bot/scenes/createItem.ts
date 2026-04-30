@@ -1,23 +1,19 @@
 import { Scene } from "grammy-scenes";
 import { BotContext } from "../core/context";
 import { render } from "../lib/render";
-import { EntityHandlerFactory } from "../lib/factory";
-import { Step } from "../types";
+import { EntityServiceFactory } from "../lib/factory";
+import { EntityType, Step } from "../types";
 import { CommonKeyboard } from "../keyboards/common";
 
 const scene = new Scene<BotContext>("createEntity");
 
 scene.step(async (ctx) => {
-    const entity = ctx.match![1]
-    const handler = EntityHandlerFactory.create(ctx, entity);
-    if(!handler) return;
+    const entity = ctx.match![1] as EntityType;
 
     ctx.session.entityData = {
         entity,
         title: '',
-        filter: handler.getFilter()
     };
-
 })
 
 scene.label('enter_title').step(async (ctx) => {
@@ -30,7 +26,11 @@ scene.wait('wait_title').on(['message:text', 'callback_query'], async(ctx) => {
     const choice = ctx.callbackQuery?.data;
     if(choice && choice === 'create_cancel') {
         ctx.answerCallbackQuery();
-        await render(ctx, {type: 'start'});
+        await render(ctx, {
+            type: 'page',
+            entity: ctx.session.entityData.entity,
+            id: 1
+        });
         ctx.scene.exit();
         return;
     }
@@ -47,12 +47,10 @@ scene.wait('wait_title').on(['message:text', 'callback_query'], async(ctx) => {
 scene.label('create_item').step(async(ctx) => {
 
     const createData = ctx.session.entityData;
-    const handler = EntityHandlerFactory.create(ctx, createData.entity);
-
-    if(!handler) return;
+    const service = EntityServiceFactory.create(createData.entity);
 
     try{     
-        const item = await handler.create()
+        const item = await service.create(ctx)
         if(!item) throw new Error('ITEM_NOT_CREATED');
 
         const step: Step = {

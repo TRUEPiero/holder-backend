@@ -1,5 +1,7 @@
 import { Setting } from "@schemas/common";
-import { UpdateData } from "../types";
+import { MemberRole, UpdateData } from "../types";
+import { Cashbox } from "../../cashbox/types";
+import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
 
 export class ProjectEntity {
     public id: number;
@@ -7,7 +9,7 @@ export class ProjectEntity {
     public settings: Setting[];
     public ownerId: number;
     public members: any[];
-    public cashboxes: any[];
+    public cashboxes: Cashbox[];
     
     constructor(params: any) {
         this.id = params.id;
@@ -51,12 +53,12 @@ export class ProjectEntity {
         };
     }
     
-    public checkAccess(user: any) {
+    public checkAccess(user: UserEntity, role: MemberRole = 'viewer') {
         const userId = this.resolveUserId(user);
 
         if(this.ownerId === userId) return true
 
-        const editors = this.members.filter(member => member.role === 'editor')
+        const editors = this.members.filter(member => member.role === role)
                                     .map(member => member.user)
         
         const inEditors = editors.some(i => i.id === userId)

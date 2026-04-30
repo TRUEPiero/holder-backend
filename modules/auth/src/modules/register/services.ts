@@ -1,11 +1,13 @@
-import { MailService } from "../../../lib/mail";
+import { MailService } from "../../lib/mail";
 import { RegisterRepository } from "./repository";
-import { UserRepository } from "../user/repository";
+import { UserService } from "../user/services";
+import { AlreadyExistError, NotFoundError, NotUpdatedError } from "@common/errors";
+import { getExpiredDate } from "../../../../../src/helpers/expiredDate";
 
 export class RegisterService {
     constructor(
         private repo: RegisterRepository,
-        private userRepo: UserRepository,
+        private userService: UserService,
         private mailService: MailService
     ) {}
 
@@ -15,23 +17,20 @@ export class RegisterService {
     }
 
     public async registerNewUser(data: any) {
-        const user = await this.userRepo.create(data)
-        if(!user) throw new Error("USER_NOT_CREATED");
-
-        return user;
+        return await this.userService.create(data);
     }
 
     public async sendVerify(email: string) {
 
         const verify = await this.getVerify({email});
-        if(verify && verify.isActive()) throw new Error('VERIFY_ALREADY_EXIST');
+        if(verify && verify.isActive()) throw new AlreadyExistError('VERIFY');
 
         const code = this.generateCode();
 
         await this.repo.create({
                 email,
                 code,
-                expiredAt: new Date(Date.now() + 10 * 60 * 1000),
+                expiredAt: getExpiredDate(),
             }
         );
 
@@ -40,17 +39,17 @@ export class RegisterService {
         return true
     }
 
-    public async chechVerify(code: string) {
+    public async checkVerify(code: string) {
 
         const verify = await this.getVerify({code});
-        if (!verify || !verify.isActive()) throw new Error("VERIVY_NOT_FOUND") ;
+        if (!verify || !verify.isActive()) throw new NotFoundError("VERIFY") ;
 
-        verify.setExpiredDate()
+        verify.setChecked()
         const updated = await this.repo.update(
             {code}, 
             verify.toJSON()
         )
-        if(!updated) throw new Error("UPDATE_ERROR");
+        if(!updated) throw new NotUpdatedError("VERIFY");
 
         return Boolean(updated)
     }

@@ -1,5 +1,5 @@
 import { t } from "elysia"
-import { ResponseObject } from "../../../common/types/user"
+import { ResponseObject } from "../../common/types/user"
 import { errorSchema } from "@schemas/error"
 
 export const schema = {

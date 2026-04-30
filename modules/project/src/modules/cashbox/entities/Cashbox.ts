@@ -1,3 +1,5 @@
+import { Transaction } from "../../transaction/types";
+import { LessBalanceError } from "../errors";
 import { UpdateData } from "../types";
 import { Money } from "./Money";
 import { DecimalClass as Decimal, DecimalType } from "@shared-types/index.ts";
@@ -9,7 +11,7 @@ export class CashboxEntity {
     public title: string;
     public description: string;
     public settings: any;
-    public transactions: any[];
+    public transactions: Transaction[];
     
     constructor(
         params: any
@@ -19,13 +21,13 @@ export class CashboxEntity {
         this.balance = new Decimal(params.balance);
         this.title = params.title;
         this.description = params.description || '';
-        this.settings = params.settings || {}
+        this.settings = params.settings || []
         this.transactions = params.transactions || [];
     }
 
     public debit(amount: Money) {
         if (this.balance.lessThan(amount.get())) {
-            throw new Error("BALANSE_LESS_AMOUNT");
+            throw new LessBalanceError();
         }
         this.balance = this.balance.sub(new Decimal(amount.get()));
     }
@@ -38,15 +40,12 @@ export class CashboxEntity {
         const {settings, ...dataWithoutParams} = data;
         
         for(const [key, value] of Object.entries(dataWithoutParams)) {
-            if(value.toString()) (this as any)[key] = value
+            (this as any)[key] = value
         }
 
         this.setParameters(settings);
 
-        return {
-            title: this.title,
-            settings: this.settings,
-        };
+        return this.toJSON();
     }
 
     public getSettings() {

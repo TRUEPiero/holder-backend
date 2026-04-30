@@ -1,0 +1,26 @@
+model User {
+  id       Int        @id @default(autoincrement())
+  name     String
+  password String
+  status   UserStatus @default(trial)
+  email    String     @unique
+
+  telegram   String? @unique
+  telegramId Int?    @unique @map("telegram_id")
+
+  OwnedProjects Project[]       @relation("ProjectOwner")
+  projects      ProjectMember[]
+  transactions  Transaction[]
+
+  createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
+
+  @@index([name, email])
+  @@map("users")
+}
+
+enum UserStatus {
+  trial
+  personal
+  enterprise
+}

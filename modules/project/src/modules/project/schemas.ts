@@ -1,6 +1,7 @@
 import { errorSchema } from "@schemas/error";
 import {t} from 'elysia';
-import { ResponseObject, ResponseObjects } from "./types";
+import { ResponseDetailObject, ResponseObject, ResponseObjects } from "./types";
+import { setting } from "@schemas/common";
 
 export const schema = {
     getAll: {
@@ -22,15 +23,17 @@ export const schema = {
             description: 'Получить проект по ID',
         },
         response: {
-            200: ResponseObject,
+            200: ResponseDetailObject,
             ...errorSchema
         }
     },
     create: {
-        body: t.Object({
-            title: t.String(),
-            settings: t.Any()
-        }),
+        body: t.Partial(
+            t.Object({
+                title: t.String(),
+                settings: t.Array(setting)
+            })
+        ),
         detail: {
             tags: ['Проект'],
             description: 'Создать проект',
@@ -44,7 +47,12 @@ export const schema = {
         params: t.Object({
             pid: t.Number()
         }),
-        body: t.Any(),
+        body: t.Partial(
+            t.Object({
+                title: t.String(),
+                settings: t.Array(setting)
+            })
+        ),
         detail: {
             tags: ['Проект'],
             description: 'Обновить проект'

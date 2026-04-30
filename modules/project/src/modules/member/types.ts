@@ -1,6 +1,8 @@
 import { MemberRole } from "@prisma/client";
-import { ResponseUser, User } from "../../../../auth/common/types/user";
+import { ResponseUser, User } from "../../../../auth/src/common/types/user";
 import { t } from "elysia";
+
+type MemberRoles = MemberRole;
 
 type Member = {
     id: number;
@@ -10,6 +12,8 @@ type Member = {
     role: MemberRole
     joinedAt: Date
 }
+
+const memberRole = t.Enum(MemberRole)
 
 const ResponseMember = t.Object({
     id: t.Number(),
@@ -28,10 +32,12 @@ const ResponseObjects = t.Object({
 })
 
 export type{
+    MemberRoles,
     Member
 }
 
 export {
+    memberRole,
     ResponseMember,
     ResponseObject,
     ResponseObjects
