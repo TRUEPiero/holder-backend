@@ -12,7 +12,6 @@ async function render(ctx: BotContext, step: Step, isCommand = false) {
     const entity = step?.entity;
     const history = new HistoryService(ctx);
 
-    console.log(history.getFull())
     if(!entity) {
         history.setStartStep();
 

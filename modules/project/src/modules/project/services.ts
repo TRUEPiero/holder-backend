@@ -3,7 +3,7 @@ import { UserEntity } from "../../../../auth/src/modules/user/entities/User";
 import { ProjectRepository } from "./repository";
 import { SettingsOwner } from "../../interfaices/SettingsOwner";
 import { SettingTargets } from "../settings/types";
-import { CasheService } from "@services/CashService";
+import { CasheService } from "@services/CasheService";
 import { ProjectEntity } from "./entities/Project";
 import { InvalidFieldError, NotCreatedError, NotDeletedError, NotFoundError, NotUpdatedError } from "@common/errors";
 import { ProjectPermission, ProjectPolicy } from "../../policies/project.policy";
@@ -36,7 +36,7 @@ export class ProjectService implements SettingsOwner{
         if(cashed) {
             project = new ProjectEntity(cashed);
         } else {
-            const dbProject = await this.repo.findDetailedProject(id);
+            const dbProject = await this.repo.findDetailed(id);
             if (!dbProject) throw new NotFoundError('PROJECT');
 
             project = dbProject;

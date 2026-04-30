@@ -7,7 +7,7 @@ WORKDIR /app
 COPY package.json package.json
 COPY bun.lock bun.lock
 
-COPY .env.dev .env
+# COPY .env.dev .env
 
 RUN bun install
 

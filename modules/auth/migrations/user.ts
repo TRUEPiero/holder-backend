@@ -9,6 +9,7 @@ await db.user.createMany({
             name: 'Admin',
             password: await hash('adminuser'),
             telegram: 'truepiero',
+            telegramId: 1026044206,
             status: 'enterprise',
         },
         {

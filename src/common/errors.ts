@@ -8,6 +8,13 @@ class AppError extends Error {
   }
 }
 
+
+class UnautorizedError extends AppError {
+  constructor() {
+    super(`UNAUTORIZED`, 401, `Unautorized`);
+  }
+}
+
 class InvalidFieldError extends AppError {
   constructor(field: string) {
     super(`${field}_NOT_VALID`, 404, `${field} not valid`);
@@ -54,6 +61,7 @@ class AccessDeniedError extends AppError {
 
 export {
   AppError,
+  UnautorizedError,
   NotFoundError,
   NotCreatedError,
   NotUpdatedError,

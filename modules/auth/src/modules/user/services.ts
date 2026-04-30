@@ -21,9 +21,9 @@ export class UserService{
         return user;
     }
 
-    public async getTelegramUser(telegram: string) {
+    public async getTelegramUser(telegramId: number) {
         const filter = {
-            telegram
+            telegramId
         }
 
         const user = await this.repo.findByFilter(filter);

@@ -1,25 +1,32 @@
-import { Elysia, t } from 'elysia';
-import jwt from '@elysiajs/jwt';
+import { Elysia } from 'elysia';
 import { schema } from './schemas';
 import { AuthTokenService } from '../../common/services/token';
 import { AuthCookieService } from '../../common/services/cookie';
 import { container } from '../../../../containers';
+import { jwtPlugin } from '@plugins/jwt';
+import { SessionService } from '../../common/services/session';
 
-const {registerService} = container;
+const {registerService, casheService} = container;
 
 export const RegisterController = new Elysia({
     prefix: '/register'
 })
-.use(jwt({secret: process.env.JWT_SECRET!}))
+.use(jwtPlugin)
 
 .post('/', async({body, jwt, cookie}) => {
     const user = await registerService.registerNewUser(body)
 
     const tokenService = new AuthTokenService(jwt);
-    const token = await tokenService.generate(user);
+    const sessionService = new SessionService(
+        casheService,
+        tokenService
+    )
 
+    const {access, refresh} = await sessionService.create(user);
+    
     const cookieService = new AuthCookieService(cookie);
-    await cookieService.set(token)
+    cookieService.setAccess(access);
+    cookieService.setRefresh(refresh);
 
     return {data: user}
 }, schema.register)

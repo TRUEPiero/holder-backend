@@ -1,25 +1,84 @@
-import { Elysia} from 'elysia'
-import jwt from "@elysiajs/jwt";
+import { Elysia } from 'elysia'
 import { schema } from './schemas';
 import { AuthTokenService } from '../../common/services/token';
 import { AuthCookieService } from '../../common/services/cookie';
 import { container } from '../../../../containers';
+import { jwtPlugin } from '@plugins/jwt';
+import { SessionService } from '../../common/services/session';
+import { UnautorizedError } from '@common/errors';
 
-const {authService} = container;
+const { authService, userService, casheService } = container;
 
 export const AuthController = new Elysia({
     prefix: '/auth'
 })
-.use(jwt({secret: process.env.JWT_SECRET!}))
+.use(jwtPlugin)
 
-.post('/login', async ({body: {email, password, remember}, jwt, cookie}) => {
+.post('/login', async ({ body: { email, password }, jwt, cookie }) => {
     const user = await authService.login(email, password);
 
     const tokenService = new AuthTokenService(jwt);
-    const token = await tokenService.generate(user);
+    const sessionService = new SessionService(
+        casheService,
+        tokenService
+    )
+
+    const { access, refresh } = await sessionService.create(user);
 
     const cookieService = new AuthCookieService(cookie);
-    await cookieService.set(token, remember) 
+    cookieService.setAccess(access)
+    cookieService.setRefresh(refresh)
 
-    return {data: user}
+    return { data: user }
 }, schema.login)
+
+.post('/refresh', async ({ jwt, cookie }) => {
+    const refreshToken: any = cookie['refresh_token']?.value;
+    if (!refreshToken) throw new UnautorizedError();
+
+    let payload = null;
+    try {
+        payload = await jwt.verify(refreshToken);
+    } catch (error) {
+        console.error(error);
+        throw new UnautorizedError();
+    }
+
+    if (!payload || !payload.sub || !payload.jti) throw new UnautorizedError();
+
+    const user = await userService.getUser(Number(payload.sub));
+    const tokenService = new AuthTokenService(jwt);
+    const sessionService = new SessionService(casheService, tokenService);
+
+    const { access, refresh } = await sessionService.refresh(payload.jti, user);
+
+    const cookieService = new AuthCookieService(cookie);
+    cookieService.setAccess(access);
+    cookieService.setRefresh(refresh);
+
+    return true;
+}, schema.refresh)
+
+.post('/logout', async ({ jwt, cookie }) => {
+    const refreshToken: any = cookie['refresh_token']?.value;
+
+    if (refreshToken) {
+        let payload = null;
+        try {
+            payload = await jwt.verify(refreshToken);
+        } catch (error) {
+            console.error(error);
+            throw new UnautorizedError();
+        }
+
+        if (payload && payload?.jti) {
+            const tokenService = new AuthTokenService(jwt);
+            const sessionService = new SessionService(casheService, tokenService);
+            await sessionService.revoke(payload.jti);
+        }
+    }
+
+    new AuthCookieService(cookie).clear();
+    return true;
+}, schema.logout)
+

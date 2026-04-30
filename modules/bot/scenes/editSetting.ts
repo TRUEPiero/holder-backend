@@ -1,7 +1,5 @@
 import { Scene } from "grammy-scenes";
 import { BotContext } from "../core/context";
-// import { EntityHandlerFactory } from "../lib/factory";
-// import { ProjectHandler } from "../entities/project.handler";
 import { EntityType } from "../types";
 
 const scene = new Scene<BotContext>('editSetting');

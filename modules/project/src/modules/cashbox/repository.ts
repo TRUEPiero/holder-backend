@@ -18,9 +18,9 @@ export class CashboxRepository {
         return data.map((p: Cashbox) => new CashboxEntity(p));
     }
 
-    async findDetailed(id: number):Promise<CashboxEntity|null> {
+    async findDetailed(filter: any):Promise<CashboxEntity|null> {
         const data = await this.base.getFirstByFields(
-            { id },
+            filter,
             {
                 transactions: true
             }

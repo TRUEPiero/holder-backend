@@ -26,7 +26,11 @@ scene.wait('wait_title').on(['message:text', 'callback_query'], async(ctx) => {
     const choice = ctx.callbackQuery?.data;
     if(choice && choice === 'create_cancel') {
         ctx.answerCallbackQuery();
-        await render(ctx, {type: 'start'});
+        await render(ctx, {
+            type: 'page',
+            entity: ctx.session.entityData.entity,
+            id: 1
+        });
         ctx.scene.exit();
         return;
     }

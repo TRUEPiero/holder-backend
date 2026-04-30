@@ -102,14 +102,19 @@ export class BaseService<ModelName extends PrismaModelName> {
         fields: any,
         data: any
     ): Promise<any[]> {
-        return await (this.model as any).updateMany({where: {...fields}, data}) || []
+        return await (this.model as any).updateManyAndReturn({where: {...fields}, data}) || []
     }
 
     public async updateFirstByFields(
         fields: any,
         data: any
     ): Promise<any> {
-        return await (this.model as any).update({where: {...fields}, data}) || []
+        const finded = await (this.model as any).findFirst({
+            where: {...fields}
+        });
+        if(!finded) return null;
+
+        return await (this.model as any).update({where: {id: finded.id}, data}) || []
     }
 
     public async deleteItem(id: number): Promise<any | null> {

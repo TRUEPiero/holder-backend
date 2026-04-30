@@ -1,6 +1,6 @@
 import { errorSchema } from "@schemas/error";
 import {t} from 'elysia';
-import { ResponseObjects } from "./types";
+import { ResponseObjects, TypesUnion } from "./types";
 
 export const schema = {
     get: {
@@ -43,7 +43,7 @@ export const schema = {
         }),
         body: t.Object({
             amount: t.Number(),
-            type: t.Any()
+            type: TypesUnion
         }),
         response: {
             200: t.Boolean(),

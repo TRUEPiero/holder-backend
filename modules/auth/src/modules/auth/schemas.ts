@@ -7,7 +7,6 @@ export const schema = {
         body: t.Object({
             email: t.String(),
             password: t.String(),
-            remember: t.Optional(t.Boolean())
         }),
         detail: {
             description: 'Авторизация',
@@ -15,6 +14,16 @@ export const schema = {
         },
         response: {
             200: ResponseObject,
+            ...errorSchema
+        }
+    },
+    refresh: {
+        detail: {
+            description: 'Обновление acces token',
+            tags: ['Авторизация']
+        },
+        response:{ 
+            200: t.Boolean(),
             ...errorSchema
         }
     },

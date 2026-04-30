@@ -8,8 +8,9 @@ export class MembershipRepository {
     
     public async findById(id: number) {
         const include = {user: true};
-        const data = await this.base.getFirstByFields(id, include);
+        const data = await this.base.getFirstByFields({id}, include);
         if(!data) return null;
+
         return new MemberEntity(data);        
     }
 

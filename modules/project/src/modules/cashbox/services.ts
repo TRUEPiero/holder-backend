@@ -4,7 +4,7 @@ import { CashboxRepository } from "./repository";
 import { SettingsOwner } from "../../interfaices/SettingsOwner";
 import { SettingTargets } from "../settings/types";
 import { InvalidFieldError, NotCreatedError, NotDeletedError, NotFoundError, NotUpdatedError } from "@common/errors";
-import { CasheService } from "@services/CashService";
+import { CasheService } from "@services/CasheService";
 import { UserEntity } from "../../../../auth/src/modules/user/entities/User";
 
 export class CashboxService implements SettingsOwner{
@@ -20,7 +20,7 @@ export class CashboxService implements SettingsOwner{
 
         await this.projectService.authorize(projectId, user, 'cashbox:read')
         
-        const cashbox = await this.repo.findDetailed(id);
+        const cashbox = await this.repo.findDetailed({id, projectId});
         if (!cashbox) throw new NotFoundError("CASHBOX");
         return cashbox;
     }

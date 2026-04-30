@@ -2,7 +2,7 @@ import { AccessDeniedError, AlreadyExistError, NotCreatedError, NotFoundError, N
 import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
 import { ProjectService } from "../../project/services";
 import { MembershipRepository } from "../repositories/membership";
-import { CasheService } from "@services/CashService";
+import { CasheService } from "@services/CasheService";
 
 export class MembershipService {
 
@@ -36,13 +36,16 @@ export class MembershipService {
 
         await this.cashe.del(`project:${projectId}`);
 
-        return member
+        const detail = await this.getById(member.id);
+        return detail;
     }
 
     public async update(projectId: number, memberId: number, data: any, user: UserEntity) {
         await this.projectService.authorize(projectId, user, 'member:update');
 
-        const member = await this.getById(memberId);
+        const member = await this.repo.findByFilter({id: memberId, projectId});
+        if(!member) throw new  NotFoundError("MEMBER");
+
         const updated = member.update(data);
 
         const res = await this.repo.update(memberId, updated);
@@ -50,7 +53,8 @@ export class MembershipService {
         
         await this.cashe.del(`project:${projectId}`);
         
-        return res; 
+        const detail = await this.getById(res.id);
+        return detail;
     }
     
     public async delete(projectId: number, userId: number) {

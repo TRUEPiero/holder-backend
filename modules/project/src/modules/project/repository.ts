@@ -30,7 +30,7 @@ export class ProjectRepository {
         return data.map((p: Project) => new ProjectEntity(p));
     }
 
-    async findDetailedProject(id: number) {
+    async findDetailed(id: number) {
         const data = await this.base.getFirstByFields(
             { id },
             {

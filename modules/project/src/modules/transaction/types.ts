@@ -41,6 +41,11 @@ const ResponseTransaction = t.Object({
     cashboxId: t.Number()
 })
 
+const TypesUnion = t.Union([
+    t.Literal("income"),
+    t.Literal("expense")
+]);
+
 const ResponseObject = t.Object({
     data: t.Nullable(ResponseTransaction)
 })
@@ -58,6 +63,7 @@ export type {
 }
 
 export {
+    TypesUnion,
     ResponseTransaction,
     ResponseObject,
     ResponseObjects,

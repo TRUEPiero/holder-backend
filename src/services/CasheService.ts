@@ -1,4 +1,3 @@
-// cache.service.ts
 import { getRedis } from '../common/redis';
 
 export class CasheService {
@@ -22,6 +21,17 @@ export class CasheService {
             await this.redis.set(key, payload, { EX: ttlSeconds });
         } else {
             await this.redis.set(key, payload);
+        }
+    }
+
+    async getDel<T>(key: string) {
+        const data = await this.redis.getDel(key);
+        if (!data) return null;
+
+        try {
+            return JSON.parse(data) as T;
+        } catch {
+            return null;
         }
     }
 
