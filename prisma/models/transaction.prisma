@@ -12,6 +12,8 @@ model Transaction {
 
   tags TransactionTag[]
 
+  isDeleted Boolean @default(false)
+
   authorId Int  @map("author_id")
   author   User @relation(fields: [authorId], references: [id], onDelete: Cascade)
 

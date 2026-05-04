@@ -1,9 +1,9 @@
 import { errorSchema } from "@schemas/error";
 import {t} from 'elysia';
-import { ResponseObjects, TypesUnion } from "./types";
+import { ResponseObjects, ResponseTags, Tag, TypesUnion } from "./types";
 
 export const schema = {
-    get: {
+    getByCashbox: {
         params: t.Object({
             pid: t.Number(),
             cid: t.Number()
@@ -11,13 +11,29 @@ export const schema = {
         response: {
             200: ResponseObjects,
             ...errorSchema
-        },
+        },  
+        query: t.Object({
+            tags: t.Optional(t.Array(t.Number()))
+        }),
         detail: {
             tags: ['Транзации'],
             description: 'Получить операции счета'
         }
     },
-
+    getTags: {
+        params: t.Object({
+            pid: t.Number(),
+            cid: t.Number()
+        }),
+        response: {
+            200: ResponseTags,
+            ...errorSchema
+        },
+        detail: {
+            tags: ['Транзации'],
+            description: 'Получить теги операций по счету'
+        }
+    },
     transfer: {
         params: t.Object({
             pid: t.Number(),
@@ -25,7 +41,8 @@ export const schema = {
         }),
         body: t.Object({
             to: t.Number(),
-            amount: t.Number()
+            amount: t.Number(),
+            tags: t.Optional(t.Array(Tag))
         }),
         response: {
             200: t.Boolean(),
@@ -43,7 +60,8 @@ export const schema = {
         }),
         body: t.Object({
             amount: t.Number(),
-            type: TypesUnion
+            type: TypesUnion,
+            tags: t.Optional(t.Array(Tag))
         }),
         response: {
             200: t.Boolean(),

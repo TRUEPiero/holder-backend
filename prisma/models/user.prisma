@@ -1,3 +1,9 @@
+enum UserStatus {
+  trial
+  personal
+  enterprise
+}
+
 model User {
   id       Int        @id @default(autoincrement())
   name     String
@@ -16,11 +22,6 @@ model User {
   updateAt  DateTime @updatedAt
 
   @@index([name, email])
-  @@map("users")
+  @@map("user")
 }
 
-enum UserStatus {
-  trial
-  personal
-  enterprise
-}

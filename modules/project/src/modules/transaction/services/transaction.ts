@@ -1,7 +1,7 @@
 import { PaginationParam } from "@shared-types/index.ts";
 import { ProjectService } from "../../project/services";
-import { TransactionRepository } from "../repository";
-import { CreateData } from "../types";
+import { TransactionRepository } from "../repositories/transaction";
+import { CreateData, Query } from "../types";
 import { InvalidFieldError, NotCreatedError, NotDeletedError, NotFoundError } from "@common/errors";
 import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
 
@@ -25,6 +25,26 @@ export class TransactionService {
         return await this.repo.findByCashbox(projectId, cashboxId)
     }
 
+    public async getByFilter(projectId: number, cashboxId: number, query: Query, user: UserEntity) {
+        await this.projectService.authorize(projectId, user, 'transaction:read');
+        const filter = {
+            cashboxId,
+            tags: query?.tags ? 
+                {
+                    in: query?.tags
+                } : undefined
+        }
+
+        const include = {
+            tags: true
+        }
+
+        const transaction = await this.repo.findByFilter(filter, include);
+        if(!transaction) throw new NotFoundError("TRANSACTION");
+
+        return transaction;
+    }
+
     public async getWithPagination(parameters: PaginationParam) {
         const transactions = await this.repo.findWithPagination(parameters);
         return transactions;
@@ -32,15 +52,28 @@ export class TransactionService {
 
     public async create(projectId: number, cashboxId: number, body: CreateData, user: UserEntity) {
         await this.projectService.authorize(projectId, user, 'transaction:create');
+        const createdData = {
+            ...body,
+            cashboxId,
+        };
 
-        const created = await this.repo.create(body);
+        const created = await this.repo.create(createdData);
         if(!created) throw new NotCreatedError("TRANSACTION");
+
+        return created;
     }
 
-    public async delete(projectId: number, id: number, user: UserEntity) {
+    public async delete(projectId: number, cashboxId: number, id: number, user: UserEntity) {
         await this.projectService.authorize(projectId, user, 'transaction:delete');
 
-        const deleted = await this.repo.delete(id);
+        const exist = await this.repo.findFirstByFilter({cashboxId, id});
+        if(!exist) throw new NotFoundError("TRANSACTION");
+
+        const deletedData = {
+            isDeleted: true
+        };
+
+        const deleted = await this.repo.softDelete(id, deletedData);
         if(!deleted) throw new NotDeletedError("TRANSACTION");
 
         return deleted;

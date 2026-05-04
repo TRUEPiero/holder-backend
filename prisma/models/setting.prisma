@@ -46,4 +46,6 @@ model SettingDefinition {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@map("setting")
 }

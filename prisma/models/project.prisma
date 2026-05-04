@@ -14,7 +14,7 @@ model Project {
   updatedAt DateTime @updatedAt
 
   @@index([id, ownerId])
-  @@map("projects")
+  @@map("project")
 }
 
 

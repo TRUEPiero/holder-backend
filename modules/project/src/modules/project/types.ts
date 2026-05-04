@@ -22,6 +22,7 @@ type UpdateData = {
 const ResponseDetailProject = t.Object({
     id: t.Number(),
     title: t.String(),
+    balance: t.Any(),
     ownerId: t.Number(),
     settings: t.Array(setting),
     cashboxes: t.Array(ResponseCashbox),
