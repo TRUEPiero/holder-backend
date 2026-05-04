@@ -48,21 +48,24 @@ export class TransferService {
             });
             if (creditResult.count !== 1) throw new NotFoundError('CASHBOX');
 
-            await tx.transaction.createMany({
-                data: [
-                    {
-                        cashboxId: request.to,
-                        type: "income",
-                        amount: amount.get(),
-                        authorId: user.id
-                    },
-                    {
-                        cashboxId,
-                        type: "expense",
-                        amount: amount.get(),
-                        authorId: user.id
-                    }
-                ]
+            await tx.transaction.create({
+                data: {
+                    cashboxId: request.to,
+                    type: "income",
+                    amount: amount.get(),
+                    authorId: user.id,
+                    tags: this.connectOrCreate(request.tags)
+                }
+            })
+
+            await tx.transaction.create({
+                data: {
+                    cashboxId,
+                    type: "expense",
+                    amount: amount.get(),
+                    authorId: user.id,
+                    tags: this.connectOrCreate(request.tags)
+                }
             })
 
             return true;
@@ -114,7 +117,8 @@ export class TransferService {
                     cashboxId,
                     type: transactionType,
                     amount: amount.get(),
-                    authorId: user.id
+                    authorId: user.id,
+                    tags: this.connectOrCreate(request.tags)
                 }
             });
 
@@ -122,6 +126,17 @@ export class TransferService {
         });
     }
 
+    private connectOrCreate(tags?: {id?: number, title?: string}[]) {
+        return {
+            connect: tags
+                ?.filter(t => t.id)
+                .map(t => ({ id: t.id! })) ?? [],
+
+            create: tags
+                ?.filter(t => !t.id && t.title)
+                .map(t => ({ title: t.title! })) ?? [],
+        }
+    }
 
     private async execute(
         projectId: number,

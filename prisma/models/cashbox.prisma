@@ -11,30 +11,11 @@ model Cashbox {
 
   transactions Transaction[]
 
-  linkAsParent CashboxLink[] @relation("parent")
-  linkAsChild  CashboxLink[] @relation("children")
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([id, projectId])
   @@map("cashbox")
-}
-
-model CashboxLink {
-  id Int @id @default(autoincrement())
-
-  parentId   Int
-  childrenId Int
-
-  parent   Cashbox @relation(fields: [parentId], references: [id], onDelete: Cascade, name: "parent")
-  children Cashbox @relation(fields: [childrenId], references: [id], onDelete: Cascade, name: "children")
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([parentId, childrenId])
-  @@map("cashbox_link")
 }
 
 

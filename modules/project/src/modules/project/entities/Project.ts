@@ -1,11 +1,12 @@
 import { Setting } from "@schemas/common";
-import { MemberRole, UpdateData } from "../types";
+import { UpdateData } from "../types";
 import { Cashbox } from "../../cashbox/types";
-import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
+import { DecimalClass as Decimal, DecimalType } from "@shared-types/index.ts";
 
 export class ProjectEntity {
     public id: number;
     public title: string;
+    public balance: DecimalType;
     public settings: Setting[];
     public ownerId: number;
     public members: any[];
@@ -14,22 +15,13 @@ export class ProjectEntity {
     constructor(params: any) {
         this.id = params.id;
         this.title = params.title;
+        this.balance = this.calculateTotalSum(params.cashboxes);
         this.settings = params.settings;
         this.ownerId = params.ownerId;
         this.members = params.members;
         this.cashboxes = params.cashboxes;
     }
     
-    public toJSON() {
-        return {
-            id: this.id,
-            title: this.title,
-            settings: this.settings,
-            ownerId: this.ownerId,
-            members: this.formatMembers(this.members),
-            cashboxes: this.cashboxes,
-        }
-    }
 
     public getSettings() {
         if(typeof this.settings === 'string') return JSON.parse(this.settings);
@@ -52,18 +44,11 @@ export class ProjectEntity {
             settings: this.settings,
         };
     }
-    
-    public checkAccess(user: UserEntity, role: MemberRole = 'viewer') {
-        const userId = this.resolveUserId(user);
 
-        if(this.ownerId === userId) return true
+    private calculateTotalSum(cashboxes: any[]) {
+        const summ = cashboxes.reduce((summ, cashbox) => summ + cashbox.balance, 0);
 
-        const editors = this.members.filter(member => member.role === role)
-                                    .map(member => member.user)
-        
-        const inEditors = editors.some(i => i.id === userId)
-        
-        return inEditors;
+        return new Decimal(summ);
     }
 
     private setParameters(newParams: any) {
@@ -83,11 +68,16 @@ export class ProjectEntity {
         })
     }
 
-    private resolveUserId(user: any) {
-        if (typeof user === "object" && user !== null) {
-            return user.id;
-        } else {
-            return Number(user);
+    public toJSON() {
+        return {
+            id: this.id,
+            title: this.title,
+            balance: this.balance,
+            settings: this.settings,
+            ownerId: this.ownerId,
+            members: this.formatMembers(this.members),
+            cashboxes: this.cashboxes,
         }
-    } 
+    }
+
 }

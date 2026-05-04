@@ -32,28 +32,21 @@ const transactionServiveTg: EntityService<'transaction'> & MoneyTransfer = {
         return [];
     },
     async create(ctx: BotContext) {
-        const project_id = ctx.session.project_id;
-        const cashbox_id = ctx.session.project_id;
-        const user = await userService.getUser(ctx.session.user_id);
 
-        const createData = ctx.session.entityData;
-        
-        const data = {
-            amount: createData.amount,
-            type: createData.type
-        }
-
-        return await this.baseService.create(project_id, cashbox_id, data, user)
     },
     async update(ctx: BotContext){
 
     },
     async delete(ctx: BotContext){
+        const project_id = ctx.session.project_id;
+        const cashbox_id = ctx.session.project_id;
+        const transaction_id = ctx.session.transaction_id;
         const user = await this.userService.getUser(ctx.session.user_id);
 
         return await this.baseService.delete(
-            ctx.session.project_id,
-            ctx.session.transaction_id,
+            project_id,
+            cashbox_id,
+            transaction_id,
             user
         );
     },
