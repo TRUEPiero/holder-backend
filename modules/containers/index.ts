@@ -68,9 +68,9 @@ const projectService = new ProjectService(projectRepo, casheService);
 const memberService = new MembershipService(memberRepo, projectService, casheService);
 const inviteService = new ProjectInviteService(inviteRepo, userService, memberService, projectService)
 const cashboxService = new CashboxService(cashboxRepo, projectService, casheService);
-const transactionService = new TransactionService(transactionRepo, projectService);
+const transactionService = new TransactionService(transactionRepo, casheService, projectService);
 const transactionTagService = new TransactionTagService(transactionTagRepo, projectService);
-const transferService = new TransferService(projectService);
+const transferService = new TransferService(casheService, projectService);
 const cashboxSettingService = new SettingService(settingRepo, cashboxService);
 const projectSettingService = new SettingService(settingRepo, projectService);
 

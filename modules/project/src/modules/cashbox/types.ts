@@ -24,8 +24,20 @@ const ResponseCashbox = t.Object({
     balance: t.Any(),
 })
 
+const ResponseDetailCashbox = t.Object({
+    id: t.Number(),
+    settings: t.Array(setting),
+    title: t.String(),
+    description: t.String(),
+    balance: t.Any(),
+})
+
 const ResponseObject = t.Object({
     data: ResponseCashbox
+})
+
+const ResponseDetailObject = t.Object({
+    data: ResponseDetailCashbox
 })
 
 const ResponseObjects = t.Object({
@@ -39,6 +51,8 @@ export type {
 
 export {
     ResponseCashbox,
+    ResponseDetailCashbox,
     ResponseObject,
+    ResponseDetailObject,
     ResponseObjects
 }
