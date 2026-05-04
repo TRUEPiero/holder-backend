@@ -1,5 +1,5 @@
 import db from "@common/prisma";
-import { Decimal } from "@prisma/client/runtime/library";
+import { Decimal } from "@prisma/client/runtime/client";
 
 type PrismaModelName = keyof typeof db;
 type PrismaTxClient = Omit<typeof db, "$connect" | "$disconnect" | "$on" | "$transaction" | "$extends">;
