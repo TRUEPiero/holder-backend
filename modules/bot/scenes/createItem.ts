@@ -4,6 +4,7 @@ import { render } from "../lib/render";
 import { EntityServiceFactory } from "../lib/factory";
 import { EntityType, Step } from "../types";
 import { CommonKeyboard } from "../keyboards/common";
+import { EntityService } from "../interfaces/entity.service";
 
 const scene = new Scene<BotContext>("createEntity");
 
@@ -47,7 +48,7 @@ scene.wait('wait_title').on(['message:text', 'callback_query'], async(ctx) => {
 scene.label('create_item').step(async(ctx) => {
 
     const createData = ctx.session.entityData;
-    const service = EntityServiceFactory.create(createData.entity);
+    const service = EntityServiceFactory.create(createData.entity) as EntityService<'cashbox'> | EntityService<'project'>;
 
     try{     
         const item = await service.create(ctx)
