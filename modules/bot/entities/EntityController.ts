@@ -1,20 +1,22 @@
 import { BotContext } from "../core/context";
-import { buildItemMessage, buildSettingsMessage } from "../lib/builder";
+import { buildItemMessage, buildSettingsMessage } from "../lib/message-builder";
 import { replyOrEdit } from "../lib/send-method";
 import { EntityControllerParams, PaginationItem, Step } from "../types";
 import { EntityConfig } from "../interfaces/entity.config";
 import { EntityKeyboard } from "../interfaces/entity.keyboard";
 import { EntityService } from "../interfaces/entity.service";
+import { EntitySettingsOwner } from "../interfaces/owner-settings";
 
 class EntityController {
-    private service: EntityService<any>;
+    private service: EntityService<any> & EntitySettingsOwner;
     private config: EntityConfig<any>
     private keyboard: EntityKeyboard
 
     private methods = {
         page: this.renderList.bind(this),
         item: this.renderItem.bind(this),
-        settings: this.renderSettings.bind(this)
+        settings: this.renderSettings.bind(this),
+        start: null
     }
 
     constructor(params: EntityControllerParams) {
@@ -24,12 +26,14 @@ class EntityController {
     }
 
     public async render(ctx: BotContext, step: Step, isCommand: boolean) {
-        const type = step.type as 'page' | 'item' | 'settings';
+        const type = step.type;
         const id = Number(step.id);
 
         if(type === 'item') ctx.session[`${step.entity!}_id`] = id;
 
         const method = this.methods[type];
+        if(!method) return;
+        
         await method(ctx, id, isCommand);
     }
 

@@ -28,9 +28,6 @@ const transactionServiveTg: EntityService<'transaction'> & MoneyTransfer = {
     getList(filter) {
         return this.baseService.getWithPagination(filter)
     },
-    async getSettings(ctx) {
-        return [];
-    },
     async create(ctx: BotContext) {
 
     },

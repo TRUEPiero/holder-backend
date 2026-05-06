@@ -28,6 +28,10 @@ export class SettingEntity {
         this.isTelegram = params.isTelegram;
     }
 
+    public getType() {
+        return this.type;
+    }
+
     public toJSON() {
         return {
             id: this.id,

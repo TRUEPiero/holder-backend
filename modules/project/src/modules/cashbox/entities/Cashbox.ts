@@ -54,9 +54,18 @@ export class CashboxEntity {
         return this.settings;
     }
 
-    private setParameters(newParams: any) {
-        const preparedParams = newParams;
-        this.settings = preparedParams;
+    private setParameters(newParams: any[] = []) {
+        const map = new Map<string, any>();
+
+        for (const param of this.settings) {
+            map.set(param.code, param);
+        }
+
+        for (const param of newParams) {
+            map.set(param.code, param);
+        }
+
+        this.settings = Array.from(map.values());
     }
 
     public toJSON(): any {

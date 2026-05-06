@@ -17,7 +17,7 @@ export class ItemsKeyboard {
     }
 
     static async entityList(entity: EntityType, data: any, flags: EntityListFlags = {}) {
-        const { withBackButton = true, isMember = false } = flags;
+        const { withBackButton = true, isMember = false, create = false } = flags;
 
         const keyboard = new InlineKeyboard();
 
@@ -33,7 +33,7 @@ export class ItemsKeyboard {
             
             keyboard.append(paginationKeyboard)
         }
-        
+        if(create) keyboard.append(CommonKeyboard.create(entity));
         if (withBackButton) keyboard.append(CommonKeyboard.back());
 
         return InlineKeyboard.from(keyboard)

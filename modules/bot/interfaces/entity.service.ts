@@ -17,10 +17,8 @@ interface EntityService<K extends keyof ServiceMap> {
     baseService: ServiceMap[K];
     userService: UserService
     settingService: SettingService | null
-
     getItem(ctx: BotContext): Promise<any>
     getList(filter: any): Promise<any>
-    getSettings(ctx: BotContext): Promise<any>
     create(ctx: BotContext): any
     update(ctx: BotContext): any
     delete(ctx: BotContext): any

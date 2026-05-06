@@ -2,13 +2,18 @@ import { ItemsKeyboard } from "../../keyboards/list";
 import { MenuKeyboard } from "../../keyboards/menu";
 import { SettingKeyboard } from "../../keyboards/settings";
 import { EntityKeyboard } from "../../interfaces/entity.keyboard";
+import { EntityListFlags } from "../../types";
 
 const projectKeyboard: EntityKeyboard = {
     item() {
         return MenuKeyboard.projectMenu();
     },
-    async list(data) {   
-        return ItemsKeyboard.entityList("project", data);
+    async list(data) { 
+        const flags: EntityListFlags = {
+            create: true
+        };
+
+        return ItemsKeyboard.entityList("project", data, flags);
     },
     async settings(data) {       
         return await SettingKeyboard.projectSettings(data);

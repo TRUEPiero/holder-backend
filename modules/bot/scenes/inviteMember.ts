@@ -2,7 +2,7 @@ import { Scene } from "grammy-scenes";
 import { BotContext } from "../core/context";
 import { render } from "../lib/render";
 import { CommonKeyboard } from "../keyboards/common";
-import { EntityServiceFactory } from "../lib/factory";
+import { EntityServiceFactory } from "../lib/entity-factory";
 import { Step } from "../types";
 
 const scene = new Scene<BotContext>('inviteMember');

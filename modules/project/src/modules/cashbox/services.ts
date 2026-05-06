@@ -36,7 +36,7 @@ export class CashboxService implements SettingsOwner{
         return cashbox;
     }
 
-    public async create(projectId: number, body: any, user: any) {
+    public async create(projectId: number, body: any, user: UserEntity) {
         await this.projectService.authorize(projectId, user, 'cashbox:create');
 
         const createData = { 
@@ -54,7 +54,7 @@ export class CashboxService implements SettingsOwner{
         return created;
     }
 
-    public async update(projectId: number, id: number, data: any, user: any) {
+    public async update(projectId: number, id: number, data: any, user: UserEntity) {
         await this.projectService.authorize(projectId, user, 'cashbox:update');
 
         const cashbox = await this.getById(id, user, projectId);
@@ -68,7 +68,7 @@ export class CashboxService implements SettingsOwner{
         return res;
     }
 
-    public async delete(projectId: number, id: number, user: any) {
+    public async delete(projectId: number, id: number, user: UserEntity) {
         await this.projectService.authorize(projectId, user, 'cashbox:delete');
 
         await this.getById(id, user, projectId); 

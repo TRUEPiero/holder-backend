@@ -17,6 +17,12 @@ export class CommonKeyboard {
             .text('Отемна', 'cancel')
     }
 
+    static create(entity: string) {
+        return new InlineKeyboard()
+            .text('Добавить', `${entity}_create`)
+            .row()
+    }
+
     static cancelCreate() {
         return new InlineKeyboard()
             .text('Отемна', 'create_cancel')

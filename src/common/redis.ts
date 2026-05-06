@@ -35,4 +35,5 @@ export async function initRedis() {
     const redis = getRedis();
 
     if(!redis.isOpen) await redis.connect();
+    await redis.flushAll();
 }

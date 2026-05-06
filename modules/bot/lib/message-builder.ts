@@ -15,10 +15,13 @@ function buildItemMessage(entity: any, fields: any[]): string {
 function buildSettingsMessage(settings: any[]) {
     let res = `Настройки\n`
 
-    res += settings
-        .filter(s => s.type === 'boolean')
-        .map(s => `${s.title}: ${s.value ? 'on' : 'off'}`)
-        .join("\n")
+    settings.forEach(sett => {
+        if(sett.type === 'boolean') {
+            res += `${sett.title}: ${sett.value ? 'on' : 'off'}` + '\n';
+        } else {
+            res += `${sett.title}: ${sett.value}` + '\n'
+        }
+    })
 
     return res;
 }

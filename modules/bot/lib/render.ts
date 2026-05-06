@@ -2,7 +2,7 @@ import { BotContext } from "../core/context";
 import { MenuKeyboard } from "../keyboards/menu";
 import { HistoryService } from "../services/history";
 import { Step } from "../types";
-import { EntityControllerFactory } from "./factory";
+import { EntityControllerFactory } from "./entity-factory";
 import { replyOrEdit } from "./send-method";
 import { cashboxConfig } from "../entities/cashbox/config";
 import { cashboxServiceTg } from "../entities/cashbox/service";

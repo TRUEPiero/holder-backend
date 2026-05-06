@@ -1,7 +1,7 @@
 import { Scene } from "grammy-scenes";
 import { BotContext } from "../core/context";
 import { render } from "../lib/render";
-import { EntityServiceFactory } from "../lib/factory";
+import { EntityServiceFactory } from "../lib/entity-factory";
 import { EntityType, Step } from "../types";
 import { CommonKeyboard } from "../keyboards/common";
 import { EntityService } from "../interfaces/entity.service";

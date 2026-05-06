@@ -5,5 +5,5 @@ import { SettingTargets } from "../modules/settings/types";
 
 export interface SettingsOwner {
     getById(id: number, user: UserEntity, projectId?: number): Promise<ProjectEntity|CashboxEntity>;
-    getSettingTarget(): SettingTargets
+    getSettingTarget(): SettingTargets;
 }

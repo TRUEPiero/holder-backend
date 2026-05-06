@@ -10,10 +10,11 @@ type EntityControllerParams = {
     keyboard: any
 }
 
+type StepTypes = 'page' | 'item' | 'settings' | 'start';
 
 type Step = {
     entity?: EntityType,
-    type: string,
+    type: StepTypes,
     id?: number | null
 }
 
@@ -26,7 +27,8 @@ type PaginationItem = {
 
 type EntityListFlags = {
     withBackButton?: boolean;
-    isMember?: boolean
+    isMember?: boolean;
+    create?: boolean
 };
 
 export {

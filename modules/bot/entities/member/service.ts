@@ -17,9 +17,6 @@ const memberServiceTg: EntityService<'member'> = {
     getList(filter) {
         return this.baseService.getWithPagination(filter)
     },
-    async getSettings(ctx) {
-        return [];
-    },
     async create(ctx: BotContext) {
         const username = ctx.session.entityData.username;
         const user = await this.userService.getTelegramUser(username);
@@ -28,20 +25,10 @@ const memberServiceTg: EntityService<'member'> = {
         return await this.baseService.create(projectId, user);
     },
     async update(ctx: BotContext){
-        // const projectId = ctx.session.project_id;
-        // const user = await this.userService.getUser(ctx.session.user_id);
-        // const updateData = ctx.session.entityData;
-        // const data = {
-        //     title: updateData.title
-        // }
-
-        // return await this.baseService.update(user, projectId, data);
+        
     },
     async delete(ctx: BotContext){
-        // const projectId = ctx.session.project_id;
-        // const user = await this.userService.getUser(ctx.session.user_id);
 
-        // return await this.baseService.delete(user, projectId);
     },
 }
 

@@ -46,14 +46,25 @@ export class ProjectEntity {
     }
 
     private calculateTotalSum(cashboxes: any[]) {
+        if(!cashboxes || !cashboxes.length) return new Decimal(0);
+
         const summ = cashboxes.reduce((summ, cashbox) => summ + cashbox.balance, 0);
 
         return new Decimal(summ);
     }
 
-    private setParameters(newParams: any) {
-        const preparedParams = newParams;
-        this.settings = preparedParams;
+    private setParameters(newParams: any[] = []) {
+        const map = new Map<string, any>();
+
+        for (const param of this.settings) {
+            map.set(param.code, param);
+        }
+
+        for (const param of newParams) {
+            map.set(param.code, param);
+        }
+
+        this.settings = Array.from(map.values());
     }
 
     private formatMembers(members: any[]) {

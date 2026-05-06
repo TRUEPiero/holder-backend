@@ -6,7 +6,7 @@ import { render, renderListForChoice } from "../lib/render";
 import { Step, TransactionTypes } from "../types";
 import { MoneyTransfer } from "../interfaces/money-transfer";
 import { EntityService } from "../interfaces/entity.service";
-import { EntityServiceFactory } from "../lib/factory";
+import { EntityServiceFactory } from "../lib/entity-factory";
 
 const scene = new Scene<BotContext>('moneyTransfer');
 
