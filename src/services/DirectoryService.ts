@@ -36,7 +36,7 @@ export class DirectoryService<modelName extends PrismaModelName> extends BaseSer
         return await (this.model as any).create({data: InitObject}) || null;
     }
 
-    public async updateItem(id: number, data: any): Promise<any> {
+    public async updateItem(id: number, data: any, include: any = {}): Promise<any> {
         const InitObject = Object.assign(
             {},
             {
@@ -48,7 +48,8 @@ export class DirectoryService<modelName extends PrismaModelName> extends BaseSer
 
         const item = await (this.model as any).update({
             where: {id}, 
-            data: InitObject
+            data: InitObject,
+            include
         })
         
         return item || null

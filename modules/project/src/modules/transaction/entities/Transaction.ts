@@ -5,6 +5,7 @@ export class TransactionEntity {
     public type: string;
     public tags: any[];
     public author: any;
+    public isDeleted: boolean;
     public cashboxId: number;
     public cashbox: any;
     public createdAt: Date;
@@ -16,6 +17,7 @@ export class TransactionEntity {
         this.type = params.type;
         this.tags = params.tags || [];
         this.author = params.author || {};
+        this.isDeleted = params.isDeleted;
         this.cashboxId = params.cashboxId;
         this.cashbox = params.cashbox || {};
         this.createdAt = params.createdAt;

@@ -73,13 +73,14 @@ export class ProjectEntity {
         return members.map((member: any) => {
             return {
                 ...member.user,
+                memberId: member.id,
                 role: member.role,
                 password: undefined
             }
         })
     }
 
-    public toJSON() {
+    public response() {
         return {
             id: this.id,
             title: this.title,

@@ -54,17 +54,17 @@ type ParamsExternal = {
     }[]
 }
 
+const Tag = t.Object({
+    id: t.Optional(t.Number()),
+    title: t.Optional(t.String())
+})
+
 const ResponseTransaction = t.Object({
     id: t.Number(),
     amount: t.Any(),
     description: t.Nullable(t.String()),
-    tags: t.Array(t.Any()),
+    tags: t.Array(Tag),
     cashboxId: t.Number()
-})
-
-const Tag = t.Object({
-    id: t.Optional(t.Number()),
-    title: t.Optional(t.String())
 })
 
 const ResponseTag = t.Object({

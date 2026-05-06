@@ -1,6 +1,6 @@
 import { DirectoryService } from "@services/DirectoryService";
 import { MemberEntity } from "../entities/membership";
-import { Member } from "../types";
+import { Member, SoftDeleteData } from "../types";
 
 export class MembershipRepository {
     constructor(private base: DirectoryService<'projectMember'>) {}
@@ -54,5 +54,12 @@ export class MembershipRepository {
         if(!updated) return null;
 
         return new MemberEntity(updated);
+    }
+
+    public async softDelete(id: number, data: SoftDeleteData) {
+        const deleted = await this.base.updateItem(id, data);
+        if(!deleted) return null;
+
+        return new MemberEntity(deleted);
     }
 }

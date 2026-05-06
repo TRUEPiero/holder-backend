@@ -1,4 +1,4 @@
-import { AccessDeniedError, AlreadyExistError, NotCreatedError, NotFoundError, NotUpdatedError } from "@common/errors";
+import { AlreadyExistError, NotCreatedError, NotDeletedError, NotFoundError, NotUpdatedError } from "@common/errors";
 import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
 import { ProjectService } from "../../project/services";
 import { MembershipRepository } from "../repositories/membership";
@@ -18,6 +18,12 @@ export class MembershipService {
         return member;
     }
 
+    public async getByUser(user: UserEntity) {
+        const member = await this.repo.findByFilter({userId: user.id});
+        if(!member) throw new NotFoundError("MEMBER");
+        return member;
+    }
+
     public async getWithPagination(parameters: any) {
         const members = await this.repo.findWithPagination(parameters);
         return members;
@@ -25,7 +31,20 @@ export class MembershipService {
 
     public async create(projectId: number, user: UserEntity) {
         const exist = await this.repo.findByFilter({projectId, userId: user.id})
-        if(exist) throw new AlreadyExistError('MEMBER');
+        if(exist) {
+            if(!exist.isDeleted) throw new AlreadyExistError('MEMBER');
+
+            const updateData = {
+                isDeleted: false
+            }
+
+            const updated = await this.repo.update(exist.id, updateData);
+            if(!updated) throw new NotCreatedError('MEMBER');
+
+            await this.cashe.del(`project:${projectId}`);
+
+            return updated;
+        };
 
         const member = await this.repo.create({
             projectId,
@@ -57,7 +76,21 @@ export class MembershipService {
         return detail;
     }
     
-    public async delete(projectId: number, userId: number) {
+    public async delete(projectId: number, memberId: number, user: UserEntity) {
+        await this.projectService.authorize(projectId, user, 'member:delete');
 
+        const member = await this.repo.findByFilter({id: memberId, projectId});
+        if(!member) throw new  NotFoundError("MEMBER");
+
+        const deleteData = {
+            isDeleted: true
+        }
+
+        const deleted = await this.repo.softDelete(memberId, deleteData);
+        if(!deleted) throw new NotDeletedError("MEMBER");
+
+        await this.cashe.del(`project:${projectId}`);
+
+        return deleted;
     }
 }

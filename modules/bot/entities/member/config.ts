@@ -8,7 +8,7 @@ const memberConfig: EntityConfig<any> = {
         { key: "user.telegram", title: "TG", visible: true, formatter: (value: string) => `@${value}` }
     ],
     getFilter(ctx) {
-        return { projectId: ctx.session.project_id };
+        return { projectId: ctx.session.project_id, isDeleted: false };
     },
     getTitleKey(item) {
         return `${item.user!.name} (${item.role})`

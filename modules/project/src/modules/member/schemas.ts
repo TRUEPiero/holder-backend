@@ -52,5 +52,20 @@ export const schema = {
             tags: ['Участники'],
             desctiprion: 'Обновить роль участника'
         }
+    },
+
+    delete: {
+        params: t.Object({
+            pid: t.Number(),
+            mid: t.Number()
+        }),
+        response: {
+            200: ResponseObject,
+            ...errorSchema
+        },
+        detail: {
+            tags: ['Участники'],
+            desctiprion: 'Удалить участника'
+        }
     }
 }

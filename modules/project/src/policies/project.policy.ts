@@ -36,6 +36,7 @@ const permissionsByRole: Record<ProjectActorRole, ProjectPermission[]> = {
     "transaction:delete",
     "member:invite",
     "member:update",
+    "member:delete",
     "settings:read",
     "settings:update",
   ],

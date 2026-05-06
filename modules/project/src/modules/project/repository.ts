@@ -34,7 +34,10 @@ export class ProjectRepository {
         const data = await this.base.getFirstByFields(
             { id },
             {
-                members: { include: { user: true } },
+                members: { 
+                    where: { isDeleted: false },
+                    include: { user: true } 
+                },
                 cashboxes: true
             }
         );

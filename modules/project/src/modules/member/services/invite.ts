@@ -52,7 +52,7 @@ export class ProjectInviteService {
         )
         if(!updated) throw new NotUpdatedError("INVITE");
 
-        return  await this.memberService.create(projectId, user);
+        return await this.memberService.create(projectId, user);
     }
 
     private generateCode() {

@@ -13,13 +13,17 @@ type Member = {
     joinedAt: Date
 }
 
+type SoftDeleteData = {
+    isDeleted: boolean
+}
+
 const memberRole = t.Enum(MemberRole)
 
 const ResponseMember = t.Object({
     id: t.Number(),
     projectId: t.Number(),
     role: t.String(),
-    user: ResponseUser,
+    user: t.Optional(ResponseUser),
     joinedAt: t.Date()
 })
 
@@ -32,6 +36,7 @@ const ResponseObjects = t.Object({
 })
 
 export type{
+    SoftDeleteData,
     MemberRoles,
     Member
 }

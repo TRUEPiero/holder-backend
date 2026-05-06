@@ -17,7 +17,7 @@ export const ProjectController = new Elysia({
 
 .get('/:pid', async({params: {pid}, user}) => {
     const project = await projectService.authorize(pid, user, 'project:read');
-    return {data: project}
+    return {data: project.response()}
 }, schema.detail)
 
 .post('/', async({user, body}) => {

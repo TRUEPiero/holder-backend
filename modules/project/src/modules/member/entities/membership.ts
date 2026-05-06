@@ -7,14 +7,16 @@ export class MemberEntity {
     public userId: number
     public user: UserEntity
     public role: MemberRoles
+    public isDeleted: boolean;
     public joinedAt: Date
 
     constructor(params: any) {
         this.id = params.id;
         this.projectId = params.projectId;
         this.userId = params.userId;
-        this.user = params.user;
+        this.user = params.user || undefined;
         this.role = params.role;
+        this.isDeleted = params.isDeleted;
         this.joinedAt = params.joinedAt;
     }
 

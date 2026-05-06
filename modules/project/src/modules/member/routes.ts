@@ -16,7 +16,7 @@ export const MembershipController = new Elysia({
     
 }, schema.invite) 
 
-.post('/invite/accept', async ({params: {pid},body: {code}, user}) => {
+.post('/invite/accept', async ({params: {pid}, body: {code}, user}) => {
     const member =  await inviteService.acceptInvite(pid, code, user);
     return {data: member}
 }, schema.accept)
@@ -25,3 +25,8 @@ export const MembershipController = new Elysia({
     const member = await memberService.update(pid, mid, {role}, user); 
     return {data: member}
 }, schema.updateRole)
+
+.delete('/:mid', async({params: {pid, mid}, user}) => {
+    const member = await memberService.delete(pid, mid, user);
+    return {data: member};
+}, schema.delete)

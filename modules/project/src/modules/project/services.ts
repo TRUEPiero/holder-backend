@@ -41,7 +41,7 @@ export class ProjectService implements SettingsOwner{
 
             project = dbProject;
 
-            await this.cashe.set(`project:${id}`, project.toJSON())
+            await this.cashe.set(`project:${id}`, project)
         }
 
         return project;
