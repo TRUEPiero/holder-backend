@@ -4,6 +4,7 @@ import { TransactionRepository } from "../repositories/transaction";
 import { CreateData, Query } from "../types";
 import { InvalidFieldError, NotCreatedError, NotDeletedError, NotFoundError } from "@common/errors";
 import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
+import { DecimalClass as Decimal } from "@shared-types/index.ts";
 
 export class TransactionService {
 
@@ -25,18 +26,59 @@ export class TransactionService {
         return await this.repo.findByCashbox(projectId, cashboxId)
     }
 
+    public async getGroupedByTags(projectId: number, cashboxId: number, user: UserEntity) {
+        await this.projectService.authorize(projectId, user, 'transaction:read');
+        
+        const filter = {
+            cashboxId,
+            cashbox: {
+                projectId
+            },
+        };
+        const include = {
+            tag: true
+        }
+        
+        const transactions = await this.repo.findByFilter(filter, include);
+
+        const result = {
+            income: [] as any[],
+            expense: [] as any[]
+        }
+
+        for(const type of ['income', 'expense'] as const) {
+            const filtered = transactions.filter(i => i.type === type);
+
+            const groupedByTag = Object.groupBy(filtered, item => {
+                return item.tag.title ?? 'other'
+            });
+
+            result[type] = Object.entries(groupedByTag).map(
+                ([tagTitle, transactions]) => ({
+                    id: transactions?.[0]?.tag?.id ?? null,
+                    title: transactions?.[0]?.tag?.title ?? tagTitle,
+                    transactions: transactions ?? [],
+                    amount: transactions?.reduce((summ, transaction) => summ.plus(transaction.amount), new Decimal(0))
+                })
+            );
+        }
+
+        return result;
+    }
+
     public async getByFilter(projectId: number, cashboxId: number, query: Query, user: UserEntity) {
         await this.projectService.authorize(projectId, user, 'transaction:read');
         const filter = {
             cashboxId,
-            tags: query?.tags ? 
-                {
-                    in: query?.tags
-                } : undefined
+            cashbox: {
+                projectId
+            },
+            tag: {
+                in: query?.tags
+            }
         }
-
         const include = {
-            tags: true
+            tag: true
         }
 
         const transaction = await this.repo.findByFilter(filter, include);

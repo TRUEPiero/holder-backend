@@ -1,10 +1,11 @@
 {
   "compilerOptions": {
     /* Language and Environment */
-    "target": "ES2021",
+    "target": "ES2024",
    /* Modules */
     "module": "ES2022",
     // "rootDir": "./",
+     "lib": ["ES2024"],
     "moduleResolution": "node",
     "types": ["bun-types"],
     "esModuleInterop": true,

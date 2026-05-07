@@ -3,7 +3,9 @@ export class TransactionEntity {
     public amount: number;
     public description: string;
     public type: string;
-    public tags: any[];
+    public tagId: number;
+    public tag: any;
+    public authorId: number;
     public author: any;
     public isDeleted: boolean;
     public cashboxId: number;
@@ -15,7 +17,9 @@ export class TransactionEntity {
         this.amount = params.amount;
         this.description = params.description || '';
         this.type = params.type;
-        this.tags = params.tags || [];
+        this.tagId = params.tagId;
+        this.tag = params.tag || null;
+        this.authorId = params.authorId;
         this.author = params.author || {};
         this.isDeleted = params.isDeleted;
         this.cashboxId = params.cashboxId;

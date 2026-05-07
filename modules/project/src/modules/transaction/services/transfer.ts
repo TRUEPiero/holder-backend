@@ -3,8 +3,8 @@ import { Money } from "../../cashbox/entities/Money";
 import { ProjectService } from "../../project/services";
 import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
 import { PrismaTxClient } from "@shared-types/index.ts";
-import { ParamsBetween, ParamsExternal, TransactionTypes } from "../types";
-import { NotFoundError } from "@common/errors";
+import { ParamsBetween, ParamsExternal, TransactionTag, TransactionTypes } from "../types";
+import { NotCreatedError, NotFoundError } from "@common/errors";
 import { SameIdError } from "../errors";
 
 export class TransferService {
@@ -48,24 +48,25 @@ export class TransferService {
             });
             if (creditResult.count !== 1) throw new NotFoundError('CASHBOX');
 
-            await tx.transaction.create({
-                data: {
-                    cashboxId: request.to,
-                    type: "income",
-                    amount: amount.get(),
-                    authorId: user.id,
-                    tags: this.connectOrCreate(request.tags)
-                }
-            })
+            const tag = await this.getFirstTagOrCreate(tx, request.tag);
 
-            await tx.transaction.create({
-                data: {
-                    cashboxId,
-                    type: "expense",
-                    amount: amount.get(),
-                    authorId: user.id,
-                    tags: this.connectOrCreate(request.tags)
-                }
+            await tx.transaction.createManyAndReturn({
+                data: [
+                    {
+                        cashboxId,
+                        type: "expense",
+                        amount: amount.get(),
+                        authorId: user.id,
+                        tagId: tag?.id
+                    },
+                    {
+                        cashboxId: request.to,
+                        type: "income",
+                        amount: amount.get(),
+                        authorId: user.id,
+                        tagId: tag?.id
+                    }
+                ]
             })
 
             return true;
@@ -112,13 +113,15 @@ export class TransferService {
                 if (updated.count !== 1) throw new NotFoundError('CASHBOX_OR_NOT_ENOUGH_BALANCE');
             }
 
+            const tag = await this.getFirstTagOrCreate(tx, request.tag);
+
             await tx.transaction.create({
                 data: {
                     cashboxId,
                     type: transactionType,
                     amount: amount.get(),
                     authorId: user.id,
-                    tags: this.connectOrCreate(request.tags)
+                    tagId: tag?.id
                 }
             });
 
@@ -126,16 +129,29 @@ export class TransferService {
         });
     }
 
-    private connectOrCreate(tags?: {id?: number, title?: string}[]) {
-        return {
-            connect: tags
-                ?.filter(t => t.id)
-                .map(t => ({ id: t.id! })) ?? [],
+    private async getFirstTagOrCreate(tx: PrismaTxClient, tag?: TransactionTag) {
+        if(!tag) return;
 
-            create: tags
-                ?.filter(t => !t.id && t.title)
-                .map(t => ({ title: t.title! })) ?? [],
-        }
+        const exist = await tx.transactionTag.findFirst({
+            where: {
+                OR: [
+                    {id: tag.id},
+                    {title: tag.title}
+                ]
+            }
+        })
+        if(exist) return exist;
+
+        if(!tag.title) throw new Error("Error while adding tag.");
+
+        const created = await tx.transactionTag.create({
+            data: {
+                title: tag.title
+            }
+        })
+
+        if(!created) throw new NotCreatedError('TRANSACTION TAG');
+        return created;
     }
 
     private async execute(
