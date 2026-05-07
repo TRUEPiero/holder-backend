@@ -73,6 +73,8 @@ export class TransferService {
 
             await this.cashe.del(`project:${projectId}`)
 
+            await this.cashe.del(`project:${projectId}`)
+
             return true;
         })
     }
