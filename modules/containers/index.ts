@@ -42,7 +42,7 @@ const memberBase = new DirectoryService<'projectMember'>('projectMember', ['user
 const inviteBase = new DirectoryService<'projectInvite'>('projectInvite', []);
 const cashboxBase = new DirectoryService<'cashbox'>('cashbox', ['project']);
 const settingBase = new DirectoryService<'settingDefinition'>('settingDefinition', []);
-const transactionBase = new DirectoryService<'transaction'>('transaction', ['cashbox', 'author']);
+const transactionBase = new DirectoryService<'transaction'>('transaction', ['cashbox', 'author', 'tag']);
 const transactionTagBase = new DirectoryService<'transactionTag'>('transactionTag', []);
 
 // repos

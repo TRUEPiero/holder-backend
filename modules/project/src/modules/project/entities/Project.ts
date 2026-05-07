@@ -46,7 +46,9 @@ export class ProjectEntity {
     }
 
     private calculateTotalSum(cashboxes: any[]) {
-        const summ = cashboxes.reduce((summ, cashbox) => summ + cashbox.balance, 0);
+        if(!cashboxes || !cashboxes.length) return new Decimal(0);
+
+        const summ = cashboxes.reduce((summ, cashbox) => summ.plus(cashbox.balance), new Decimal(0));
 
         return new Decimal(summ);
     }

@@ -1,6 +1,6 @@
 import { errorSchema } from "@schemas/error";
 import {t} from 'elysia';
-import { ResponseObjects, ResponseTags, Tag, TypesUnion } from "./types";
+import { ResponseGrouped, ResponseObjects, Tag, TypesUnion } from "./types";
 
 export const schema = {
     getByCashbox: {
@@ -26,7 +26,7 @@ export const schema = {
             cid: t.Number()
         }),
         response: {
-            200: ResponseTags,
+            200: ResponseGrouped,
             ...errorSchema
         },
         detail: {
@@ -42,7 +42,7 @@ export const schema = {
         body: t.Object({
             to: t.Number(),
             amount: t.Number(),
-            tags: t.Optional(t.Array(Tag))
+            tag: t.Optional(Tag)
         }),
         response: {
             200: t.Boolean(),
@@ -61,7 +61,7 @@ export const schema = {
         body: t.Object({
             amount: t.Number(),
             type: TypesUnion,
-            tags: t.Optional(t.Array(Tag))
+            tag: t.Optional(Tag)
         }),
         response: {
             200: t.Boolean(),

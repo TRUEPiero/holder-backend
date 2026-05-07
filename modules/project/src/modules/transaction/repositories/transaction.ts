@@ -27,7 +27,7 @@ export class TransactionRepository {
         return data.map((t: Transaction) => new TransactionEntity(t))
     }
 
-    public async findByFilter(filter: any, include: any) {
+    public async findByFilter(filter: any, include?: any) {
         const data = await this.base.getByFields(filter, include);
         
         return data.map((t: Transaction) => new TransactionEntity(t))

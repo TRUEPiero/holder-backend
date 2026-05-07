@@ -1,6 +1,8 @@
 import { TransactionType } from '@prisma/client';
 import {t} from 'elysia';
 
+type TransactionTypes = TransactionType
+
 type Query = {
     tags?: number[]
 }
@@ -17,11 +19,9 @@ type Transaction = {
 }
 
 type TransactionTag = {
-    id: number,
-    title: string
+    id?: number,
+    title?: string
 }
-
-type TransactionTypes = TransactionType
 
 type CreateData = {
     amount: number;
@@ -39,32 +39,51 @@ type SoftDeleteData = {
 type ParamsBetween = {
     amount: number,
     to: number,
-    tags?: {
+    tag?: {
         id?: number
         title?: string
-    }[]
+    }
 }
 
 type ParamsExternal = {
     amount: number,
     type: TransactionTypes
-    tags?: {
+    tag?: {
         id?: number
         title?: string
-    }[]
+    }
 }
 
-const ResponseTransaction = t.Object({
+const TypesUnion = t.Union([
+    t.Literal("income"),
+    t.Literal("expense")
+]);
+
+const transaction = t.Object({
     id: t.Number(),
     amount: t.Any(),
     description: t.Nullable(t.String()),
-    tags: t.Array(t.Any()),
-    cashboxId: t.Number()
+    tagId: t.Number(),
 })
 
 const Tag = t.Object({
     id: t.Optional(t.Number()),
-    title: t.Optional(t.String())
+    title: t.Optional(t.String({
+        minLength: 1
+    })),
+    transactions: t.Optional(
+        t.Array(transaction)
+    ),
+    amount: t.Optional(t.Any())
+})
+
+const TransactionDetail = t.Object({
+    id: t.Number(),
+    amount: t.Any(),
+    description: t.Nullable(t.String()),
+    tag: t.Nullable(Tag),
+    cashboxId: t.Number(),
+    authorId: t.Number()
 })
 
 const ResponseTag = t.Object({
@@ -75,17 +94,18 @@ const ResponseTags = t.Object({
     data: t.Array(Tag)
 })
 
-const TypesUnion = t.Union([
-    t.Literal("income"),
-    t.Literal("expense")
-]);
-
 const ResponseObject = t.Object({
-    data: t.Nullable(ResponseTransaction)
+    data: t.Nullable(TransactionDetail)
 })
 
 const ResponseObjects = t.Object({
-    data: t.Array(ResponseTransaction)
+    data: t.Array(TransactionDetail)
+})
+
+const ResponseGrouped = t.Object({
+    data: t.Record(
+        t.String(), t.Array(Tag)
+    )
 })
 
 export type {
@@ -100,11 +120,13 @@ export type {
 }
 
 export {
+    Tag,
     TypesUnion,
-    ResponseTransaction,
+    transaction,
+    TransactionDetail,
     ResponseObject,
     ResponseObjects,
-    Tag,
     ResponseTag,
     ResponseTags,
+    ResponseGrouped
 }
