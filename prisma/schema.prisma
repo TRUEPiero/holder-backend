@@ -167,7 +167,8 @@ model Transaction {
 
   type TransactionType
 
-  tags TransactionTag[]
+  tagId Int? @map("tag_id")
+  tag TransactionTag? @relation(fields: [tagId], references: [id], onDelete: SetNull)
 
   isDeleted Boolean @default(false)
 
@@ -185,12 +186,11 @@ model Transaction {
 
 model TransactionTag {
   id    Int    @id @default(autoincrement())
-  title String 
+  title String @unique
 
   transactions Transaction[]
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
   @@map("transaction_tag")
 }
