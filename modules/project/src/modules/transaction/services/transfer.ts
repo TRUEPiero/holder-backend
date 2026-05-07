@@ -6,10 +6,12 @@ import { PrismaTxClient } from "@shared-types/index.ts";
 import { ParamsBetween, ParamsExternal, TransactionTag, TransactionTypes } from "../types";
 import { NotCreatedError, NotFoundError } from "@common/errors";
 import { SameIdError } from "../errors";
+import { CasheService } from "@services/CasheService";
 
 export class TransferService {
 
     constructor(
+        private cashe: CasheService,
         private projectService: ProjectService,
     ) { }
 
@@ -69,6 +71,10 @@ export class TransferService {
                 ]
             })
 
+            await this.cashe.del(`project:${projectId}`)
+
+            await this.cashe.del(`project:${projectId}`)
+
             return true;
         })
     }
@@ -124,6 +130,8 @@ export class TransferService {
                     tagId: tag?.id
                 }
             });
+
+            await this.cashe.del(`project:${projectId}`)
 
             return true;
         });

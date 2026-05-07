@@ -5,11 +5,13 @@ import { CreateData, Query } from "../types";
 import { InvalidFieldError, NotCreatedError, NotDeletedError, NotFoundError } from "@common/errors";
 import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
 import { DecimalClass as Decimal } from "@shared-types/index.ts";
+import { CasheService } from "@services/CasheService";
 
 export class TransactionService {
 
     constructor(
         private repo: TransactionRepository,
+        private cashe: CasheService,
         private projectService: ProjectService
     ) {}
 
@@ -117,6 +119,8 @@ export class TransactionService {
 
         const deleted = await this.repo.softDelete(id, deletedData);
         if(!deleted) throw new NotDeletedError("TRANSACTION");
+
+        await this.cashe.del(`project:${projectId}`);
 
         return deleted;
     }
