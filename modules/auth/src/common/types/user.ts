@@ -3,7 +3,8 @@ import { t } from "elysia";
 export type User = {
     id: number
     name: string
-    status: string,
+    email: string
+    status: string
     telegram?: string
     telegramId?: number
 }
@@ -11,6 +12,7 @@ export type User = {
 export const ResponseUser = t.Object({
     id: t.Number(),
     name: t.String(),
+    email: t.String(),
     status: t.String(),
     telegram: t.Nullable(t.Any()),
     telegramId: t.Nullable(t.Any()),

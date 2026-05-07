@@ -1,4 +1,4 @@
-import {Elysia, t} from 'elysia';
+import {Elysia } from 'elysia';
 import { container } from '../../../../containers';
 import { deriveUser } from '@plugins/deriveUser';
 import { schema } from './schemas';

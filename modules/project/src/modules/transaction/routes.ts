@@ -1,9 +1,9 @@
-import { Elysia, t } from 'elysia'
+import { Elysia } from 'elysia'
 import { schema } from './schemas';
 import { deriveUser } from '@plugins/deriveUser';
 import { container } from '../../../../containers';
 
-const {transactionService, transferService, transactionTagService} = container
+const {transactionService, transferService } = container
 
 export const TransactionController = new Elysia({
     prefix: 'project/:pid/cashbox/:cid/transaction'
@@ -16,9 +16,7 @@ export const TransactionController = new Elysia({
 }, schema.getByCashbox)
 
 .get('/tags', async({params: {pid, cid}, user}) => {
-    // const transactionTags = await transactionTagService.getByCashbox(pid, cid, user);
     const transactionTags = await transactionService.getGroupedByTags(pid, cid, user);
-    
     return {data: transactionTags}
 },schema.getTags)
 

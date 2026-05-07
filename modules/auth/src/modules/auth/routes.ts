@@ -14,7 +14,9 @@ export const AuthController = new Elysia({
 })
 .use(jwtPlugin)
 
-.post('/login', async ({ body: { email, password }, jwt, cookie }) => {
+.post('/login', async ({ body: { email, password }, jwt, cookie, set }) => {
+    set.headers['content-type'] = 'application/json';
+    
     const user = await authService.login(email, password);
 
     const tokenService = new AuthTokenService(jwt);
@@ -32,7 +34,9 @@ export const AuthController = new Elysia({
     return { data: user }
 }, schema.login)
 
-.post('/refresh', async ({ jwt, cookie }) => {
+.post('/refresh', async ({ jwt, cookie, set }) => {
+    set.headers['content-type'] = 'application/json';
+
     const refreshToken: any = cookie['refresh_token']?.value;
     if (!refreshToken) throw new UnautorizedError();
 
@@ -59,7 +63,9 @@ export const AuthController = new Elysia({
     return true;
 }, schema.refresh)
 
-.post('/logout', async ({ jwt, cookie }) => {
+.post('/logout', async ({ jwt, cookie, set }) => {
+    set.headers['content-type'] = 'application/json';
+    
     const refreshToken: any = cookie['refresh_token']?.value;
 
     if (refreshToken) {

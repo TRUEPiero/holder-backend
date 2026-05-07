@@ -8,33 +8,34 @@ export const schema = {
             email: t.String(),
             password: t.String(),
         }),
+        response: {
+            200: ResponseObject,
+            ...errorSchema
+        },
+        cookie: t.Cookie(t.Any()),
         detail: {
             description: 'Авторизация',
             tags: ['Авторизация']
         },
-        response: {
-            200: ResponseObject,
-            ...errorSchema
-        }
     },
     refresh: {
+        response:{ 
+            200: t.Boolean(),
+            ...errorSchema
+        },
         detail: {
             description: 'Обновление acces token',
             tags: ['Авторизация']
         },
+    },
+    logout: {
         response:{ 
             200: t.Boolean(),
             ...errorSchema
-        }
-    },
-    logout: {
+        },
         detail: {
             description: 'Разавторизация',
             tags: ['Авторизация']
         },
-        response:{ 
-            200: t.Boolean(),
-            ...errorSchema
-        }
     }
 }

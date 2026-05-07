@@ -3,7 +3,7 @@ export class AuthCookieService {
 
     public setAccess(token: string) {
         this.cookie['access_token'].set({
-             value: token,
+            value: token,
             httpOnly: true,
             secure: true,
             sameSite: 'lax',
@@ -17,9 +17,9 @@ export class AuthCookieService {
             value: token,
             httpOnly: true,
             secure: true,
-            sameSite: 'strict',
+            sameSite: 'lax',
             maxAge: 60 * 60 * 24 * 30,
-            path: '/auth/refresh'
+            path: '/auth'
         })
     }
 
