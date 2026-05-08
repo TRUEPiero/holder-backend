@@ -18,8 +18,14 @@ const memberServiceTg: EntityService<'member'> = {
         return this.baseService.getWithPagination(filter)
     },
     async create(ctx: BotContext) {
-        const username = ctx.session.entityData.username;
-        const user = await this.userService.getTelegramUser(username);
+        const telegram = ctx.session.entityData.username;
+        const filter = {
+            telegram
+        }
+
+        const user = await this.userService.getTelegramUser(filter);
+        if(!user) return null;
+
         const projectId = ctx.session.project_id;
 
         return await this.baseService.create(projectId, user);

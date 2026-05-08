@@ -15,6 +15,6 @@ export const UserController = new Elysia({
 }, schema.getUser)
 
 .patch('/', async({user, body}) => { 
-    const entity = await userService.updateUser(user, body);
+    const entity = await userService.update(user, body);
     return {data: entity}
 }, schema.updateUser)

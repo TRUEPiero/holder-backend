@@ -1,5 +1,11 @@
 import { NotCreatedError, NotFoundError, NotUpdatedError } from "@common/errors";
 import { UserRepository } from "./repository";
+import { UserEntity } from "./entities/User";
+
+type TelegramFilter = {
+    telegramId?: number | string,
+    telegram?: string
+}
 
 export class UserService{
     
@@ -21,13 +27,18 @@ export class UserService{
         return user;
     }
 
-    public async getTelegramUser(telegramId: number) {
+    public async getTelegramUser(params: TelegramFilter) {
+        const {telegramId, telegram} = params;
+
         const filter = {
-            telegramId
+            OR: [
+                {telegramId},
+                {telegram}
+            ],
+            
         }
 
         const user = await this.repo.findByFilter(filter);
-        if(!user) throw new NotFoundError('USER')
         return user
     }
 
@@ -43,7 +54,7 @@ export class UserService{
         return created;
     }
 
-    public async updateUser(user: any, data: any) {
+    public async update(user: UserEntity, data: any) {
         user.update(data)
 
         const updateData = {

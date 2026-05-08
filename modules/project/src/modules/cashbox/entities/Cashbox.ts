@@ -37,11 +37,13 @@ export class CashboxEntity {
     }
 
     public update(data: UpdateData) {
-        const {settings, ...dataWithoutParams} = data;
+        const {settings, balance, ...dataWithoutParams} = data;
         
         for(const [key, value] of Object.entries(dataWithoutParams)) {
             (this as any)[key] = value
         }
+        
+        this.balance = new Decimal(balance!);
 
         this.setParameters(settings);
 

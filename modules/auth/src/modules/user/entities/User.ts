@@ -19,6 +19,7 @@ export class UserEntity {
 
     public async update(data: any) {
         if(data.name) this.name = data.name;
+        if(data.telegramId) this.telegramId = data.telegramId;
         if(data.telegram) this.telegram = data.telegram;
         if(data.password) this.password = await Bun.password.hash(data.password);
     }
