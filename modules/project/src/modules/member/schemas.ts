@@ -41,7 +41,7 @@ export const schema = {
         }),
         body: t.Partial(
             t.Object({
-                role: memberRole
+                roleId: t.Number() 
             })
         ),
         response: {

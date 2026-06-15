@@ -48,11 +48,11 @@ export class ProjectInviteService {
 
         const updated = await this.inviteRepo.update(
             {code}, 
-            invite.toJSON()
+            invite.response()
         )
         if(!updated) throw new NotUpdatedError("INVITE");
 
-        return await this.memberService.create(projectId, user);
+        return await this.memberService.create(user, {}, projectId);
     }
 
     private generateCode() {

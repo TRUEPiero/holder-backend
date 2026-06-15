@@ -49,18 +49,18 @@ export class TransactionService {
         }
 
         for(const type of ['income', 'expense'] as const) {
-            const filtered = transactions.filter(i => i.type === type);
+            const filtered = transactions.filter(i => i.getType() === type);
 
             const groupedByTag = Object.groupBy(filtered, item => {
-                return item.tag.title ?? 'other'
+                return item.getTag().title ?? 'other'
             });
 
             result[type] = Object.entries(groupedByTag).map(
                 ([tagTitle, transactions]) => ({
-                    id: transactions?.[0]?.tag?.id ?? null,
-                    title: transactions?.[0]?.tag?.title ?? tagTitle,
+                    id: transactions?.[0]?.getTag()?.id ?? null,
+                    title: transactions?.[0]?.getTag()?.title ?? tagTitle,
                     transactions: transactions ?? [],
-                    amount: transactions?.reduce((summ, transaction) => summ.plus(transaction.amount), new Decimal(0))
+                    amount: transactions?.reduce((summ, transaction) => summ.plus(transaction.getAmount()), new Decimal(0))
                 })
             );
         }
@@ -83,7 +83,7 @@ export class TransactionService {
             tag: true
         }
 
-        const transaction = await this.repo.findByFilter(filter, include);
+        const transaction = (await this.repo.findByFilter(filter, include)).map(i => i.response());
         if(!transaction) throw new NotFoundError("TRANSACTION");
 
         return transaction;

@@ -1,11 +1,13 @@
+import { Setting } from "@schemas/common";
 import { UserEntity } from "../../../auth/src/modules/user/entities/User";
-import { CashboxEntity } from "../modules/cashbox/entities/Cashbox";
-import { ProjectEntity } from "../modules/project/entities/Project";
 import { SettingTargets } from "../modules/settings/types";
 
 export interface SettingsOwner {
-    getById(id: number, user: UserEntity, projectId?: number): Promise<ProjectEntity|CashboxEntity>;
+    getById(id: number, user: UserEntity, parentId?: number): Promise<SettingTarget>;
     getSettingTarget(): SettingTargets;
     createOrUpdateSetting(id: number, user: UserEntity, data: any[]): any,
-    getDefaultSetting(): any[]
+}
+
+export interface SettingTarget {
+    getSettings(): Setting[]
 }

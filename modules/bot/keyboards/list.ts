@@ -11,7 +11,7 @@ export class ItemsKeyboard {
 
         return new InlineKeyboard()
             .text(prevPage ? `<< ${prevPage}` : " ", `${object}_page_${prevPage}`)
-            .text(`${currentPage}/${totalPages}`)
+            .text(`${currentPage}/${totalPages}`, 'ignore')
             .text(nextPage ? `${nextPage} >>` : " ", `${object}_page_${nextPage}`)
 
     }
@@ -24,8 +24,10 @@ export class ItemsKeyboard {
         if(isMember) keyboard.append(MenuKeyboard.memberInvite());
 
         data.items.forEach((item: PaginationItem) => {
-            return keyboard.text(item.title, `${entity}_${item.id}`).row()
+            return keyboard.text(item.getTitle(), `${entity}_${item.getId()}`).row()
         });
+
+        console.log(JSON.stringify(data, null, ' '))
 
         if(data.pagination) {
             const { currentPage, totalPages, totalItems, hasNextPage } = data!.pagination;

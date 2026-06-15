@@ -12,10 +12,10 @@ const transactionConfig: EntityConfig<any> = {
     ],
     
     getTitleKey(item) {
-        const type = item.type === 'income' ? '+' : '-'
+        const type = item.getType() === 'income' ? '+' : '-'
 
-        const dateString = formatDate(item.createdAt);
-        const amount = new Decimal(item.amount!).toFixed(2);
+        const dateString = formatDate(item.getCreatedAt());
+        const amount = new Decimal(item.getAmount()!).toFixed(2);
 
         return `${dateString} ${type}${amount}`;
     },

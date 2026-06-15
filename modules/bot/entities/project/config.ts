@@ -6,7 +6,7 @@ const projectConfig: EntityConfig<any> = {
     ],
     
     getTitleKey(item) {
-        return item.title
+        return item.getTitle
     },
     getId(ctx) {
         return ctx.session.project_id

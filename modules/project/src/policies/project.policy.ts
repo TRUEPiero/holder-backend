@@ -26,7 +26,7 @@ type ProjectActorRole = {
 
 export class ProjectPolicy {
   static getMemberRole(project: ProjectEntity, user: UserEntity): ProjectActorRole | null {
-    if (project.ownerId === user.id) {
+    if (project.getOwner() === user.id) {
       return {
         name: 'owner',
         permissions: []

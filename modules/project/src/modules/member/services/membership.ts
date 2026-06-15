@@ -4,15 +4,18 @@ import { ProjectService } from "../../project/services";
 import { MembershipRepository } from "../repositories/membership";
 import { CasheService } from "@services/CasheService";
 import { MemberRoleService } from "./role";
+import { CRUD } from "../../../interfaices/Crud";
 
-export class MembershipService {
+export class MembershipService extends CRUD{
 
     constructor(
         private repo: MembershipRepository,
         private projectService: ProjectService,
         private memberRoleService: MemberRoleService,
         private cashe: CasheService
-    ) {};
+    ) {
+        super()
+    };
 
     public async getById(id: number) {
         const member = await this.repo.findById(id);
@@ -31,16 +34,16 @@ export class MembershipService {
         return members;
     }
 
-    public async create(projectId: number, user: UserEntity) {
+    public async create(user: UserEntity, data: any, projectId: number) {
         const exist = await this.repo.findByFilter({projectId, userId: user.id})
         if(exist) {
-            if(!exist.isDeleted) throw new AlreadyExistError('MEMBER');
+            if(!exist.getIsDeleted()) throw new AlreadyExistError('MEMBER');
 
             const updateData = {
                 isDeleted: false
             }
 
-            const updated = await this.repo.update(exist.id, updateData);
+            const updated = await this.repo.update(exist.getId(), updateData);
             if(!updated) throw new NotCreatedError('MEMBER');
 
             await this.cashe.del(`project:${projectId}`);
@@ -59,11 +62,11 @@ export class MembershipService {
 
         await this.cashe.del(`project:${projectId}`);
 
-        const detail = await this.getById(member.id);
+        const detail = await this.getById(member.getId());
         return detail;
     }
 
-    public async update(projectId: number, memberId: number, data: any, user: UserEntity) {
+    public async update(memberId: number, user: UserEntity, data: any, projectId: number) {
         await this.projectService.authorize(projectId, user, 'member:update');
 
         const member = await this.repo.findByFilter({id: memberId, projectId});
@@ -76,11 +79,11 @@ export class MembershipService {
         
         await this.cashe.del(`project:${projectId}`);
         
-        const detail = await this.getById(res.id);
+        const detail = await this.getById(res.getId());
         return detail;
     }
     
-    public async delete(projectId: number, memberId: number, user: UserEntity) {
+    public async delete(memberId: number, user: UserEntity, projectId: number, ) {
         await this.projectService.authorize(projectId, user, 'member:delete');
 
         const member = await this.repo.findByFilter({id: memberId, projectId});

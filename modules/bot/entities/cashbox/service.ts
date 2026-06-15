@@ -28,7 +28,7 @@ const cashboxServiceTg: EntityService<'cashbox'> & EntitySettingsOwner = {
             title: createData.title
         }
 
-        return await this.baseService.create(ctx.session.project_id, data, user);
+        return await this.baseService.create( user, data, ctx.session.project_id,);
     },
     async update(ctx){
         const projectId = ctx.session.project_id;
@@ -39,14 +39,14 @@ const cashboxServiceTg: EntityService<'cashbox'> & EntitySettingsOwner = {
             title: updateData.title
         }
 
-        return await this.baseService.update(projectId, cashboxId, data, user);
+        return await this.baseService.update(cashboxId, user, data, projectId);
     },
     async delete(ctx){
         const projectId = ctx.session.project_id;
         const cashboxId = ctx.session.cashbox_id;
         const user = await this.userService.getUser(ctx.session.user_id);
 
-        return await this.baseService.delete(projectId, cashboxId, user);
+        return await this.baseService.delete(cashboxId, user, projectId);
     },
 
     async getSetting(ctx, settingId) {
@@ -78,7 +78,7 @@ const cashboxServiceTg: EntityService<'cashbox'> & EntitySettingsOwner = {
             ]
         };
 
-        return await this.baseService.update(projectId, cashboxId, data, user);
+        return await this.baseService.update(cashboxId, user, data, projectId);
     }
 }
 

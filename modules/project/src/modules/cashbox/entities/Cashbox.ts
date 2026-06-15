@@ -1,22 +1,21 @@
+import { Entity } from "../../../interfaices/Entity";
+import { SettingTarget } from "../../../interfaices/SettingsOwner";
 import { Transaction } from "../../transaction/types";
-import { LessBalanceError } from "../errors";
 import { UpdateData } from "../types";
-import { Money } from "./Money";
 import { DecimalClass as Decimal, DecimalType } from "@shared-types/index.ts";
 
-export class CashboxEntity {
-    public id: number;
-    public projectId: number;
-    public balance: DecimalType;
-    public title: string;
-    public description: string;
-    public settings: any;
-    public transactions: Transaction[];
+export class CashboxEntity extends Entity implements SettingTarget {
+    private title: string;
+    private balance: DecimalType;
+    private description: string;
+    private projectId: number;
+    private settings: any;
+    private transactions: Transaction[];
     
     constructor(
         params: any
     ) {
-        this.id = params.id;
+        super(params);
         this.projectId = params.projectId;
         this.balance = new Decimal(params.balance);
         this.title = params.title;
@@ -25,15 +24,12 @@ export class CashboxEntity {
         this.transactions = params.transactions || [];
     }
 
-    public debit(amount: Money) {
-        if (this.balance.lessThan(amount.get())) {
-            throw new LessBalanceError();
-        }
-        this.balance = this.balance.sub(new Decimal(amount.get()));
+    public getTitle() {
+        return this.title
     }
 
-    public credit(amount: Money) {
-        this.balance = this.balance.add(new Decimal(amount.get()));
+    public getSettings() {
+        return this.settings;
     }
 
     public update(data: UpdateData) {
@@ -45,14 +41,13 @@ export class CashboxEntity {
         
         this.balance = new Decimal(balance!);
 
-        return this.toJSON();
+        return {
+            title: this.title,
+            desciption: this.description
+        };
     }
 
-    public getSettings() {
-        return this.settings;
-    }
-
-    public toJSON(): any {
+    public response(): any {
         return {
             id: this.id,
             title: this.title,

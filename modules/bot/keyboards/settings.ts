@@ -45,7 +45,7 @@ export class SettingKeyboard {
         const keyboard = new InlineKeyboard();
                 
         data.forEach((setting, index) => {
-            const key = keyboard.text(`Edit ${setting.title}`, `${entity}_setting_${setting.id}`)
+            const key = keyboard.text(`Edit ${setting.getTitle()}`, `${entity}_setting_${setting.getId()}`)
 
             if(index++ && index++ % 3 === 0) key.row();
         })

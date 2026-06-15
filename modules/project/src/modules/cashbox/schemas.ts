@@ -56,7 +56,6 @@ export const schema = {
         body: t.Partial(
             t.Object({
                 title: t.String(),
-                balance: t.Number(),
                 description: t.String()
             })
         ),

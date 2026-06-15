@@ -7,15 +7,18 @@ import { InvalidFieldError, NotCreatedError, NotDeletedError, NotFoundError, Not
 import { CasheService } from "@services/CasheService";
 import { UserEntity } from "../../../../auth/src/modules/user/entities/User";
 import { CashboxSettingRepository } from "./repositories/settings";
+import { CRUD } from "../../interfaices/Crud";
 
-export class CashboxService implements SettingsOwner{
+export class CashboxService extends CRUD implements SettingsOwner{
 
     constructor(
         private repo: CashboxRepository,
         private projectService: ProjectService,
         private settingRepo: CashboxSettingRepository,
         private cashe: CasheService
-    ) {}
+    ) {
+        super()
+    }
 
     public async getById(id: number, user: UserEntity, projectId: number) {
         if(!id) throw new InvalidFieldError("ID");
@@ -30,7 +33,8 @@ export class CashboxService implements SettingsOwner{
     public async getByProject(projectId: number, user: UserEntity) {
         await this.projectService.authorize(projectId, user, 'cashbox:read');
 
-        return await this.repo.findByProject(projectId);
+        const cashboxes = await this.repo.findByProject(projectId);
+        return cashboxes.map(c => c.response())
     }
 
     public async getWithPagination(parameters: PaginationParam) {
@@ -38,7 +42,7 @@ export class CashboxService implements SettingsOwner{
         return cashbox;
     }
 
-    public async create(projectId: number, body: any, user: UserEntity) {
+    public async create(user: UserEntity, body: any, projectId: number) {
         await this.projectService.authorize(projectId, user, 'cashbox:create');
 
         const createData = { 
@@ -55,7 +59,7 @@ export class CashboxService implements SettingsOwner{
         return created;
     }
 
-    public async update(projectId: number, id: number, data: any, user: UserEntity) {
+    public async update(id: number, user: UserEntity, data: any, projectId: number) {
         await this.projectService.authorize(projectId, user, 'cashbox:update');
 
         const cashbox = await this.getById(id, user, projectId);
@@ -69,7 +73,7 @@ export class CashboxService implements SettingsOwner{
         return res;
     }
 
-    public async delete(projectId: number, id: number, user: UserEntity) {
+    public async delete(id: number, user: UserEntity, projectId: number) {
         await this.projectService.authorize(projectId, user, 'cashbox:delete');
 
         await this.getById(id, user, projectId); 
@@ -82,14 +86,10 @@ export class CashboxService implements SettingsOwner{
     }
 
     public async createOrUpdateSetting(id: number, user: UserEntity, data: any[]) {
-
+        
     }
 
     public getSettingTarget(): SettingTargets {
         return 'cashbox'
-    }
-
-    public getDefaultSetting() {
-        return [];
     }
 }

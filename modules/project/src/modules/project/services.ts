@@ -1,4 +1,4 @@
-import { PaginationParam } from "@shared-types/index.ts";
+import { PaginationParam, PaginationResult } from "@shared-types/index.ts";
 import { UserEntity } from "../../../../auth/src/modules/user/entities/User";
 import { ProjectRepository } from "./repositories/project";
 import { SettingsOwner } from "../../interfaices/SettingsOwner";
@@ -8,14 +8,17 @@ import { ProjectEntity } from "./entities/Project";
 import { InvalidFieldError, NotCreatedError, NotDeletedError, NotFoundError, NotUpdatedError } from "@common/errors";
 import { ProjectPermission, ProjectPolicy } from "../../policies/project.policy";
 import { ProjectSettingRepository } from "./repositories/settings";
+import { CRUD } from "../../interfaices/Crud";
 
-export class ProjectService implements SettingsOwner{
+export class ProjectService extends CRUD implements SettingsOwner{
 
     constructor(
         private repo: ProjectRepository,
         private settingRepo: ProjectSettingRepository,
         private cashe: CasheService
-    ) {}
+    ) {
+        super()
+    }
 
     public async authorize(
         projectId: number,
@@ -49,11 +52,12 @@ export class ProjectService implements SettingsOwner{
         return project;
     }
 
-    public async getByUser(user: UserEntity): Promise<ProjectEntity[]> {
-        return await this.repo.findUserProjects(user.id);
+    public async getByUser(user: UserEntity): Promise<any[]> {
+        const projects = await this.repo.findUserProjects(user.id);
+        return projects.map(i => i.response())
     }
 
-    public async getWithPagination(parameters: PaginationParam) {
+    public async getWithPagination(parameters: PaginationParam): Promise<PaginationResult> {
         return await this.repo.findWithPagination(parameters);
     }
 
@@ -126,9 +130,5 @@ export class ProjectService implements SettingsOwner{
 
     public getSettingTarget(): SettingTargets {
         return 'project'
-    }
-
-    public getDefaultSetting() {
-        return [];
     }
 }

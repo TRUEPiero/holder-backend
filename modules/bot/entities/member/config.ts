@@ -11,7 +11,7 @@ const memberConfig: EntityConfig<any> = {
         return { projectId: ctx.session.project_id, isDeleted: false };
     },
     getTitleKey(item) {
-        return `${item.user!.name} (${item.role.name})`
+        return `${item.getUser().name} (${item.getRole().name})`
     },
     getId(ctx) {
         return ctx.session.member_id;

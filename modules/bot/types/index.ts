@@ -22,8 +22,8 @@ type Step = {
 }
 
 type PaginationItem = {
-    id: number,
-    title:  string,
+    getId(): number,
+    getTitle():  string,
     createdAt: Date,
 }
 

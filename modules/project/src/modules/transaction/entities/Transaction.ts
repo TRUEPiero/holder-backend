@@ -1,19 +1,20 @@
-export class TransactionEntity {
-    public id: number;
-    public amount: number;
-    public description: string;
-    public type: string;
-    public tagId: number;
-    public tag: any;
-    public authorId: number;
-    public author: any;
-    public isDeleted: boolean;
-    public cashboxId: number;
-    public cashbox: any;
-    public createdAt: Date;
+import { Entity } from "../../../interfaices/Entity";
+
+export class TransactionEntity extends Entity {
+    private amount: number;
+    private description: string;
+    private type: string;
+    private tagId: number;
+    private tag: any;
+    private authorId: number;
+    private author: any;
+    private isDeleted: boolean;
+    private cashboxId: number;
+    private cashbox: any;
+    private createdAt: Date;
 
     constructor(params: any) {
-        this.id = params.id;
+        super(params)
         this.amount = params.amount;
         this.description = params.description || '';
         this.type = params.type;
@@ -25,5 +26,38 @@ export class TransactionEntity {
         this.cashboxId = params.cashboxId;
         this.cashbox = params.cashbox || {};
         this.createdAt = params.createdAt;
+    }
+
+    public getType() {
+        return this.type
+    }
+
+    public getCreatedAt() {
+        return this.createdAt
+    }
+
+    public getTag() {
+        return this.tag
+    }
+
+    public getAmount() {
+        return this.amount
+    }
+
+    public response() {
+        return {
+            id: this.id,
+            amount: this.amount,
+            cashboxId: this.cashboxId,
+            authorId: this.authorId,
+            description: this.description,
+            type: this.type,
+            tagId: this.tagId,
+            tag: this.tag,
+            author: this.author,
+            isDeleted: this.isDeleted,
+            cashbox: this.cashbox,
+            createdAt: this.createdAt,
+        }
     }
 }

@@ -29,9 +29,7 @@ export class TransactionTagService {
 
         const finded = await this.repo.findByFields(fields, include);
 
-        
-
-        return finded.map(i => i.toJSON());
+        return finded.map(i => i.response());
     }
     
 }

@@ -20,11 +20,6 @@ type Setting = {
     createdAt: Date
 }
 
-type EntitySetting = {
-    settingId: number,
-    value: string
-}
-
 const SettingEntity = t.Object({
     code: t.String(),
     value: t.String(), 
@@ -42,7 +37,6 @@ const ResponseObjects = t.Object({
 
 export type {
     Setting,
-    EntitySetting,
     SettingTypes,
     SettingTargets,
     GetSettingFilter

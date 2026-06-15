@@ -2,18 +2,19 @@ import { Setting } from "@schemas/common";
 import { UpdateData } from "../types";
 import { Cashbox } from "../../cashbox/types";
 import { DecimalClass as Decimal, DecimalType } from "@shared-types/index.ts";
+import { Entity } from "../../../interfaices/Entity";
+import { SettingTarget } from "../../../interfaices/SettingsOwner";
 
-export class ProjectEntity {
-    public id: number;
-    public title: string;
-    public balance: DecimalType;
-    public settings: Setting[];
-    public ownerId: number;
-    public members: any[];
-    public cashboxes: Cashbox[];
+export class ProjectEntity extends Entity implements SettingTarget {
+    private title: string;
+    private balance: DecimalType;
+    private settings: Setting[];
+    private ownerId: number;
+    private members: any[];
+    private cashboxes: Cashbox[];
     
     constructor(params: any) {
-        this.id = params.id;
+        super(params);
         this.title = params.title;
         this.balance = this.calculateTotalSum(params.cashboxes);
         this.settings = params.settings || [];
@@ -21,20 +22,17 @@ export class ProjectEntity {
         this.members = params.members;
         this.cashboxes = params.cashboxes;
     }
-    
 
-    public getSettings() {
-        return this.settings;
+    public getTitle() {
+        return this.title;
     }
 
-    public update(data: UpdateData) {
-        for(const [key, value] of Object.entries(data)) {
-            if(value.toString()) (this as any)[key] = value
-        }
-
-        return {
-            title: this.title,
-        };
+    public getOwner() {
+        return this.ownerId
+    }
+    
+    public getSettings() {
+        return this.settings;
     }
 
     public getMembers() {
@@ -45,6 +43,16 @@ export class ProjectEntity {
             user: member.user,
             role: this.formatRole(member)
         }))
+    }
+
+    public update(data: UpdateData) {
+        for(const [key, value] of Object.entries(data)) {
+            if(value.toString()) (this as any)[key] = value
+        }
+
+        return {
+            title: this.title,
+        };
     }
 
     private calculateTotalSum(cashboxes: any[]) {

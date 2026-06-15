@@ -7,6 +7,7 @@ export const schema = {
         params: t.Object({
             entity: t.String(),
             eid: t.Number()
+            // pid: t.Number(),
         }),
         response: {
             200: ResponseObjects,

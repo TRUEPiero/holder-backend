@@ -13,7 +13,7 @@ const cashboxConfig: EntityConfig<any> = {
     ],
     
     getTitleKey(item) {
-        return item.title
+        return item.getTitle()
     },
     getId(ctx) {
         return ctx.session.cashbox_id

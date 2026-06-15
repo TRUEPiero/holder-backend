@@ -22,7 +22,7 @@ export const ProjectController = new Elysia({
 
 .post('/', async({user, body}) => {
     const project =  await projectService.create(user, body)
-    return {data: project}
+    return {data: project.response()}
 }, schema.create)
 
 .patch('/:pid', async({params: {pid}, user, body}) => {
@@ -32,5 +32,5 @@ export const ProjectController = new Elysia({
 
 .delete('/:pid', async({params: {pid}, user}) => {
     const project =  await projectService.delete(pid, user)
-    return {data: project}
+    return {data: project.response()}
 }, schema.delete)

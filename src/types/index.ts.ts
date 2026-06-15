@@ -1,5 +1,6 @@
 import db from "@common/prisma";
 import { Decimal } from "@prisma/client/runtime/client";
+import { Entity } from "../../modules/project/src/interfaices/Entity";
 
 type PrismaModelName = keyof typeof db;
 type PrismaTxClient = Omit<typeof db, "$connect" | "$disconnect" | "$on" | "$transaction" | "$extends">;
@@ -24,12 +25,23 @@ type PaginationParam = {
     fieldFilter?: any 
 }
 
+type PaginationResult = {
+    items: Entity[];
+    pagination: {
+        currentPage: any;
+        totalPages?: number;
+        totalItems: any;
+        hasNextPage?: boolean;
+    };
+}
+
 export type {
     PrismaModelName,
     PrismaTxClient,
     DecimalType,
     QueryParam,
-    PaginationParam
+    PaginationParam,
+    PaginationResult
 }
 
 export {
