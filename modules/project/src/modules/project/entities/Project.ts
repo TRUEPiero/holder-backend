@@ -45,6 +45,16 @@ export class ProjectEntity {
         };
     }
 
+    public getMembers() {
+        return this.members.map(member => ({
+            id: member.id,
+            isDeleted: member.isDeleted,
+            userId: member.userId,
+            user: member.user,
+            role: this.formatRole(member)
+        }))
+    }
+
     private calculateTotalSum(cashboxes: any[]) {
         if(!cashboxes || !cashboxes.length) return new Decimal(0);
 
@@ -67,14 +77,21 @@ export class ProjectEntity {
         this.settings = Array.from(map.values());
     }
 
+    private formatRole(member: any) {
+        return {
+            name: member.role.name,
+            permissions: member.role.permissions.map((perm: {permission: {entity: string, setting: string}}) => `${perm.permission.entity}:${perm.permission.setting}`)
+        }
+    }
+
     private formatMembers(members: any[]) {
         if(!members) return [];
 
         return members.map((member: any) => {
             return {
-                ...member.user,
                 memberId: member.id,
-                role: member.role,
+                ...member.user,
+                role: member.role.name,
                 password: undefined
             }
         })

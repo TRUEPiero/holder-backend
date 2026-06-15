@@ -1,0 +1,57 @@
+{
+    "permissions": [
+        "project:read",
+        "project:update",
+        "project:delete",
+        "cashbox:read",
+        "cashbox:create",
+        "cashbox:update",
+        "cashbox:delete",
+        "transaction:read",
+        "transaction:create",
+        "transaction:delete",
+        "member:invite",
+        "member:update",
+        "member:delete",
+        "settings:read",
+        "settings:update"
+    ],
+    "roles": {
+        "owner": [
+            "project:read",
+            "project:update",
+            "project:delete",
+            "cashbox:read",
+            "cashbox:create",
+            "cashbox:update",
+            "cashbox:delete",
+            "transaction:read",
+            "transaction:create",
+            "transaction:delete",
+            "member:invite",
+            "member:update",
+            "member:delete",
+            "settings:read",
+            "settings:update"
+        ],
+        "editor": [
+            "project:read",
+            "project:update",
+            "cashbox:read",
+            "cashbox:create",
+            "cashbox:update",
+            "cashbox:delete",
+            "transaction:read",
+            "transaction:create",
+            "transaction:delete",
+            "settings:read",
+            "settings:update"
+        ],
+        "viewer": [
+            "project:read",
+            "cashbox:read",
+            "transaction:read",
+            "settings:read"
+        ]
+    }
+}

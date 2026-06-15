@@ -3,6 +3,7 @@
         "code": "main",
         "title": "основ",
         "description": "",
+        "target": "project",
         "settings": [
             {
                 "code": "notification",

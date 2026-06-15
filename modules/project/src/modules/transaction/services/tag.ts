@@ -1,6 +1,6 @@
 import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
 import { ProjectService } from "../../project/services";
-import { TransactionTagRepository } from "../repositories/transactionTag";
+import { TransactionTagRepository } from "../repositories/tag";
 
 export class TransactionTagService {
     constructor(

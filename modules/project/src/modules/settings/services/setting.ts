@@ -1,8 +1,8 @@
-import { UserEntity } from "../../../../auth/src/modules/user/entities/User";
-import { SettingsOwner } from "../../interfaices/SettingsOwner";
-import { SettingEntity } from "./entities/Setting";
-import { SettingRepository } from "./repository";
-import { EntitySetting, GetSettingFilter } from "./types";
+import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
+import { SettingsOwner } from "../../../interfaices/SettingsOwner";
+import { SettingEntity } from "../entities/Setting";
+import { SettingRepository } from "../repositories/setting";
+import { EntitySetting, GetSettingFilter } from "../types";
 
 export class SettingService {
     constructor(
@@ -21,13 +21,13 @@ export class SettingService {
     }
 
     public async getByGroup(entityId: number, groupId: number, user: UserEntity) {
-        const filter = {groupId}
+        const filter: GetSettingFilter = {groupId}
 
         return await this.getSettings(entityId, user, filter);
     }
 
     public async getForTelegram(entityId: number, user: UserEntity) {
-        const filter:GetSettingFilter = {
+        const filter: GetSettingFilter = {
             isTelegram: true
         }
 
@@ -38,7 +38,10 @@ export class SettingService {
         const target = this.entityService.getSettingTarget();
         const settings = await this.repo.findByFilter({
             ...filter,
-            target
+            OR: [
+                {target},
+                {group: {target}}
+            ]
         });
 
         return await this.mergeWithEntitySettings(entityId, user, settings);

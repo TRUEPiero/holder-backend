@@ -1,7 +1,6 @@
 {
   "name": "holder-backend",
   "version": "1.0.50",
-
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "bun run --watch src/index.ts",
@@ -9,7 +8,7 @@
     "prisma:generate": "bunx prisma generate",
     "prisma:push": "bunx prisma db push --force-reset",
     "migrate:auth": "bun run modules/auth/migrations/user.ts",
-    "migrate:project": "bun run modules/project/migrations/project_seed.ts && bun run modules/project/migrations/project_settings.ts",
+    "migrate:project": "bun run modules/project/migrations/project_seed.ts && bun run modules/project/migrations/project_settings.ts && bun run modules/project/migrations/permissions.ts",
     "migrate:all": "bun run migrate:auth && bun run migrate:project",
     "gpm": "bun run prisma:generate && bun run prisma:push && bun run migrate:all"
   },
@@ -19,10 +18,13 @@
     "@elysiajs/swagger": "^1.3.1",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
+    "@types/nodemailer": "^8.0.0",
     "dotenv": "^17.4.2",
     "elysia": "^1.4.15",
     "grammy": "^1.39.3",
     "grammy-scenes": "^10.2.0",
+    "mailgen": "^2.0.34",
+    "nodemailer": "^8.0.10",
     "pg": "^8.20.0",
     "prisma": "^7.8.0",
     "redis": "^5.12.1"

@@ -17,7 +17,7 @@ composer.command('start', async (ctx) => {
     if(hasCashe) return await render(ctx, {type: 'start'}, true);
 
     const filter = {
-        telegramId: chatId
+        telegramId: chatId.toString()
     }
 
     let user = await userService.getTelegramUser(filter)

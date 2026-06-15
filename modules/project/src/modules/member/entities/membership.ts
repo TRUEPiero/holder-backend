@@ -1,12 +1,12 @@
 import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
-import { MemberRoles } from "../types";
+import { MemberRole } from "../types";
 
 export class MemberEntity {
     public id: number
     public projectId: number
     public userId: number
     public user: UserEntity
-    public role: MemberRoles
+    public role: MemberRole
     public isDeleted: boolean;
     public joinedAt: Date
 

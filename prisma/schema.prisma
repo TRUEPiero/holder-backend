@@ -13,11 +13,6 @@ enum UserStatus {
   enterprise
 }
 
-enum MemberRole {
-  viewer
-  editor
-}
-
 enum SettingType {
   enum
   string
@@ -34,6 +29,22 @@ enum SettingTarget {
 enum TransactionType {
   income
   expense
+}
+
+enum PermissionsEntity {
+  project
+  cashbox
+  transaction
+  member
+  settings
+}
+
+enum PermissionSetting {
+  create
+  read
+  update
+  delete
+  invite
 }
 
 model User {
@@ -101,7 +112,8 @@ model ProjectMember {
   projectId Int @map("project_id")
   userId    Int @map("user_id")
 
-  role MemberRole
+  roleId Int
+  role MemberRole @relation(fields: [roleId], references: [id])
 
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
@@ -116,6 +128,45 @@ model ProjectMember {
   @@unique([projectId, userId])
   @@index([id, projectId, userId])
   @@map("project_member")
+}
+
+model MemberRole {
+  id        Int @id @default(autoincrement())
+  name String @unique
+
+  isDefault Boolean @default(false)
+
+  member ProjectMember[]
+  permissions RolePermissions[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("member_role")
+}
+
+model Permission {
+  id        Int @id @default(autoincrement())
+  entity    PermissionsEntity
+  setting   PermissionSetting 
+
+  role RolePermissions[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([entity, setting])
+  @@map("project_permission")
+}
+
+model RolePermissions {
+  permissionId Int
+  roleId Int
+
+  permission Permission @relation(fields: [permissionId], references: [id])
+  role MemberRole @relation(fields: [roleId], references: [id])
+
+  @@id([roleId, permissionId])
 }
 
 model ProjectInvite {
@@ -201,6 +252,8 @@ model SettingGroup {
   title       String
   description String
 
+  target SettingTarget
+
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
   settingDefinitions SettingDefinition[]
@@ -231,5 +284,6 @@ model SettingDefinition {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([code, target])
   @@map("setting")
 }

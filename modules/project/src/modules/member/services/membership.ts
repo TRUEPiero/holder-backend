@@ -3,12 +3,14 @@ import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
 import { ProjectService } from "../../project/services";
 import { MembershipRepository } from "../repositories/membership";
 import { CasheService } from "@services/CasheService";
+import { MemberRoleService } from "./role";
 
 export class MembershipService {
 
     constructor(
         private repo: MembershipRepository,
         private projectService: ProjectService,
+        private memberRoleService: MemberRoleService,
         private cashe: CasheService
     ) {};
 
@@ -46,10 +48,12 @@ export class MembershipService {
             return updated;
         };
 
+        const defaultRole = await this.memberRoleService.getDefault();
+
         const member = await this.repo.create({
             projectId,
             userId: user.id,
-            role: 'editor'
+            roleId: defaultRole.id
         })
         if(!member) throw new NotCreatedError('MEMBER');
 

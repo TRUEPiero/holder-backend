@@ -34,7 +34,16 @@ export class RegisterService {
             }
         );
 
-        await this.mailService.send(`Content`, `Header`, {})
+        const params = {
+            intro: 'content'
+        };
+
+        const user = {
+            login: email,
+            name: 'Guest'
+        }
+
+        await this.mailService.send(params, `Header`, user)
         
         return true
     }

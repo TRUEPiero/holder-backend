@@ -7,7 +7,7 @@ export class MembershipRepository {
 
     
     public async findById(id: number) {
-        const include = {user: true};
+        const include = {user: true, role: true};
         const data = await this.base.getFirstByFields({id}, include);
         if(!data) return null;
 
@@ -23,7 +23,7 @@ export class MembershipRepository {
     async findWithPagination(parameters: any) {
         const preparedParam = {
             ...parameters,
-            include: {user: true}
+            include: {user: true, role: true}
         }
 
         const paginationData = await this.base.getWithPagination(preparedParam); 

@@ -1,5 +1,5 @@
 import { DirectoryService } from "@services/DirectoryService";
-import { SettingEntity } from "./entities/Setting";
+import { SettingEntity } from "../entities/Setting";
 
 export class SettingRepository {
     constructor (

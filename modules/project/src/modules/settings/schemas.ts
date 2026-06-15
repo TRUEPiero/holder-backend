@@ -5,10 +5,8 @@ import { errorSchema } from '@schemas/error';
 export const schema = {
     getAll: {
         params: t.Object({
+            entity: t.String(),
             eid: t.Number()
-        }),
-        query: t.Object({
-            entity: t.Any()
         }),
         response: {
             200: ResponseObjects,
@@ -20,13 +18,26 @@ export const schema = {
         }
     },
 
+    groups: {
+        params: t.Object({
+            entity: t.String(),
+            eid: t.Number()
+        }),
+        response: {
+            200: t.Any(),
+            ...errorSchema
+        },
+        detail: {
+            tags: ['Настройки'],
+            description: 'Получить группы настроек сущности'
+        }
+    },
+
     byGroup: {
         params: t.Object({
+            entity: t.String(),
             eid: t.Number(),
             gid: t.Number()
-        }),
-        query: t.Object({
-            entity: t.Any()
         }),
         response: {
             200: ResponseObjects,

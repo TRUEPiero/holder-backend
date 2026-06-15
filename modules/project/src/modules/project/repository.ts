@@ -36,7 +36,15 @@ export class ProjectRepository {
             {
                 members: { 
                     where: { isDeleted: false },
-                    include: { user: true } 
+                    include: { user: true, role: {
+                        include: {
+                            permissions: {
+                                include: {
+                                    permission: true
+                                }
+                            }
+                        }
+                    } } 
                 },
                 cashboxes: true
             }
