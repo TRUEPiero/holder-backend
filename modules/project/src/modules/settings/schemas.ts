@@ -1,4 +1,4 @@
-import {t} from 'elysia';
+import { t } from 'elysia';
 import { ResponseObjects } from './types';
 import { errorSchema } from '@schemas/error';
 
@@ -46,6 +46,20 @@ export const schema = {
         detail: {
             tags: ['Настройки'],
             description: 'Получить настройки сущности по группе'
+        }
+    },
+
+    update: {
+        params: t.Object({
+            entity: t.String(),
+            eid: t.Number(),
+        }),
+        body: t.Object({
+            settings: t.Any()
+        }),
+        detail: {
+            tags: ['Настройки'],
+            description: 'Обновить настройки сущности'
         }
     }
 }

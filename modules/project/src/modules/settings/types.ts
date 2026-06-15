@@ -21,7 +21,7 @@ type Setting = {
 }
 
 type EntitySetting = {
-    code: string,
+    settingId: number,
     value: string
 }
 

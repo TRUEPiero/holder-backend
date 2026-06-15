@@ -1,17 +1,19 @@
 import { PaginationParam } from "@shared-types/index.ts";
 import { UserEntity } from "../../../../auth/src/modules/user/entities/User";
-import { ProjectRepository } from "./repository";
+import { ProjectRepository } from "./repositories/project";
 import { SettingsOwner } from "../../interfaices/SettingsOwner";
 import { SettingTargets } from "../settings/types";
 import { CasheService } from "@services/CasheService";
 import { ProjectEntity } from "./entities/Project";
 import { InvalidFieldError, NotCreatedError, NotDeletedError, NotFoundError, NotUpdatedError } from "@common/errors";
 import { ProjectPermission, ProjectPolicy } from "../../policies/project.policy";
+import { ProjectSettingRepository } from "./repositories/settings";
 
 export class ProjectService implements SettingsOwner{
 
     constructor(
         private repo: ProjectRepository,
+        private settingRepo: ProjectSettingRepository,
         private cashe: CasheService
     ) {}
 
@@ -59,7 +61,6 @@ export class ProjectService implements SettingsOwner{
         const createData = { 
             owner: user.id, 
             ...body,
-            settings: body.settings ?? this.getDefaultSetting()
         };
 
         const created = await this.repo.create(createData);
@@ -91,11 +92,43 @@ export class ProjectService implements SettingsOwner{
         return deleted;
     }
     
+    public async createOrUpdateSetting(id: number, user: UserEntity, data: any[]) {
+        await this.authorize(id, user, 'settings:update');
+
+        const settings = [];
+        for(const setting of data) {
+            const filter = {
+                projectId_settingId: {
+                    projectId: id,
+                    settingId: setting.id
+                }   
+            }
+
+            const create = {
+                projectId: id,
+                settingId: setting.id,
+                value: setting.value
+            }
+
+            const update = {
+                settingId: setting.id,
+                value: setting.value
+            }
+
+            const res = await this.settingRepo.createOrUpdate(filter, create, update);
+            settings.push(res);
+        }
+
+        await this.cashe.del(`project:${id}`)
+
+        return settings;
+    }
+
     public getSettingTarget(): SettingTargets {
         return 'project'
     }
 
-    private getDefaultSetting() {
+    public getDefaultSetting() {
         return [];
     }
 }

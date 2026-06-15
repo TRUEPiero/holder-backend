@@ -31,7 +31,6 @@ export const schema = {
         body: t.Partial(
             t.Object({
                 title: t.String(),
-                settings: t.Array(setting)
             })
         ),
         detail: {
@@ -50,7 +49,6 @@ export const schema = {
         body: t.Partial(
             t.Object({
                 title: t.String(),
-                settings: t.Array(setting)
             })
         ),
         detail: {

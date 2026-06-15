@@ -1,6 +1,7 @@
 import { DirectoryService } from "@services/DirectoryService";
 
 import { MailService } from "../auth/src/lib/mail";
+import { CasheService } from "@services/CasheService";
 
 // auth
 import { UserRepository } from "../auth/src/modules/user/repository";
@@ -9,7 +10,7 @@ import { AuthService } from "../auth/src/modules/auth/services";
 import { RegisterRepository } from "../auth/src/modules/register/repository";
 import { RegisterService } from "../auth/src/modules/register/services";
 // project
-import { ProjectRepository } from "../project/src/modules/project/repository";
+import { ProjectRepository } from "../project/src/modules/project/repositories/project";
 import { ProjectService } from "../project/src/modules/project/services";
 
 import { CashboxRepository } from "../project/src/modules/cashbox/repository";
@@ -27,13 +28,16 @@ import { ProjectInviteService } from "../project/src/modules/member/services/inv
 
 import { SettingRepository } from "../project/src/modules/settings/repositories/setting";
 import { SettingService } from "../project/src/modules/settings/services/setting";
-import { CasheService } from "@services/CasheService";
-import { TransactionTagRepository } from "../project/src/modules/transaction/repositories/tag";
-import { TransactionTagService } from "../project/src/modules/transaction/services/tag";
-import { MemberRoleService } from "../project/src/modules/member/services/role";
-import { MemberRoleRepository } from "../project/src/modules/member/repositories/role";
 import { SettingGroupService } from "../project/src/modules/settings/services/group";
 import { SettingGroupRepository } from "../project/src/modules/settings/repositories/group";
+
+import { TransactionTagRepository } from "../project/src/modules/transaction/repositories/tag";
+import { TransactionTagService } from "../project/src/modules/transaction/services/tag";
+
+import { MemberRoleService } from "../project/src/modules/member/services/role";
+import { MemberRoleRepository } from "../project/src/modules/member/repositories/role";
+import { ProjectSettingRepository } from "../project/src/modules/project/repositories/settings";
+import { CashboxSettingRepository } from "../project/src/modules/cashbox/repositories/settings";
 
 const mainService = new MailService();
 
@@ -48,6 +52,8 @@ const inviteBase = new DirectoryService<'projectInvite'>('projectInvite', []);
 const cashboxBase = new DirectoryService<'cashbox'>('cashbox', ['project']);
 const settingBase = new DirectoryService<'settingDefinition'>('settingDefinition', []);
 const settingGroupBase = new DirectoryService<'settingGroup'>('settingGroup', []);
+const projectSettingBase = new DirectoryService<'projectSettings'>('projectSettings', []);
+const cashboxSettingBase = new DirectoryService<'cashboxSettings'>('cashboxSettings', []);
 const transactionBase = new DirectoryService<'transaction'>('transaction', ['cashbox', 'author', 'tag']);
 const transactionTagBase = new DirectoryService<'transactionTag'>('transactionTag', []);
 
@@ -60,6 +66,8 @@ const memberRoleRepo = new MemberRoleRepository(memberRoleBase)
 const memberRepo = new MembershipRepository(memberBase);
 const inviteRepo = new InviteRepository(inviteBase);
 const cashboxRepo = new CashboxRepository(cashboxBase);
+const projectSettingRepo = new ProjectSettingRepository(projectSettingBase);
+const cashboxSettingRepo = new CashboxSettingRepository(cashboxSettingBase);
 const settingRepo = new SettingRepository(settingBase);
 const settingGroupRepo = new SettingGroupRepository(settingGroupBase)
 const transactionRepo = new TransactionRepository(transactionBase);
@@ -72,11 +80,11 @@ const userService = new UserService(userRepo);
 const authService = new AuthService(userService);
 const registerService = new RegisterService(registerRepo, userService, mainService);
 
-const projectService = new ProjectService(projectRepo, casheService);
+const projectService = new ProjectService(projectRepo, projectSettingRepo, casheService);
 const memberRoleService = new MemberRoleService(memberRoleRepo);
 const memberService = new MembershipService(memberRepo, projectService, memberRoleService,casheService);
 const inviteService = new ProjectInviteService(inviteRepo, userService, memberService, projectService)
-const cashboxService = new CashboxService(cashboxRepo, projectService, casheService);
+const cashboxService = new CashboxService(cashboxRepo, projectService, cashboxSettingRepo, casheService);
 const transactionService = new TransactionService(transactionRepo, casheService, projectService);
 const transactionTagService = new TransactionTagService(transactionTagRepo, projectService);
 const transferService = new TransferService(casheService, projectService);

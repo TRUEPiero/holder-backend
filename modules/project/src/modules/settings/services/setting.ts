@@ -34,6 +34,11 @@ export class SettingService {
         return await this.getSettings(entityId, user, filter);
     }
 
+    public async update(entityId: number, user: UserEntity, data: any) {
+        await this.entityService.createOrUpdateSetting(entityId, user, data);
+        return await this.getSettings(entityId, user, {});
+    }
+
     private async getSettings(entityId: number, user: UserEntity, filter: GetSettingFilter) {
         const target = this.entityService.getSettingTarget();
         const settings = await this.repo.findByFilter({
@@ -47,16 +52,22 @@ export class SettingService {
         return await this.mergeWithEntitySettings(entityId, user, settings);
     }
 
-    private async mergeWithEntitySettings(entityId: number, user: UserEntity, defaultSettings: SettingEntity[]) {
+    private async getEntitySettings(entityId: number, user: UserEntity) {
         const entity = await this.entityService.getById(entityId, user);
         const entitySettings: EntitySetting[] = entity.getSettings();
 
-        const map = new Map(
-            entitySettings.map(s => [s.code, s])
-        );
+        return entitySettings;
+    }
 
+    private async mergeWithEntitySettings(entityId: number, user: UserEntity, defaultSettings: SettingEntity[]) {
+        const entitySettings = await this.getEntitySettings(entityId, user);
+
+        const map = new Map(
+            entitySettings.map(s => [s.settingId, s])
+        );
+        
         return defaultSettings.map(setting => {
-            const entitySetting = map.get(setting.code);
+            const entitySetting = map.get(setting.id);
 
             if (!entitySetting) return setting;
 

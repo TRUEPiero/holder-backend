@@ -16,7 +16,7 @@ export class ProjectEntity {
         this.id = params.id;
         this.title = params.title;
         this.balance = this.calculateTotalSum(params.cashboxes);
-        this.settings = params.settings;
+        this.settings = params.settings || [];
         this.ownerId = params.ownerId;
         this.members = params.members;
         this.cashboxes = params.cashboxes;
@@ -24,24 +24,16 @@ export class ProjectEntity {
     
 
     public getSettings() {
-        if(typeof this.settings === 'string') return JSON.parse(this.settings);
-        
         return this.settings;
     }
 
     public update(data: UpdateData) {
-        const {settings, ...dataWithoutParams} = data;
-        
-        for(const [key, value] of Object.entries(dataWithoutParams)) {
+        for(const [key, value] of Object.entries(data)) {
             if(value.toString()) (this as any)[key] = value
         }
 
-        this.setParameters(settings);
-
         return {
             title: this.title,
-            ownerId: this.ownerId,
-            settings: this.settings,
         };
     }
 
@@ -63,20 +55,6 @@ export class ProjectEntity {
         return new Decimal(summ);
     }
 
-    private setParameters(newParams: any[] = []) {
-        const map = new Map<string, any>();
-
-        for (const param of this.settings) {
-            map.set(param.code, param);
-        }
-
-        for (const param of newParams) {
-            map.set(param.code, param);
-        }
-
-        this.settings = Array.from(map.values());
-    }
-
     private formatRole(member: any) {
         return {
             name: member.role.name,
@@ -84,10 +62,10 @@ export class ProjectEntity {
         }
     }
 
-    private formatMembers(members: any[]) {
-        if(!members) return [];
+    private formatMembers() {
+        if(!this.members) return [];
 
-        return members.map((member: any) => {
+        return this.members.map((member: any) => {
             return {
                 memberId: member.id,
                 ...member.user,
@@ -97,14 +75,24 @@ export class ProjectEntity {
         })
     }
 
+    private formatSettings() {
+        if(!this.settings) return [];
+
+        return this.settings.map((setting: any) => ({
+            settingId: setting.settingId,
+            code: setting.setting.code,
+            value: setting.value
+        })) 
+    }
+
     public response() {
         return {
             id: this.id,
+            ownerId: this.ownerId,
             title: this.title,
             balance: this.balance,
-            settings: this.settings,
-            ownerId: this.ownerId,
-            members: this.formatMembers(this.members),
+            settings: this.formatSettings(),
+            members: this.formatMembers(),
             cashboxes: this.cashboxes,
         }
     }

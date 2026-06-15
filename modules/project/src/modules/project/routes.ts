@@ -27,7 +27,7 @@ export const ProjectController = new Elysia({
 
 .patch('/:pid', async({params: {pid}, user, body}) => {
     const project =  await projectService.update(pid, user,body);
-    return {data: project}
+    return {data: project.response()}
 }, schema.update)
 
 .delete('/:pid', async({params: {pid}, user}) => {

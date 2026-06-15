@@ -37,7 +37,7 @@ export class CashboxEntity {
     }
 
     public update(data: UpdateData) {
-        const {settings, balance, ...dataWithoutParams} = data;
+        const {balance, ...dataWithoutParams} = data;
         
         for(const [key, value] of Object.entries(dataWithoutParams)) {
             (this as any)[key] = value
@@ -45,29 +45,11 @@ export class CashboxEntity {
         
         this.balance = new Decimal(balance!);
 
-        this.setParameters(settings);
-
         return this.toJSON();
     }
 
     public getSettings() {
-        if(typeof this.settings === 'string') return JSON.parse(this.settings);
-        
         return this.settings;
-    }
-
-    private setParameters(newParams: any[] = []) {
-        const map = new Map<string, any>();
-
-        for (const param of this.settings) {
-            map.set(param.code, param);
-        }
-
-        for (const param of newParams) {
-            map.set(param.code, param);
-        }
-
-        this.settings = Array.from(map.values());
     }
 
     public toJSON(): any {

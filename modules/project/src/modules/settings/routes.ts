@@ -1,6 +1,6 @@
-import Elysia from "elysia";
+import Elysia, { t } from "elysia";
 import { schema } from "./schemas";
-import { deriveService } from "./services/deriveSettingService";
+import { deriveService } from "./services/derive";
 import { deriveUser } from "@plugins/deriveUser";
 
 export const SettingController = new Elysia({
@@ -24,4 +24,9 @@ export const SettingController = new Elysia({
     const settings = await settingService.getByGroup(eid, gid, user);
     return {data: settings}
 }, schema.byGroup)
+
+.patch('/', async ({params: {eid}, user, body: {settings}, services: {settingService}}) => {
+    const updated = await settingService.update(eid, user, settings)
+    return {data: updated}
+}, schema.update)
 

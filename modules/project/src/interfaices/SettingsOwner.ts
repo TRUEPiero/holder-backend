@@ -6,4 +6,6 @@ import { SettingTargets } from "../modules/settings/types";
 export interface SettingsOwner {
     getById(id: number, user: UserEntity, projectId?: number): Promise<ProjectEntity|CashboxEntity>;
     getSettingTarget(): SettingTargets;
+    createOrUpdateSetting(id: number, user: UserEntity, data: any[]): any,
+    getDefaultSetting(): any[]
 }

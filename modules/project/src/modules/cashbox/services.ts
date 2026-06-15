@@ -6,12 +6,14 @@ import { SettingTargets } from "../settings/types";
 import { InvalidFieldError, NotCreatedError, NotDeletedError, NotFoundError, NotUpdatedError } from "@common/errors";
 import { CasheService } from "@services/CasheService";
 import { UserEntity } from "../../../../auth/src/modules/user/entities/User";
+import { CashboxSettingRepository } from "./repositories/settings";
 
 export class CashboxService implements SettingsOwner{
 
     constructor(
         private repo: CashboxRepository,
         private projectService: ProjectService,
+        private settingRepo: CashboxSettingRepository,
         private cashe: CasheService
     ) {}
 
@@ -43,7 +45,6 @@ export class CashboxService implements SettingsOwner{
             projectId, 
             ...body,
             description: body.desciption ?? '',
-            settings: body.settings ?? this.getDefaultSetting()
         };
 
         const created = await this.repo.create(createData);
@@ -80,11 +81,15 @@ export class CashboxService implements SettingsOwner{
         return deleted;
     }
 
+    public async createOrUpdateSetting(id: number, user: UserEntity, data: any[]) {
+
+    }
+
     public getSettingTarget(): SettingTargets {
         return 'cashbox'
     }
 
-    private getDefaultSetting() {
+    public getDefaultSetting() {
         return [];
     }
 }

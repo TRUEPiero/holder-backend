@@ -11,14 +11,12 @@ type Cashbox = {
 
 type UpdateData = {
     title?: string,
-    settings?: Setting[],
     description?: string,
     balance?: number | string
 }
 
 const ResponseCashbox = t.Object({
     id: t.Number(),
-    settings: t.Array(setting),
     title: t.String(),
     description: t.String(),
     balance: t.Any(),
