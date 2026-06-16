@@ -1,4 +1,4 @@
-import { Entity } from "../../../interfaices/Entity";
+import { Entity } from "../../../interfaces/Entity";
 import { SettingTypes } from "../types";
 
 export class SettingEntity extends Entity{
@@ -18,7 +18,7 @@ export class SettingEntity extends Entity{
         super(params);
         this.code = params.code;
         this.title = params.title;
-        this.description = params.description;
+        this.description = params.description || '';
         this.groupId = params.groupId;
         this.type = params.type;
         this.value = params.value
@@ -46,6 +46,9 @@ export class SettingEntity extends Entity{
             type: this.type,
             value : this.value, 
             values: this.values,
+            isDisabled: this.isDisabled,
+            isRequired: this.isRequired,
+            isTelegram: this.isTelegram,
         }
     }
 }

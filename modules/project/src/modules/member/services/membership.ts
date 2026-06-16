@@ -4,7 +4,7 @@ import { ProjectService } from "../../project/services";
 import { MembershipRepository } from "../repositories/membership";
 import { CasheService } from "@services/CasheService";
 import { MemberRoleService } from "./role";
-import { CRUD } from "../../../interfaices/Crud";
+import { CRUD } from "../../../interfaces/Crud";
 
 export class MembershipService extends CRUD{
 
@@ -24,7 +24,7 @@ export class MembershipService extends CRUD{
     }
 
     public async getByUser(user: UserEntity) {
-        const member = await this.repo.findByFilter({userId: user.id});
+        const member = await this.repo.findByFilter({userId: user.getId()});
         if(!member) throw new NotFoundError("MEMBER");
         return member;
     }
@@ -35,7 +35,7 @@ export class MembershipService extends CRUD{
     }
 
     public async create(user: UserEntity, data: any, projectId: number) {
-        const exist = await this.repo.findByFilter({projectId, userId: user.id})
+        const exist = await this.repo.findByFilter({projectId, userId: user.getId()})
         if(exist) {
             if(!exist.getIsDeleted()) throw new AlreadyExistError('MEMBER');
 
@@ -55,7 +55,7 @@ export class MembershipService extends CRUD{
 
         const member = await this.repo.create({
             projectId,
-            userId: user.id,
+            userId: user.getId(),
             roleId: defaultRole.id
         })
         if(!member) throw new NotCreatedError('MEMBER');

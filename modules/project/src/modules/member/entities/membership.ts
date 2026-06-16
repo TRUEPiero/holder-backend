@@ -1,5 +1,5 @@
 import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
-import { Entity } from "../../../interfaices/Entity";
+import { Entity } from "../../../interfaces/Entity";
 import { MemberRole } from "../types";
 
 export class MemberEntity extends Entity {

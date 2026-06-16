@@ -1,6 +1,6 @@
-import { container } from "../../../../../containers";
-import { InvalidEntity } from "../errors";
-import { SettingTargets } from "../types";
+import { container } from "../../modules/containers";
+import { InvalidEntity } from "@common/errors";
+import { SettingTargets } from "@shared-types/index.ts";
 
 const {projectSettingService, cashboxSettingService, projectSettingGroupService, cashboxSettingGroupService} = container;
 

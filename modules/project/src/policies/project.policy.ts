@@ -24,9 +24,14 @@ type ProjectActorRole = {
   permissions: any[]
 };
 
+type authorizeMode = 'all' | 'any'
+
 export class ProjectPolicy {
-  static getMemberRole(project: ProjectEntity, user: UserEntity): ProjectActorRole | null {
-    if (project.getOwner() === user.id) {
+  static getMemberRole(
+    project: ProjectEntity, 
+    user: UserEntity
+  ): ProjectActorRole | null {
+    if (project.getOwner() === user.getId()) {
       return {
         name: 'owner',
         permissions: []
@@ -36,23 +41,41 @@ export class ProjectPolicy {
     const members = project.getMembers()
     const member = members?.find((m) => {
       const memberUserId = m.userId ?? m.user?.id;
-      return memberUserId === user.id;
+      return memberUserId === user.getId();
     });
 
     return member?.role ?? null;
   }
 
-  static can(project: ProjectEntity, user: UserEntity, permission: ProjectPermission): boolean {
+  static can(
+    project: ProjectEntity, 
+    user: UserEntity, 
+    permission: ProjectPermission | ProjectPermission[],
+    mode: authorizeMode
+  ): boolean {
     const role = this.getMemberRole(project, user);
     if (!role) return false;
     if (role.name === 'owner') return true;
 
-    return role.permissions.includes(permission);
+    const permissions = Array.isArray(permission) ? permission : [permission];
+    
+    return mode === 'all' 
+      ? permissions.every(permission => role.permissions.includes(permission))
+      : permissions.some(permission => role.permissions.includes(permission))
   }
 
-  static authorize(project: ProjectEntity, user: UserEntity, permission: ProjectPermission): void {
-    if (!this.can(project, user, permission)) {
+  static authorize(
+    project: ProjectEntity, 
+    user: UserEntity, 
+    permission: ProjectPermission | ProjectPermission[],
+    mode: authorizeMode = 'all'
+  ): void {
+    if (!this.can(project, user, permission, mode)) {
       throw new AccessDeniedError();
     }
   }
+}
+
+export type {
+  authorizeMode
 }

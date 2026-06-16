@@ -64,16 +64,14 @@ const projectServiceTg: EntityService<'project'> & EntitySettingsOwner = {
         const setting = ctx.session.entityData.setting;
         const value = ctx.session.entityData.value;
 
-        const data = {
-            settings: [
-                {
-                    code: setting.code,
-                    value
-                }
-            ]
-        };
+        const data = [
+            {
+                id: setting.id,
+                value
+            }
+        ];
 
-        return await this.baseService.update(projectId, user, data);
+        return await this.baseService.createOrUpdateSetting(projectId, user, data);
     }
 }
 

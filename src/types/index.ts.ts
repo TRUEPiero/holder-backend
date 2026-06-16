@@ -1,11 +1,14 @@
 import db from "@common/prisma";
 import { Decimal } from "@prisma/client/runtime/client";
-import { Entity } from "../../modules/project/src/interfaices/Entity";
+import { Entity } from "../../modules/project/src/interfaces/Entity";
+import { SettingTarget } from "@prisma/client";
 
 type PrismaModelName = keyof typeof db;
 type PrismaTxClient = Omit<typeof db, "$connect" | "$disconnect" | "$on" | "$transaction" | "$extends">;
 type DecimalType = Decimal;
 const DecimalClass = Decimal
+
+type SettingTargets = SettingTarget
 
 type QueryParam = {
     where?: Record<string, any>,
@@ -41,7 +44,8 @@ export type {
     DecimalType,
     QueryParam,
     PaginationParam,
-    PaginationResult
+    PaginationResult,
+    SettingTargets
 }
 
 export {

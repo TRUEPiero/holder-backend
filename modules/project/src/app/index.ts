@@ -3,7 +3,7 @@ import { ProjectController } from '../modules/project/routes';
 import { CashboxController } from '../modules/cashbox/routes';
 import { TransactionController } from '../modules/transaction/routes';
 import { MembershipController } from '../modules/member/routes';
-import { SettingController } from '../modules/settings/routes';
+import { SettingController } from '../modules/setting/routes';
 
 export const app = new Elysia()
 .use(ProjectController)

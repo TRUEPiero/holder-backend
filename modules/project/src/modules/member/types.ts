@@ -1,8 +1,6 @@
 import { ResponseUser, User } from "../../../../auth/src/common/types/user";
 import { t } from "elysia";
 
-type MemberRoles = 'viewer' | 'editor';
-
 type MemberRole = {
     name: string,
     permissions: any[]
@@ -20,11 +18,6 @@ type Member = {
 type SoftDeleteData = {
     isDeleted: boolean
 }
-
-const memberRole = t.Enum({
-  viewer: 'viewer',
-  editor: 'editor',
-});
 
 const ResponseMember = t.Object({
     id: t.Number(),
@@ -45,12 +38,10 @@ const ResponseObjects = t.Object({
 export type{
     SoftDeleteData,
     MemberRole,
-    MemberRoles,
     Member
 }
 
 export {
-    memberRole,
     ResponseMember,
     ResponseObject,
     ResponseObjects

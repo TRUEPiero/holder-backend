@@ -1,5 +1,5 @@
 import { UserService } from "../../auth/src/modules/user/services"
-import { SettingService } from "../../project/src/modules/settings/services/setting"
+import { SettingService } from "../../project/src/modules/setting/services/setting"
 import { BotContext } from "../core/context"
 import { ProjectService } from "../../project/src/modules/project/services";
 import { CashboxService } from "../../project/src/modules/cashbox/services";

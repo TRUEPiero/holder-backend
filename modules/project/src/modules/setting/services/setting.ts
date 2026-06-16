@@ -1,6 +1,6 @@
 import { Setting } from "@schemas/common";
 import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
-import { SettingsOwner } from "../../../interfaices/SettingsOwner";
+import { SettingsOwner } from "../../../interfaces/SettingsOwner";
 import { SettingEntity } from "../entities/Setting";
 import { SettingRepository } from "../repositories/setting";
 import { GetSettingFilter } from "../types";
@@ -12,20 +12,19 @@ export class SettingService {
     ) {}
 
     public async getById(id: number, entityId: number, user: UserEntity) {
-        const setting = await this.getTargetSettings(entityId, user, {id});
-
+        const setting = await this.mergedSettings(entityId, user, {id});
         return setting[0];
     }
 
-    public async getAll(entityId: number, user: UserEntity) {
-        const settings = await this.getTargetSettings(entityId, user, {});
+    public async getAll(entityId: number, user: UserEntity, parentId?: number) {
+        const settings = await this.mergedSettings(entityId, user, {}, parentId);
         return settings.map(s => s.response())
     }
 
-    public async getByGroup(entityId: number, groupId: number, user: UserEntity) {
+    public async getByGroup(entityId: number, groupId: number, user: UserEntity, parentId?: number) {
         const filter: GetSettingFilter = {groupId}
 
-        const settings = await this.getTargetSettings(entityId, user, filter);
+        const settings = await this.mergedSettings(entityId, user, filter, parentId);
         return settings.map(s => s.response())
     }
 
@@ -34,16 +33,16 @@ export class SettingService {
             isTelegram: true
         }
 
-        return await this.getTargetSettings(entityId, user, filter);
+        return await this.mergedSettings(entityId, user, filter);
     }
 
-    public async update(entityId: number, user: UserEntity, data: any) {
-        await this.entityService.createOrUpdateSetting(entityId, user, data);
-        const settings = await this.getTargetSettings(entityId, user, {});
+    public async update(entityId: number, user: UserEntity, data: any, parentId?: number) {
+        await this.entityService.createOrUpdateSetting(entityId, user, data, parentId);
+        const settings = await this.mergedSettings(entityId, user, {}, parentId);
         return settings.map(s => s.response())
     }
 
-    private async getTargetSettings(entityId: number, user: UserEntity, filter: GetSettingFilter) {
+    private async getTargetSettings(filter: GetSettingFilter) {
         const target = this.entityService.getSettingTarget();
         const settings = await this.repo.findByFilter({
             ...filter,
@@ -53,24 +52,25 @@ export class SettingService {
             ]
         });
 
-        return await this.mergeWithEntitySettings(entityId, user, settings);
+        return settings
     }
 
     private async getEntitySettings(entityId: number, user: UserEntity, parentId?: number) {
         const entity = await this.entityService.getById(entityId, user, parentId);
-        const entitySettings: Setting[] = entity.getSettings();
+        const settings: Setting[] = entity.getSettings();
 
-        return entitySettings;
+        return settings;
     }
 
-    private async mergeWithEntitySettings(entityId: number, user: UserEntity, defaultSettings: SettingEntity[], parentId?: number) {
+    private async mergedSettings(entityId: number, user: UserEntity, filter: GetSettingFilter, parentId?: number) {
+        const targetSettings = await this.getTargetSettings(filter);
         const entitySettings = await this.getEntitySettings(entityId, user, parentId);
 
         const map = new Map(
             entitySettings.map(s => [s.settingId, s])
         );
         
-        return defaultSettings.map(setting => {
+        return targetSettings.map(setting => {
             const entitySetting = map.get(setting.getId());
 
             if (!entitySetting) return setting;

@@ -2,7 +2,7 @@ import { InlineKeyboard } from "grammy";
 import { container } from "../../containers";
 import { CommonKeyboard } from "./common";
 import { EntityType } from "../types";
-import { SettingEntity } from "../../project/src/modules/settings/entities/Setting";
+import { SettingEntity } from "../../project/src/modules/setting/entities/Setting";
 
 const {projectSettingService, cashboxSettingService} = container;
 

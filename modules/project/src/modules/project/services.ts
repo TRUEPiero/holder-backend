@@ -1,14 +1,14 @@
 import { PaginationParam, PaginationResult } from "@shared-types/index.ts";
 import { UserEntity } from "../../../../auth/src/modules/user/entities/User";
 import { ProjectRepository } from "./repositories/project";
-import { SettingsOwner } from "../../interfaices/SettingsOwner";
-import { SettingTargets } from "../settings/types";
+import { SettingsOwner } from "../../interfaces/SettingsOwner";
+import { SettingTargets } from "@shared-types/index.ts";
 import { CasheService } from "@services/CasheService";
 import { ProjectEntity } from "./entities/Project";
 import { InvalidFieldError, NotCreatedError, NotDeletedError, NotFoundError, NotUpdatedError } from "@common/errors";
-import { ProjectPermission, ProjectPolicy } from "../../policies/project.policy";
+import { authorizeMode, ProjectPermission, ProjectPolicy } from "../../policies/project.policy";
 import { ProjectSettingRepository } from "./repositories/settings";
-import { CRUD } from "../../interfaices/Crud";
+import { CRUD } from "../../interfaces/Crud";
 
 export class ProjectService extends CRUD implements SettingsOwner{
 
@@ -23,11 +23,12 @@ export class ProjectService extends CRUD implements SettingsOwner{
     public async authorize(
         projectId: number,
         user: UserEntity,
-        permission: ProjectPermission
+        permission: ProjectPermission | ProjectPermission[],
+        mode: authorizeMode = 'all'
     ) {
         const project = await this.getById(projectId);
 
-        ProjectPolicy.authorize(project, user, permission);
+        ProjectPolicy.authorize(project, user, permission, mode);
 
         return project;
     }
@@ -53,7 +54,7 @@ export class ProjectService extends CRUD implements SettingsOwner{
     }
 
     public async getByUser(user: UserEntity): Promise<any[]> {
-        const projects = await this.repo.findUserProjects(user.id);
+        const projects = await this.repo.findUserProjects(user.getId());
         return projects.map(i => i.response())
     }
 
@@ -63,7 +64,7 @@ export class ProjectService extends CRUD implements SettingsOwner{
 
     public async create(user: UserEntity, body: any) {
         const createData = { 
-            owner: user.id, 
+            owner: user.getId(), 
             ...body,
         };
 
@@ -96,8 +97,8 @@ export class ProjectService extends CRUD implements SettingsOwner{
         return deleted;
     }
     
-    public async createOrUpdateSetting(id: number, user: UserEntity, data: any[]) {
-        await this.authorize(id, user, 'settings:update');
+    public async createOrUpdateSetting(id: number, user: UserEntity, data: any[]): Promise<ProjectEntity> {
+        await this.authorize(id, user, ['project:update', 'settings:update']);
 
         const settings = [];
         for(const setting of data) {
@@ -125,7 +126,7 @@ export class ProjectService extends CRUD implements SettingsOwner{
 
         await this.cashe.del(`project:${id}`)
 
-        return settings;
+        return await this.getById(id);
     }
 
     public getSettingTarget(): SettingTargets {

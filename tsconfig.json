@@ -30,6 +30,9 @@
       ],
       "@prisma/client": [
         "./prisma-client"
+      ],
+      "@intefaces/*": [
+        "./src/intefaces/*"
       ]
     }
   }

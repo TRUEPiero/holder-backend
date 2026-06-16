@@ -58,14 +58,14 @@ export class TransferService {
                         cashboxId,
                         type: "expense",
                         amount: amount.get(),
-                        authorId: user.id,
+                        authorId: user.getId(),
                         tagId: tag?.id
                     },
                     {
                         cashboxId: request.to,
                         type: "income",
                         amount: amount.get(),
-                        authorId: user.id,
+                        authorId: user.getId(),
                         tagId: tag?.id
                     }
                 ]
@@ -126,7 +126,7 @@ export class TransferService {
                     cashboxId,
                     type: transactionType,
                     amount: amount.get(),
-                    authorId: user.id,
+                    authorId: user.getId(),
                     tagId: tag?.id
                 }
             });

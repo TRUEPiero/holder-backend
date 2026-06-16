@@ -1,6 +1,6 @@
 import { errorSchema } from "@schemas/error";
 import {t} from 'elysia';
-import { memberRole, ResponseMember, ResponseObject } from "./types";
+import { ResponseObject } from "./types";
 
 export const schema = {
     invite: {    

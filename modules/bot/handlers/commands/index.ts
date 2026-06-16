@@ -41,7 +41,7 @@ composer.command('start', async (ctx) => {
         user = await userService.update(finded, updateData);
     }
 
-    ctx.session.user_id = user.id;
+    ctx.session.user_id = user.getId();
     await casheService.set(`tgUser:${chatId}`, user);
     await render(ctx, {type: 'start'}, true);
 })

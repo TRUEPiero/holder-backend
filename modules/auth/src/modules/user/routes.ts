@@ -11,10 +11,10 @@ export const UserController = new Elysia({
 .derive(deriveUser)
 
 .get('/me', async ({user}) => {
-    return {data: user.toJSON()}
+    return {data: user.response()}
 }, schema.getUser)
 
 .patch('/', async({user, body}) => { 
     const entity = await userService.update(user, body);
-    return {data: entity}
+    return {data: entity.response()}
 }, schema.updateUser)

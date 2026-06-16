@@ -42,7 +42,7 @@ export class ProjectInviteService {
     public async acceptInvite(projectId: number, code: string, user: UserEntity) {
         const invite = await this.getInvite({code, projectId});
         if(!invite || !invite.isActive()) throw new NotFoundError("INVITE");
-        if(invite.getEmail() !== user.email) throw new NotFoundError("INVITE");
+        if(invite.getEmail() !== user.getEmail()) throw new NotFoundError("INVITE");
 
         invite.setChecked();
 

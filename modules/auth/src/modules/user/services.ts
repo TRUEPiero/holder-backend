@@ -1,6 +1,7 @@
-import { NotCreatedError, NotFoundError, NotUpdatedError } from "@common/errors";
+import { AlreadyExistError, NotCreatedError, NotFoundError, NotUpdatedError } from "@common/errors";
 import { UserRepository } from "./repository";
 import { UserEntity } from "./entities/User";
+import { hashPassword } from "../../lib/password";
 
 type TelegramFilter = {
     telegramId?: number | string,
@@ -42,10 +43,20 @@ export class UserService{
         return user
     }
 
+    public async exist(email: string) {
+        const filter = {
+            email
+        }
+
+        const user = await this.repo.findByFilter(filter);
+        if(user) throw new AlreadyExistError('USER');
+        return user;
+    }
+
     public async create(data: any) {
         const createData = {
             ...data,
-            password: await Bun.password.hash(data.password)
+            password: await hashPassword(data.password)
         }
 
         const created = await this.repo.create(createData);
@@ -58,11 +69,10 @@ export class UserService{
         user.update(data)
 
         const updateData = {
-            ...user.toJSON(),
-            password: user.getPassword()
+            ...user.response()
         }
 
-        const updated = await this.repo.update(user.id, updateData);
+        const updated = await this.repo.update(user.getId(), updateData);
         
         if(!updated) throw new NotUpdatedError('USER');
 

@@ -1,14 +1,11 @@
-import { Setting } from "@schemas/common";
 import { UpdateData } from "../types";
 import { Cashbox } from "../../cashbox/types";
 import { DecimalClass as Decimal, DecimalType } from "@shared-types/index.ts";
-import { Entity } from "../../../interfaices/Entity";
-import { SettingTarget } from "../../../interfaices/SettingsOwner";
+import { SettingTarget } from "../../../interfaces/Entity";
 
-export class ProjectEntity extends Entity implements SettingTarget {
+export class ProjectEntity extends SettingTarget {
     private title: string;
     private balance: DecimalType;
-    private settings: Setting[];
     private ownerId: number;
     private members: any[];
     private cashboxes: Cashbox[];
@@ -29,10 +26,6 @@ export class ProjectEntity extends Entity implements SettingTarget {
 
     public getOwner() {
         return this.ownerId
-    }
-    
-    public getSettings() {
-        return this.settings;
     }
 
     public getMembers() {
@@ -81,16 +74,6 @@ export class ProjectEntity extends Entity implements SettingTarget {
                 password: undefined
             }
         })
-    }
-
-    private formatSettings() {
-        if(!this.settings) return [];
-
-        return this.settings.map((setting: any) => ({
-            settingId: setting.settingId,
-            code: setting.setting.code,
-            value: setting.value
-        })) 
     }
 
     public response() {

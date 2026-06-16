@@ -1,5 +1,5 @@
 import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
-import { SettingsOwner } from "../../../interfaices/SettingsOwner";
+import { SettingsOwner } from "../../../interfaces/SettingsOwner";
 import { SettingGroupRepository } from "../repositories/group";
 
 export class SettingGroupService {

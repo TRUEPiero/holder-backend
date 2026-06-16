@@ -1,6 +1,6 @@
 import Elysia, { t } from "elysia";
 import { schema } from "./schemas";
-import { deriveService } from "./services/derive";
+import { deriveService } from "@plugins/deriveSettingService";
 import { deriveUser } from "@plugins/deriveUser";
 
 export const SettingController = new Elysia({
@@ -10,8 +10,8 @@ export const SettingController = new Elysia({
 .derive(deriveUser)
 .derive(deriveService)
 
-.get('/', async ({params: {eid}, user, services: {settingService}}) => {
-    const settings = await settingService.getAll(eid, user);
+.get('/', async ({query: {pid}, params: {eid}, user, services: {settingService}}) => {
+    const settings = await settingService.getAll(eid, user, pid);
     return {data: settings}
 }, schema.getAll)
 
@@ -20,13 +20,13 @@ export const SettingController = new Elysia({
     return {data: groups}
 }, schema.groups)
 
-.get('/group/:gid', async({params: {eid, gid}, user, services: {settingService}}) => {
-    const settings = await settingService.getByGroup(eid, gid, user);
+.get('/group/:gid', async({query: {pid}, params: {eid, gid}, user, services: {settingService}}) => {
+    const settings = await settingService.getByGroup(eid, gid, user, pid);
     return {data: settings}
 }, schema.byGroup)
 
-.patch('/', async ({params: {eid}, user, body: {settings}, services: {settingService}}) => {
-    const updated = await settingService.update(eid, user, settings)
+.patch('/', async ({query: {pid}, params: {eid}, user, body: {settings}, services: {settingService}}) => {
+    const updated = await settingService.update(eid, user, settings, pid)
     return {data: updated}
 }, schema.update)
 

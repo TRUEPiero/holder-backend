@@ -1,13 +1,14 @@
 import { PaginationParam } from "@shared-types/index.ts";
 import { ProjectService } from "../project/services";
-import { CashboxRepository } from "./repository";
-import { SettingsOwner } from "../../interfaices/SettingsOwner";
-import { SettingTargets } from "../settings/types";
+import { CashboxRepository } from "./repositories/cashbox";
+import { SettingsOwner } from "../../interfaces/SettingsOwner";
+import { SettingTargets } from "@shared-types/index.ts";
 import { InvalidFieldError, NotCreatedError, NotDeletedError, NotFoundError, NotUpdatedError } from "@common/errors";
 import { CasheService } from "@services/CasheService";
 import { UserEntity } from "../../../../auth/src/modules/user/entities/User";
 import { CashboxSettingRepository } from "./repositories/settings";
-import { CRUD } from "../../interfaices/Crud";
+import { CRUD } from "../../interfaces/Crud";
+import { CashboxEntity } from "./entities/Cashbox";
 
 export class CashboxService extends CRUD implements SettingsOwner{
 
@@ -85,8 +86,36 @@ export class CashboxService extends CRUD implements SettingsOwner{
         return deleted;
     }
 
-    public async createOrUpdateSetting(id: number, user: UserEntity, data: any[]) {
+    public async createOrUpdateSetting(id: number, user: UserEntity, data: any[], parentId: number): Promise<CashboxEntity> {
+        await this.projectService.authorize(parentId, user, ['cashbox:update', 'settings:update']);
         
+        const settings = [];
+        for(const setting of data) {
+            const filter = {
+                cashboxId_settingId: {
+                    cashboxId: id,
+                    settingId: setting.id
+                }   
+            }
+
+            const create = {
+                cashboxId: id,
+                settingId: setting.id,
+                value: setting.value
+            }
+
+            const update = {
+                settingId: setting.id,
+                value: setting.value
+            }
+
+            const res = await this.settingRepo.createOrUpdate(filter, create, update);
+            settings.push(res);
+        }
+
+        await this.cashe.del(`project:${parentId}`)
+
+        return await this.getById(id, user, parentId);
     }
 
     public getSettingTarget(): SettingTargets {

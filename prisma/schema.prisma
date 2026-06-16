@@ -68,10 +68,15 @@ model User {
   @@map("user")
 }
 
-model registerVerify {
+model RegisterVerify {
   id        Int      @id @default(autoincrement())
   email     String
   code      String
+
+  isChecked Boolean  @default(false)
+
+  verifyToken String? @unique
+  
   expiredAt DateTime
 
   createdAt DateTime @default(now()) @map("created_at")

@@ -24,10 +24,8 @@ export class ItemsKeyboard {
         if(isMember) keyboard.append(MenuKeyboard.memberInvite());
 
         data.items.forEach((item: PaginationItem) => {
-            return keyboard.text(item.getTitle(), `${entity}_${item.getId()}`).row()
+            return keyboard.text(item.title, `${entity}_${item.getId()}`).row()
         });
-
-        console.log(JSON.stringify(data, null, ' '))
 
         if(data.pagination) {
             const { currentPage, totalPages, totalItems, hasNextPage } = data!.pagination;

@@ -13,7 +13,7 @@ import { RegisterService } from "../auth/src/modules/register/services";
 import { ProjectRepository } from "../project/src/modules/project/repositories/project";
 import { ProjectService } from "../project/src/modules/project/services";
 
-import { CashboxRepository } from "../project/src/modules/cashbox/repository";
+import { CashboxRepository } from "../project/src/modules/cashbox/repositories/cashbox";
 import { CashboxService } from "../project/src/modules/cashbox/services";
 
 import { TransactionRepository } from "../project/src/modules/transaction/repositories/transaction";
@@ -26,10 +26,10 @@ import { MembershipService } from "../project/src/modules/member/services/member
 import { InviteRepository } from "../project/src/modules/member/repositories/invite";
 import { ProjectInviteService } from "../project/src/modules/member/services/invite";
 
-import { SettingRepository } from "../project/src/modules/settings/repositories/setting";
-import { SettingService } from "../project/src/modules/settings/services/setting";
-import { SettingGroupService } from "../project/src/modules/settings/services/group";
-import { SettingGroupRepository } from "../project/src/modules/settings/repositories/group";
+import { SettingRepository } from "../project/src/modules/setting/repositories/setting";
+import { SettingService } from "../project/src/modules/setting/services/setting";
+import { SettingGroupService } from "../project/src/modules/setting/services/group";
+import { SettingGroupRepository } from "../project/src/modules/setting/repositories/group";
 
 import { TransactionTagRepository } from "../project/src/modules/transaction/repositories/tag";
 import { TransactionTagService } from "../project/src/modules/transaction/services/tag";

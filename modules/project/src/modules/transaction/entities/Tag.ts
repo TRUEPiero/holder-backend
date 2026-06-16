@@ -1,4 +1,4 @@
-import { Entity } from "../../../interfaices/Entity";
+import { Entity } from "../../../interfaces/Entity";
 
 export class TransactionTagEntity extends Entity {
     private title: string;

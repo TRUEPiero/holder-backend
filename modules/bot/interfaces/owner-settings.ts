@@ -1,6 +1,6 @@
 import { CashboxEntity } from "../../project/src/modules/cashbox/entities/Cashbox"
 import { ProjectEntity } from "../../project/src/modules/project/entities/Project"
-import { SettingEntity } from "../../project/src/modules/settings/entities/Setting"
+import { SettingEntity } from "../../project/src/modules/setting/entities/Setting"
 import { BotContext } from "../core/context"
 
 interface EntitySettingsOwner {

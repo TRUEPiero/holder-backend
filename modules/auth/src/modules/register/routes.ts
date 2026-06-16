@@ -1,9 +1,9 @@
 import { Elysia } from 'elysia';
+import { jwtPlugin } from '@plugins/jwt';
 import { schema } from './schemas';
+import { container } from '../../../../containers';
 import { AuthTokenService } from '../../common/services/token';
 import { AuthCookieService } from '../../common/services/cookie';
-import { container } from '../../../../containers';
-import { jwtPlugin } from '@plugins/jwt';
 import { SessionService } from '../../common/services/session';
 
 const {registerService, casheService} = container;
@@ -13,7 +13,9 @@ export const RegisterController = new Elysia({
 })
 .use(jwtPlugin)
 
-.post('/', async({body, jwt, cookie}) => {
+.post('/', async({body, jwt, cookie, set}) => {
+    set.headers['content-type'] = 'application/json';
+    
     const user = await registerService.registerNewUser(body)
 
     const tokenService = new AuthTokenService(jwt);
@@ -28,15 +30,17 @@ export const RegisterController = new Elysia({
     cookieService.setAccess(access);
     cookieService.setRefresh(refresh);
 
-    return {data: user}
+    return {data: user.response()}
 }, schema.register)
 
 .post('/send', async({body: {email}}) => {
     return await registerService.sendVerify(email);
 }, schema.sendVerify)
 
-.post('/check', async({body: {verify_code}}) => {
-    return await registerService.checkVerify(verify_code)
+.post('/check', async({body: {email, verify_code}}) => {
+    const verify = await registerService.checkVerify(email, verify_code)
+
+    return {data: verify.response()}
 }, schema.checkVerify)
 
 
