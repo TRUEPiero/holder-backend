@@ -10,6 +10,8 @@ export type ProjectPermission =
   | "cashbox:create"
   | "cashbox:update"
   | "cashbox:delete"
+  | "budget:create"
+  | "budget:update"
   | "transaction:read"
   | "transaction:create"
   | "transaction:delete"

@@ -9,6 +9,7 @@ export class CashboxEntity extends SettingTarget {
     private description: string;
     private projectId: number;
     private transactions: Transaction[];
+    private plans: any[]
     
     constructor(
         params: any
@@ -20,6 +21,7 @@ export class CashboxEntity extends SettingTarget {
         this.description = params.description || '';
         this.settings = params.settings || []
         this.transactions = params.transactions || [];
+        this.plans = params.plans || []
     }
 
     public getTitle() {
@@ -43,9 +45,12 @@ export class CashboxEntity extends SettingTarget {
         return {
             id: this.id,
             title: this.title,
+            projectId: this.projectId,
             description: this.description,
             settings: this.formatSettings(),
             balance: this.balance,
+            transactions: this.transactions,
+            plans: this.plans,
         }
     }
 }

@@ -38,6 +38,8 @@ import { MemberRoleService } from "../project/src/modules/member/services/role";
 import { MemberRoleRepository } from "../project/src/modules/member/repositories/role";
 import { ProjectSettingRepository } from "../project/src/modules/project/repositories/settings";
 import { CashboxSettingRepository } from "../project/src/modules/cashbox/repositories/settings";
+import { BudgetService } from "../project/src/modules/budget/services";
+import { BudgetRepository } from "../project/src/modules/budget/repository";
 
 const mainService = new MailService();
 
@@ -50,6 +52,7 @@ const memberRoleBase = new DirectoryService<'memberRole'>('memberRole', [])
 const memberBase = new DirectoryService<'projectMember'>('projectMember', ['user', 'project']);
 const inviteBase = new DirectoryService<'projectInvite'>('projectInvite', []);
 const cashboxBase = new DirectoryService<'cashbox'>('cashbox', ['project']);
+const budgetBase = new DirectoryService<'cashboxBudget'>('cashboxBudget', ['cashbox'])
 const settingBase = new DirectoryService<'settingDefinition'>('settingDefinition', []);
 const settingGroupBase = new DirectoryService<'settingGroup'>('settingGroup', []);
 const projectSettingBase = new DirectoryService<'projectSettings'>('projectSettings', []);
@@ -66,6 +69,7 @@ const memberRoleRepo = new MemberRoleRepository(memberRoleBase)
 const memberRepo = new MembershipRepository(memberBase);
 const inviteRepo = new InviteRepository(inviteBase);
 const cashboxRepo = new CashboxRepository(cashboxBase);
+const budgetRepo = new BudgetRepository(budgetBase);
 const projectSettingRepo = new ProjectSettingRepository(projectSettingBase);
 const cashboxSettingRepo = new CashboxSettingRepository(cashboxSettingBase);
 const settingRepo = new SettingRepository(settingBase);
@@ -88,6 +92,7 @@ const cashboxService = new CashboxService(cashboxRepo, projectService, cashboxSe
 const transactionService = new TransactionService(transactionRepo, casheService, projectService);
 const transactionTagService = new TransactionTagService(transactionTagRepo, projectService);
 const transferService = new TransferService(casheService, projectService);
+const budgetService = new BudgetService(budgetRepo, projectService);
 const cashboxSettingService = new SettingService(settingRepo, cashboxService);
 const projectSettingService = new SettingService(settingRepo, projectService);
 const projectSettingGroupService = new SettingGroupService(settingGroupRepo, projectService)
@@ -101,6 +106,7 @@ export const container = {
     registerService,
     projectService,
     cashboxService,
+    budgetService,
     transactionService,
     transactionTagService,
     transferService,

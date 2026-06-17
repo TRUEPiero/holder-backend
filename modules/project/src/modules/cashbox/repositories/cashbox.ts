@@ -23,6 +23,11 @@ export class CashboxRepository {
             filter,
             {
                 transactions: true,
+                plans: {
+                    orderBy: {
+                        startDate: "desc"
+                    }
+                },
                 settings: {
                     include: {
                         setting: true
