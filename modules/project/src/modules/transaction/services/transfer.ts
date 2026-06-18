@@ -25,9 +25,6 @@ export class TransferService {
                 where: {
                     id: cashboxId,
                     projectId,
-                    balance: {
-                        gte: amount.get()
-                    }
                 },
                 data: {
                     balance: {
@@ -73,8 +70,6 @@ export class TransferService {
 
             await this.cashe.del(`project:${projectId}`)
 
-            await this.cashe.del(`project:${projectId}`)
-
             return true;
         })
     }
@@ -105,9 +100,6 @@ export class TransferService {
                     where: {
                         id: cashboxId,
                         projectId,
-                        balance: {
-                            gte: amount.get()
-                        }
                     },
                     data: {
                         balance: {

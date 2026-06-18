@@ -13,10 +13,10 @@ export const BudgetController = new Elysia({
 
 .get('/', async({params: {pid, cid}, user}) => {
     const budget = await budgetService.getActive(cid, user, pid);
-    return {data: budget.response()}
+    return {data: budget?.response() || null}
 }, schema.getActive)
 
-.get('/hitory', async({params: {pid, cid}, user}) => {
+.get('/history', async({params: {pid, cid}, user}) => {
     const budget = await budgetService.getHistory(cid, user, pid);
     return {data: budget}
 }, schema.history)

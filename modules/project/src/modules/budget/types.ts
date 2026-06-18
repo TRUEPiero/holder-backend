@@ -34,6 +34,10 @@ const ResponseObject = t.Object({
     data: ResponseBudget
 })
 
+const ResponseActive = t.Object({
+    data: t.Nullable(ResponseBudget)
+})
+
 const ResponseObjects = t.Object({
     data: t.Array(ResponseBudget)
 })
@@ -45,5 +49,6 @@ export type {
 
 export {
     ResponseObject,
+    ResponseActive,
     ResponseObjects
 }

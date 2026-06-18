@@ -1,4 +1,4 @@
-import { AlreadyExistError, NotCreatedError, NotFoundError, NotUpdatedError } from "@common/errors";
+import { AlreadyExistError, InvalidFieldError, NotCreatedError, NotFoundError, NotUpdatedError } from "@common/errors";
 import { UserEntity } from "../../../../auth/src/modules/user/entities/User";
 import { BudgetRepository } from "./repository";
 import { ProjectService } from "../project/services";
@@ -20,7 +20,6 @@ export class BudgetService {
             cashbox: {
                 projectId
             },
-            isActive: true,
         }
 
         const budget = await this.repo.findDetailed(filter);
@@ -32,18 +31,19 @@ export class BudgetService {
     public async getActive(cashboxId: number, user: UserEntity, projectId: number) {
         await this.projectService.authorize(projectId, user, 'cashbox:read')
 
+        const now = new Date();
+
         const filter = {
             cashboxId,
             cashbox: {
                 projectId
             },
             isActive: true,
+            startDate: { lte: now },
+            endDate: { gte: now }
         }
 
-        const budget = await this.repo.findFirst(filter);
-        if(!budget) throw new NotFoundError("BUDGET");
-
-        return budget;
+        return await this.repo.findFirst(filter);
     }
 
     public async getHistory(cashboxId: number, user: UserEntity, projectId: number) {
@@ -67,24 +67,28 @@ export class BudgetService {
     public async create(user: UserEntity, data: any, cashboxId: number, projectId: number) {
         await this.projectService.authorize(projectId, user, ["cashbox:read", 'budget:create'], "all");
         
+        const { title, description, amount, startDate, endDate } = data;
+
+        if(startDate.getTime() >= endDate.getTime() ) throw new InvalidFieldError("DATE");
+
         const filter = {
             cashboxId,
             cashbox: { projectId },
             isActive: true,
-            startDate: { lte: data.endDate },
-            endDate: { gte: data.startDate } 
+            startDate: { lt: endDate },
+            endDate: { gt: startDate } 
         }
 
         const exist = await this.repo.findFirst(filter);
         if(exist) throw new AlreadyExistError("BUDGET");
 
         const createData: createData = {
-            title: data.title || "",
-            description: data.description || "",
+            title: title || "",
+            description: description || "",
             cashboxId,
-            amount: new Decimal(data.amount ?? 0),
-            startDate: new Date(data.startDate),
-            endDate: new Date(data.endDate),
+            amount: new Decimal(amount ?? 0),
+            startDate: new Date(startDate),
+            endDate: new Date(endDate),
             isActive: true
         }
         
