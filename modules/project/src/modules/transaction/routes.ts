@@ -21,19 +21,16 @@ export const TransactionController = new Elysia({
 },schema.getTags)
 
 .post('/transfer', async({params: {pid, cid}, body, user}) => {
-    return await transferService.transferMoneyBetweenCashbox(pid, cid, body, user);
+    const transaction = await transferService.transferMoneyBetweenCashbox(pid, cid, body, user);
+    return {data: transaction}
 }, schema.transfer)
 
 .post('/external', async({params: {pid, cid}, body, user}) => {
-    return await transferService.transferWithExternal(pid, cid, body, user)
+    const transaction = await transferService.transferWithExternal(pid, cid, body, user)
+    return {data: transaction}
 }, schema.external)
 
 .post('/:tid/cancel', async({params: {pid, cid, tid}, user}) => {
-    return await transferService.canselTransfer(tid, user, cid, pid)
-}, {
-    params: t.Object({
-        pid: t.Number(),
-        cid: t.Number(),
-        tid: t.Number(),
-    })
-})
+    const transaction = await transferService.cancelTransaction(tid, user, cid, pid)
+    return {data: transaction}
+}, schema.cancel)

@@ -1,6 +1,6 @@
 import { errorSchema } from "@schemas/error";
-import {t} from 'elysia';
-import { ResponseGrouped, ResponseObjects, Tag, TypesUnion } from "./types";
+import { t } from 'elysia';
+import { ResponseGrouped, ResponseObject, ResponseObjects, Tag, TypesUnion } from "./types";
 
 export const schema = {
     getByCashbox: {
@@ -11,10 +11,12 @@ export const schema = {
         response: {
             200: ResponseObjects,
             ...errorSchema
-        },  
-        query: t.Object({
-            tags: t.Optional(t.Array(t.Number()))
-        }),
+        },
+        query: t.Partial(t.Object({
+            tag: t.Number(),
+            start: t.Date(),
+            end: t.Date()
+        })),
         detail: {
             tags: ['Транзации'],
             description: 'Получить операции счета'
@@ -42,10 +44,11 @@ export const schema = {
         body: t.Object({
             to: t.Number(),
             amount: t.Number(),
-            tag: t.Optional(Tag)
+            tag: t.Optional(Tag),
+            description: t.Optional(t.String())
         }),
         response: {
-            200: t.Boolean(),
+            200: ResponseObjects,
             ...errorSchema
         },
         detail: {
@@ -61,15 +64,31 @@ export const schema = {
         body: t.Object({
             amount: t.Number(),
             type: TypesUnion,
-            tag: t.Optional(Tag)
+            tag: t.Optional(Tag),
+            description: t.Optional(t.String())
         }),
         response: {
-            200: t.Boolean(),
+            200: ResponseObject,
             ...errorSchema
         },
         detail: {
             tags: ['Транзации'],
             description: 'Внешняя операция'
+        }
+    },
+    cancel: {
+        params: t.Object({
+            pid: t.Number(),
+            cid: t.Number(),
+            tid: t.Number(),
+        }),
+        response: {
+            200: ResponseObjects,
+            ...errorSchema
+        },
+        detail: {
+            tags: ['Транзации'],
+            description: 'Отмена транзации'
         }
     }
 }

@@ -40,7 +40,7 @@ const transactionServiveTg: EntityService<'transaction'> & MoneyTransfer = {
         const transaction_id = ctx.session.transaction_id;
         const user = await this.userService.getUser(ctx.session.user_id);
 
-        return await transferService.canselTransfer(transaction_id,user, cashbox_id, project_id);
+        return await transferService.cancelTransaction(transaction_id,user, cashbox_id, project_id);
     },
     async moneyTransfer(ctx) {
         const createData: CreateData = ctx.session.entityData;

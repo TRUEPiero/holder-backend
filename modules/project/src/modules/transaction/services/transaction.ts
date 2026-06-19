@@ -23,11 +23,6 @@ export class TransactionService {
         return transaction;
     }
 
-    public async getByCashbox(projectId: number, cashboxId: number, user: UserEntity) {
-        await this.projectService.authorize(projectId, user, 'transaction:read');
-        return await this.repo.findByCashbox(projectId, cashboxId)
-    }
-
     public async getGroupedByTags(projectId: number, cashboxId: number, user: UserEntity) {
         await this.projectService.authorize(projectId, user, 'transaction:read');
         
@@ -75,8 +70,10 @@ export class TransactionService {
             cashbox: {
                 projectId
             },
-            tag: {
-                in: query?.tags
+            tagId: query.tag,
+            createdAt: {
+                lte: query.end,
+                gte: query.start
             }
         }
         const include = {

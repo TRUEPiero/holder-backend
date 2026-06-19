@@ -1,12 +1,21 @@
 import db from "@common/prisma";
-import { Money } from "../../cashbox/entities/Money";
-import { ProjectService } from "../../project/services";
-import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
-import { PrismaTxClient } from "@shared-types/index.ts";
-import { ParamsBetween, ParamsExternal, TransactionTag, TransactionTypes } from "../types";
 import { NotCreatedError, NotFoundError } from "@common/errors";
+import { Money } from "../../cashbox/entities/Money";
+import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
+import { ProjectService } from "../../project/services";
+import { DecimalType, PrismaTxClient } from "@shared-types/index.ts";
+import { ParamsBetween, ParamsExternal, TransactionTag, TransactionTypes } from "../types";
 import { AlreadyCalceledError, SameIdError } from "../errors";
 import { CasheService } from "@services/CasheService";
+
+type transactionData = {
+    cashboxId: number
+    tagId?: number | null
+    authorId: number
+    type: 'expense' | 'income'
+    amount: DecimalType | number
+    description?: string | null
+}
 
 export class TransferService {
 
@@ -23,53 +32,28 @@ export class TransferService {
         return await this.execute(async (tx) => {
             if (cashboxId === request.to) throw new SameIdError();
 
-            const debitResult = await tx.cashbox.updateMany({
-                where: {
-                    id: cashboxId,
-                    projectId,
-                },
-                data: {
-                    balance: {
-                        decrement: amount.get()
-                    }
-                }
-            });
-            if (debitResult.count !== 1) throw new NotFoundError('CASHBOX')
-
-            const creditResult = await tx.cashbox.updateMany({
-                where: {
-                    id: request.to,
-                    projectId
-                },
-                data: {
-                    balance: {
-                        increment: amount.get()
-                    }
-                }
-            });
-            if (creditResult.count !== 1) throw new NotFoundError('CASHBOX');
+            await this.decrementCashboxBalance(tx, cashboxId, projectId, amount.get());
+            await this.incrementCashboxBalance(tx, request.to, projectId, amount.get());
 
             const tag = await this.getFirstTagOrCreate(tx, request.tag);
 
-            const expense = await tx.transaction.create({
-                data: {
-                    cashboxId,
-                    type: "expense",
-                    amount: amount.get(),
-                    authorId: user.getId(),
-                    tagId: tag?.id
-                }
-            })
+            const expenseData: transactionData = {
+                cashboxId,
+                type: "expense",
+                amount: amount.get(),
+                authorId: user.getId(),
+                tagId: tag?.id
+            }
+            const expense = await this.createTransaction(tx, expenseData);
 
-            const income = await tx.transaction.create({
-                data: {
-                    cashboxId: request.to,
-                    type: "income",
-                    amount: amount.get(),
-                    authorId: user.getId(),
-                    tagId: tag?.id
-                }
-            })
+            const incomeData: transactionData = {
+                cashboxId: request.to,
+                type: "income",
+                amount: amount.get(),
+                authorId: user.getId(),
+                tagId: tag?.id
+            }
+            const income = await this.createTransaction(tx, incomeData);
 
             await tx.transfer.create({
                 data: {
@@ -80,7 +64,7 @@ export class TransferService {
 
             await this.cashe.del(`project:${projectId}`)
 
-            return true;
+            return [expense, income];
         })
     }
 
@@ -91,81 +75,45 @@ export class TransferService {
         const transactionType = request.type as TransactionTypes;
 
         return await this.execute(async (tx) => {
-            if (transactionType === 'income') {
-                const updated = await tx.cashbox.updateMany({
-                    where: {
-                        id: cashboxId,
-                        projectId
-                    },
-                    data: {
-                        balance: {
-                            increment: amount.get()
-                        }
-                    }
-                });
+            if (transactionType === 'income')
+                await this.incrementCashboxBalance(tx, cashboxId, projectId, amount.get());
 
-                if (updated.count !== 1) throw new NotFoundError('CASHBOX');
-            }
-
-            if (transactionType === 'expense') {
-                const updated = await tx.cashbox.updateMany({
-                    where: {
-                        id: cashboxId,
-                        projectId,
-                    },
-                    data: {
-                        balance: {
-                            decrement: amount.get()
-                        }
-                    }
-                });
-
-                if (updated.count !== 1) throw new NotFoundError('CASHBOX_OR_NOT_ENOUGH_BALANCE');
-            }
+            if (transactionType === 'expense')
+                await this.decrementCashboxBalance(tx, cashboxId, projectId, amount.get());
 
             const tag = await this.getFirstTagOrCreate(tx, request.tag);
 
-            const transaction = await tx.transaction.create({
-                data: {
-                    cashboxId,
-                    type: transactionType,
-                    amount: amount.get(),
-                    authorId: user.getId(),
-                    tagId: tag?.id
-                }
-            });
-
-            const transferData = transaction.type === 'income' 
-                ? {
-                    expenseId: null,
-                    incomeId: transaction.id
-                }
-                : {
-                    expenseId: transaction.id,
-                    incomeId: null
-                }
+            const data: transactionData = {
+                cashboxId,
+                type: transactionType,
+                amount: amount.get(),
+                authorId: user.getId(),
+                tagId: tag?.id
+            }
+            const transaction = await this.createTransaction(tx, data);
 
             await tx.transfer.create({
                 data: {
-                    ...transferData
+                    expenseId: transaction.type === 'expense' ? transaction.id : null,
+                    incomeId: transaction.type === 'income' ? transaction.id : null
                 }
             })
 
             await this.cashe.del(`project:${projectId}`)
 
-            return true;
+            return transaction;
         });
     }
 
-    public async canselTransfer(transactionId: number, user: UserEntity, cashboxId: number, projectId: number) {
+    public async cancelTransaction(transactionId: number, user: UserEntity, cashboxId: number, projectId: number) {
         await this.projectService.authorize(projectId, user, 'transaction:delete');
 
-        return await this.execute(async (tx) => {
+        const transactions = await this.execute(async (tx) => {
             const transfer = await tx.transfer.findFirst({
                 where: {
                     OR: [
-                        { incomeId: transactionId },
-                        { expenseId: transactionId }
+                        {incomeId: transactionId},
+                        {expenseId: transactionId}
                     ]
                 },
                 include: {
@@ -174,71 +122,45 @@ export class TransferService {
                 }
             })
             if (!transfer) throw new NotFoundError('TRANSFER');
-            
-            if(
-                transfer.cancelExpenseId || 
-                transfer.cancelIncomeId || 
+
+            if (
+                transfer.cancelExpenseId ||
+                transfer.cancelIncomeId ||
                 transfer.cancelAt
             ) throw new AlreadyCalceledError();
 
             const { expense, income } = transfer;
-            
+
             let cancelExpense = null;
             let cancelIncome = null;
 
             if (expense) {
-                cancelExpense = await tx.transaction.create({
-                    data: {
-                        description: expense.description,
-                        amount: expense.amount,
-                        type: 'income',
-                        authorId: expense.authorId,
-                        cashboxId: expense.cashboxId,
-                        tagId: expense.tagId
-                    }
-                })
+                const data: transactionData = {
+                    description: expense.description,
+                    amount: expense.amount,
+                    type: 'income',
+                    authorId: expense.authorId,
+                    cashboxId: expense.cashboxId,
+                    tagId: expense.tagId
+                }
+                cancelExpense = await this.createTransaction(tx, data);
 
-                if (!cancelExpense) throw new NotCreatedError('TRANSACTION');
-
-                const creditResult = await tx.cashbox.updateMany({
-                    where: {
-                        id: expense.cashboxId
-                    },
-                    data: {
-                        balance: {
-                            increment: expense.amount
-                        }
-                    }
-                })
-                if (creditResult.count !== 1) throw new NotFoundError('CASHBOX');
+                await this.incrementCashboxBalance(tx, expense.cashboxId, projectId, expense.amount);
 
             }
 
             if (income) {
-                cancelIncome = await tx.transaction.create({
-                    data: {
-                        description: income.description,
-                        amount: income.amount,
-                        type: 'expense',
-                        authorId: income.authorId,
-                        cashboxId: income.cashboxId,
-                        tagId: income.tagId
-                    }
-                })
+                const data: transactionData = {
+                    description: income.description,
+                    amount: income.amount,
+                    type: 'expense',
+                    authorId: income.authorId,
+                    cashboxId: income.cashboxId,
+                    tagId: income.tagId
+                }
+                cancelIncome = await this.createTransaction(tx, data);
 
-                if (!cancelIncome) throw new NotCreatedError('TRANSACTION');
-
-                const debitResult = await tx.cashbox.updateMany({
-                    where: {
-                        id: income.cashboxId
-                    },
-                    data: {
-                        balance: {
-                            decrement: income.amount
-                        }
-                    }
-                })
-                if (debitResult.count !== 1) throw new NotFoundError('CASHBOX');
+                await this.decrementCashboxBalance(tx, income.cashboxId, projectId, income.amount);
             }
 
             await tx.transfer.update({
@@ -254,8 +176,10 @@ export class TransferService {
 
             await this.cashe.del(`project:${projectId}`)
 
-            return true;
+            return [cancelExpense, cancelIncome];
         })
+
+        return transactions.filter(Boolean)
     }
 
     private async getFirstTagOrCreate(tx: PrismaTxClient, tag?: TransactionTag) {
@@ -281,6 +205,65 @@ export class TransferService {
 
         if (!created) throw new NotCreatedError('TRANSACTION TAG');
         return created;
+    }
+
+    private async createTransaction(tx: PrismaTxClient, data: transactionData) {
+        const transaction = await tx.transaction.create({
+            data,
+            include: {
+                tag: true
+            }
+        })
+        if (!transaction) throw new NotCreatedError('TRANSACTION');
+
+        return transaction;
+    }
+
+    private async checkCashboxExist(tx: PrismaTxClient, id: number, projectId: number) {
+        const exist = await tx.cashbox.findFirst({
+            where: {
+                id,
+                projectId
+            }
+        });
+
+        if (!exist) throw new NotFoundError('CASHBOX');
+    }
+
+    private async decrementCashboxBalance(tx: PrismaTxClient, id: number, projectId: number, amount: DecimalType | number) {
+        await this.checkCashboxExist(tx, id, projectId);
+
+        const cashbox = await tx.cashbox.update({
+            where: {
+                id,
+                projectId
+            },
+            data: {
+                balance: {
+                    decrement: amount
+                }
+            }
+        })
+
+        return cashbox;
+    }
+
+    private async incrementCashboxBalance(tx: PrismaTxClient, id: number, projectId: number, amount: DecimalType | number) {
+        await this.checkCashboxExist(tx, id, projectId);
+
+        const cashbox = await tx.cashbox.update({
+            where: {
+                id,
+                projectId
+            },
+            data: {
+                balance: {
+                    increment: amount
+                }
+            }
+        })
+
+        return cashbox;
     }
 
     private async execute(hadler: (tx: PrismaTxClient) => Promise<any>) {

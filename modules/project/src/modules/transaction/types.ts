@@ -4,7 +4,9 @@ import {t} from 'elysia';
 type TransactionTypes = TransactionType
 
 type Query = {
-    tags?: number[]
+    tag?: number,
+    start?: Date,
+    end?: Date
 }
 
 type Transaction = {
@@ -92,7 +94,7 @@ const ResponseTags = t.Object({
 })
 
 const ResponseObject = t.Object({
-    data: t.Nullable(TransactionDetail)
+    data: TransactionDetail
 })
 
 const ResponseObjects = t.Object({
