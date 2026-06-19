@@ -106,22 +106,4 @@ export class TransactionService {
 
         return created;
     }
-
-    public async delete(projectId: number, cashboxId: number, id: number, user: UserEntity) {
-        await this.projectService.authorize(projectId, user, 'transaction:delete');
-
-        const exist = await this.repo.findFirstByFilter({cashboxId, id});
-        if(!exist) throw new NotFoundError("TRANSACTION");
-
-        const deletedData = {
-            isDeleted: true
-        };
-
-        const deleted = await this.repo.softDelete(id, deletedData);
-        if(!deleted) throw new NotDeletedError("TRANSACTION");
-
-        await this.cashe.del(`project:${projectId}`);
-
-        return deleted;
-    }
 }

@@ -249,17 +249,20 @@ model Transaction {
   tagId Int? @map("tag_id")
   tag TransactionTag? @relation(fields: [tagId], references: [id], onDelete: SetNull)
 
-  isDeleted Boolean @default(false)
-
   authorId Int  @map("author_id")
   author   User @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   cashboxId Int     @map("cashbox_id")
   cashbox   Cashbox @relation(fields: [cashboxId], references: [id], onDelete: Cascade)
 
+  transferExpense Transfer? @relation(name: "TransferExpense") 
+  transferIncome Transfer? @relation(name: "TransferIncome")
+  cancelTransferExpense Transfer? @relation(name: "cancelTransferExpense") 
+  cancelTransferIncome Transfer? @relation(name: "cancelTransferIncome")
+
   createdAt DateTime @default(now())
 
-  @@index([id])
+  @@index([id, cashboxId, tagId])
   @@map("transaction")
 }
 
@@ -271,7 +274,30 @@ model TransactionTag {
 
   createdAt DateTime @default(now())
 
+ @@index([title])
   @@map("transaction_tag")
+}
+
+model Transfer {
+  id Int     @id @default(autoincrement())
+
+  expenseId Int? @unique
+  incomeId  Int? @unique
+
+  cancelExpenseId Int? @unique
+  cancelIncomeId  Int? @unique
+
+  expense Transaction? @relation("TransferExpense", fields: [expenseId], references: [id])
+  income  Transaction? @relation("TransferIncome", fields: [incomeId], references: [id])
+
+  cancelExpense Transaction? @relation("cancelTransferExpense", fields: [cancelExpenseId], references: [id])
+  cancelIncome  Transaction? @relation("cancelTransferIncome", fields: [cancelIncomeId], references: [id])
+
+  createAt DateTime @default(now())
+  cancelAt DateTime?
+
+  @@index([incomeId, expenseId])
+  @@map("transfer")
 }
 
 model SettingGroup {

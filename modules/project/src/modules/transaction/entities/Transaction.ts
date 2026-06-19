@@ -1,14 +1,14 @@
 import { Entity } from "../../../interfaces/Entity";
+import { TransactionTypes } from "../types";
 
 export class TransactionEntity extends Entity {
     private amount: number;
     private description: string;
-    private type: string;
+    private type: TransactionTypes;
     private tagId: number;
     private tag: any;
     private authorId: number;
     private author: any;
-    private isDeleted: boolean;
     private cashboxId: number;
     private cashbox: any;
     private createdAt: Date;
@@ -22,7 +22,6 @@ export class TransactionEntity extends Entity {
         this.tag = params.tag || null;
         this.authorId = params.authorId;
         this.author = params.author || {};
-        this.isDeleted = params.isDeleted;
         this.cashboxId = params.cashboxId;
         this.cashbox = params.cashbox || {};
         this.createdAt = params.createdAt;
@@ -55,7 +54,6 @@ export class TransactionEntity extends Entity {
             tagId: this.tagId,
             tag: this.tag,
             author: this.author,
-            isDeleted: this.isDeleted,
             cashbox: this.cashbox,
             createdAt: this.createdAt,
         }

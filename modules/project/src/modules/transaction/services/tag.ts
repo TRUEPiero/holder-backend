@@ -19,7 +19,6 @@ export class TransactionTagService {
                         {cashbox: {
                             projectId
                         }},
-                        {isDeleted: false}
                     ]
                 }
             }

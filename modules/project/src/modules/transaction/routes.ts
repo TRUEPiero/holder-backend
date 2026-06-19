@@ -1,4 +1,4 @@
-import { Elysia } from 'elysia'
+import { Elysia, t } from 'elysia'
 import { schema } from './schemas';
 import { deriveUser } from '@plugins/deriveUser';
 import { container } from '../../../../containers';
@@ -27,3 +27,13 @@ export const TransactionController = new Elysia({
 .post('/external', async({params: {pid, cid}, body, user}) => {
     return await transferService.transferWithExternal(pid, cid, body, user)
 }, schema.external)
+
+.post('/:tid/cancel', async({params: {pid, cid, tid}, user}) => {
+    return await transferService.canselTransfer(tid, user, cid, pid)
+}, {
+    params: t.Object({
+        pid: t.Number(),
+        cid: t.Number(),
+        tid: t.Number(),
+    })
+})

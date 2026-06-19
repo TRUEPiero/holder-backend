@@ -32,10 +32,6 @@ type CreateData = {
     cashbox?: any;
 }
 
-type SoftDeleteData = {
-    isDeleted: boolean
-}
-
 type ParamsBetween = {
     amount: number,
     to: number,
@@ -81,6 +77,7 @@ const TransactionDetail = t.Object({
     id: t.Number(),
     amount: t.Any(),
     description: t.Nullable(t.String()),
+    type: TypesUnion,
     tag: t.Nullable(Tag),
     cashboxId: t.Number(),
     authorId: t.Number()
@@ -114,7 +111,6 @@ export type {
     TransactionTag,
     TransactionTypes,
     CreateData,
-    SoftDeleteData,
     ParamsBetween,
     ParamsExternal,
 }
