@@ -20,6 +20,11 @@ type Setting = {
     createdAt: Date
 }
 
+type updateData = {
+    id: number,
+    value: any
+}
+
 const group = t.Object({
     id: t.Number(),
     code: t.String(),
@@ -66,7 +71,8 @@ const ResponseObjects = t.Object({
 export type {
     Setting,
     SettingTypes,
-    GetSettingFilter
+    GetSettingFilter,
+    updateData
 }
 
 export {

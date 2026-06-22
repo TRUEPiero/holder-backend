@@ -23,7 +23,7 @@ const transactionConfig: EntityConfig<any> = {
         return ctx.session.transaction_id
     },
     getFilter(ctx) {
-      return { cashboxId: ctx.session.cashbox_id, isDeleted: false };  
+      return { cashboxId: ctx.session.cashbox_id};  
     },
 }
 
