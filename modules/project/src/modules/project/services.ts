@@ -1,28 +1,32 @@
-import { PaginationParam } from "@shared-types/index.ts";
+import { PaginationParam, PaginationResult } from "@shared-types/index.ts";
 import { UserEntity } from "../../../../auth/src/modules/user/entities/User";
-import { ProjectRepository } from "./repository";
-import { SettingsOwner } from "../../interfaices/SettingsOwner";
-import { SettingTargets } from "../settings/types";
+import { ProjectRepository } from "./repositories/project";
+import { SettingsOwner } from "../../interfaces/SettingsOwner";
+import { SettingTargets } from "@shared-types/index.ts";
 import { CasheService } from "@services/CasheService";
 import { ProjectEntity } from "./entities/Project";
 import { InvalidFieldError, NotCreatedError, NotDeletedError, NotFoundError, NotUpdatedError } from "@common/errors";
-import { ProjectPermission, ProjectPolicy } from "../../policies/project.policy";
+import { authorizeMode, ProjectPermission, ProjectPolicy } from "../../policies/project.policy";
+import { CRUD } from "../../interfaces/Crud";
 
-export class ProjectService implements SettingsOwner{
+export class ProjectService extends CRUD implements SettingsOwner{
 
     constructor(
         private repo: ProjectRepository,
         private cashe: CasheService
-    ) {}
+    ) {
+        super()
+    }
 
     public async authorize(
         projectId: number,
         user: UserEntity,
-        permission: ProjectPermission
+        permission: ProjectPermission | ProjectPermission[],
+        mode: authorizeMode = 'all'
     ) {
         const project = await this.getById(projectId);
 
-        ProjectPolicy.authorize(project, user, permission);
+        ProjectPolicy.authorize(project, user, permission, mode);
 
         return project;
     }
@@ -47,19 +51,19 @@ export class ProjectService implements SettingsOwner{
         return project;
     }
 
-    public async getByUser(user: UserEntity): Promise<ProjectEntity[]> {
-        return await this.repo.findUserProjects(user.id);
+    public async getByUser(user: UserEntity): Promise<any[]> {
+        const projects = await this.repo.findUserProjects(user.getId());
+        return projects.map(i => i.response())
     }
 
-    public async getWithPagination(parameters: PaginationParam) {
+    public async getWithPagination(parameters: PaginationParam): Promise<PaginationResult> {
         return await this.repo.findWithPagination(parameters);
     }
 
     public async create(user: UserEntity, body: any) {
         const createData = { 
-            owner: user.id, 
+            owner: user.getId(), 
             ...body,
-            settings: body.settings ?? this.getDefaultSetting()
         };
 
         const created = await this.repo.create(createData);
@@ -90,12 +94,8 @@ export class ProjectService implements SettingsOwner{
 
         return deleted;
     }
-    
+
     public getSettingTarget(): SettingTargets {
         return 'project'
-    }
-
-    private getDefaultSetting() {
-        return [];
     }
 }

@@ -1,5 +1,5 @@
 import { InvalidFieldError } from "@common/errors";
-import { checkValidPass } from "../../lib/passVerify";
+import { checkValidPass } from "../../lib/password";
 import { UserService } from "../user/services";
 
 export class AuthService{
@@ -12,8 +12,8 @@ export class AuthService{
 
         const user = await this.userService.getUserByEmail(email);
 
-        const passwordValid = await checkValidPass(password, user);
-        if(!passwordValid) throw new InvalidFieldError('PASSWORD');
+        const isPasswordValid = await checkValidPass(password, user.getPassword());
+        if(!isPasswordValid) throw new InvalidFieldError('PASSWORD');
 
         return user;
     }

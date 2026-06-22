@@ -3,6 +3,7 @@
         "code": "main",
         "title": "основ",
         "description": "",
+        "target": "project",
         "settings": [
             {
                 "code": "notification",
@@ -35,5 +36,33 @@
                 "telegram": true
             }
         ] 
+    },
+    {
+        "code": "main",
+        "title": "Главные",
+        "description": "",
+        "target": "cashbox",
+        "settings": [
+            {
+                "code": "notification1",
+                "title": "Уведомления",
+                "type": "boolean",
+                "value": false,
+                "description": "Присылать уведомления?:",
+                "isDisable": false,
+                "isRequired": false,
+                "telegram": true
+            },
+            {
+                "code": "notification_amount",
+                "title": "notification amount",
+                "type": "number",
+                "value": null,
+                "description": "Присылать уведомления когда баланс приближается к значению:",
+                "isDisable": false,
+                "isRequired": false,
+                "telegram": true
+            }
+        ]
     }
 ]

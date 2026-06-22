@@ -1,22 +1,18 @@
-import { UserService } from "../../auth/src/modules/user/services"
-import { SettingService } from "../../project/src/modules/settings/services"
 import { BotContext } from "../core/context"
-import { ProjectService } from "../../project/src/modules/project/services";
-import { CashboxService } from "../../project/src/modules/cashbox/services";
-import { MembershipService } from "../../project/src/modules/member/services/membership";
-import { TransactionService } from "../../project/src/modules/transaction/services/transaction";
+import { container } from "../../containers";
+
+const {userService, projectService, cashboxService, memberService, transactionService} = container
 
 type ServiceMap = {
-  project: ProjectService;
-  cashbox: CashboxService;
-  member: MembershipService;
-  transaction: TransactionService;
+  project: typeof projectService;
+  cashbox: typeof cashboxService;
+  member: typeof memberService;
+  transaction: typeof transactionService;
 };
 
 interface EntityService<K extends keyof ServiceMap> {
     baseService: ServiceMap[K];
-    userService: UserService
-    settingService: SettingService | null
+    userService: typeof userService
     getItem(ctx: BotContext): Promise<any>
     getList(filter: any): Promise<any>
     create(ctx: BotContext): any

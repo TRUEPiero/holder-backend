@@ -1,82 +1,60 @@
+import { SettingTarget } from "../../../interfaces/Entity";
 import { Transaction } from "../../transaction/types";
-import { LessBalanceError } from "../errors";
 import { UpdateData } from "../types";
-import { Money } from "./Money";
 import { DecimalClass as Decimal, DecimalType } from "@shared-types/index.ts";
 
-export class CashboxEntity {
-    public id: number;
-    public projectId: number;
-    public balance: DecimalType;
-    public title: string;
-    public description: string;
-    public settings: any;
-    public transactions: Transaction[];
+export class CashboxEntity extends SettingTarget {
+    private title: string;
+    private balance: DecimalType;
+    private description: string;
+    private projectId: number;
+    private transactions: Transaction[];
+    private plans: any[]
     
     constructor(
         params: any
     ) {
-        this.id = params.id;
+        super(params);
         this.projectId = params.projectId;
         this.balance = new Decimal(params.balance);
         this.title = params.title;
         this.description = params.description || '';
         this.settings = params.settings || []
         this.transactions = params.transactions || [];
+        this.plans = params.plans || []
     }
 
-    public debit(amount: Money) {
-        if (this.balance.lessThan(amount.get())) {
-            throw new LessBalanceError();
-        }
-        this.balance = this.balance.sub(new Decimal(amount.get()));
+    public getTitle() {
+        return this.title
     }
 
-    public credit(amount: Money) {
-        this.balance = this.balance.add(new Decimal(amount.get()));
+    public getBalance() {
+        return this.balance
     }
 
     public update(data: UpdateData) {
-        const {settings, balance, ...dataWithoutParams} = data;
+        const {...dataWithoutParams} = data;
         
         for(const [key, value] of Object.entries(dataWithoutParams)) {
             (this as any)[key] = value
         }
-        
-        this.balance = new Decimal(balance!);
 
-        this.setParameters(settings);
-
-        return this.toJSON();
+        return {
+            title: this.title,
+            description: this.description
+        };
     }
 
-    public getSettings() {
-        if(typeof this.settings === 'string') return JSON.parse(this.settings);
-        
-        return this.settings;
-    }
-
-    private setParameters(newParams: any[] = []) {
-        const map = new Map<string, any>();
-
-        for (const param of this.settings) {
-            map.set(param.code, param);
-        }
-
-        for (const param of newParams) {
-            map.set(param.code, param);
-        }
-
-        this.settings = Array.from(map.values());
-    }
-
-    public toJSON(): any {
+    public response() {
         return {
             id: this.id,
             title: this.title,
+            projectId: this.projectId,
             description: this.description,
-            settings: this.settings,
+            settings: this.formatSettings(),
             balance: this.balance,
+            transactions: this.transactions,
+            plans: this.plans,
         }
     }
 }

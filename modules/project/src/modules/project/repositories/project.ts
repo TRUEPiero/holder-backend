@@ -1,6 +1,6 @@
 import { DirectoryService } from "@services/DirectoryService";
-import { ProjectEntity } from "./entities/Project";
-import { Project } from "./types";
+import { ProjectEntity } from "../entities/Project";
+import { Project } from "../types";
 import { PaginationParam } from "@shared-types/index.ts";
 
 export class ProjectRepository {
@@ -36,9 +36,22 @@ export class ProjectRepository {
             {
                 members: { 
                     where: { isDeleted: false },
-                    include: { user: true } 
+                    include: { user: true, role: {
+                        include: {
+                            permissions: {
+                                include: {
+                                    permission: true
+                                }
+                            }
+                        }
+                    } } 
                 },
-                cashboxes: true
+                cashboxes: true,
+                settings: {
+                    include: {
+                        setting: true
+                    }
+                }
             }
         );
         if(!data) return null; 
@@ -70,7 +83,13 @@ export class ProjectRepository {
     }
 
     async update(id: number, data: any): Promise<ProjectEntity | null> {
-        const updated = await this.base.updateItem(id, data);
+        const include = {
+            settings: {
+                include: {setting: true}
+            }
+        };
+
+        const updated = await this.base.updateItem(id, data, include);
         if(!updated) return null;
 
         return new ProjectEntity(updated);

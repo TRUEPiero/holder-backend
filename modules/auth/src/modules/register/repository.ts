@@ -22,4 +22,11 @@ export class RegisterRepository {
         
         return new RegisterEntity(updated);
     }
+
+    public async delete(filter: any) {
+        const deleted = await this.base.deleteByFields(filter);
+        if(!deleted) return null;
+
+        return new RegisterEntity(deleted);
+    }
 }

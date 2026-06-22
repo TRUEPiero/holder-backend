@@ -1,6 +1,6 @@
 import { DirectoryService } from "@services/DirectoryService";
-import { CashboxEntity } from "./entities/Cashbox";
-import type { Cashbox } from "./types";
+import { CashboxEntity } from "../entities/Cashbox";
+import type { Cashbox } from "../types";
 import { PaginationParam } from "@shared-types/index.ts";
 
 
@@ -22,7 +22,17 @@ export class CashboxRepository {
         const data = await this.base.getFirstByFields(
             filter,
             {
-                transactions: true
+                transactions: true,
+                plans: {
+                    orderBy: {
+                        startDate: "desc"
+                    }
+                },
+                settings: {
+                    include: {
+                        setting: true
+                    }
+                }
             }
         );
         if(!data) return null;

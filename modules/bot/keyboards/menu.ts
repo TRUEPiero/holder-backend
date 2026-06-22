@@ -32,7 +32,7 @@ export class MenuKeyboard {
     static transactionMenu() {
         return new InlineKeyboard()
             .text('Повторить', 'transaction_repeat')
-            .text('Удалить', 'transaction_delete')
+            .text('Отменить', 'transaction_delete')
             .row()
             .append(CommonKeyboard.back())
     }

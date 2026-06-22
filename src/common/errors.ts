@@ -57,6 +57,11 @@ class AccessDeniedError extends AppError {
   }
 }
 
+class InvalidEntity extends AppError {
+    constructor() {
+        super('INVALID_ENTITY', 422, 'Invalid query param: "entity"')
+    }
+}
 
 
 export {
@@ -69,4 +74,5 @@ export {
   AccessDeniedError,
   InvalidFieldError,
   AlreadyExistError,
+  InvalidEntity
 }

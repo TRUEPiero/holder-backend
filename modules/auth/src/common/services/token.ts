@@ -5,16 +5,16 @@ export class AuthTokenService {
 
     public generateAccess(user: UserEntity) {
         return this.jwt.sign({
-            sub: user.id,
-            name: user.name,
-            telegram: user.telegram,
+            sub: user.getId(),
+            name: user.getName(),
+            telegram: user.getTelegram(),
             exp: Math.floor(Date.now() / 1000) + 60 * 30
         })
     }
 
     public generateRefresh(user: UserEntity, jti: string) {
         return this.jwt.sign({
-            sub: user.id,
+            sub: user.getId(),
             jti,
             exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30
         })

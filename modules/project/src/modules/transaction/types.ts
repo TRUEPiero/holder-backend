@@ -4,7 +4,9 @@ import {t} from 'elysia';
 type TransactionTypes = TransactionType
 
 type Query = {
-    tags?: number[]
+    tag?: number,
+    start?: Date,
+    end?: Date
 }
 
 type Transaction = {
@@ -30,10 +32,6 @@ type CreateData = {
     tags?: TransactionTag[];
     author?: any;
     cashbox?: any;
-}
-
-type SoftDeleteData = {
-    isDeleted: boolean
 }
 
 type ParamsBetween = {
@@ -81,6 +79,7 @@ const TransactionDetail = t.Object({
     id: t.Number(),
     amount: t.Any(),
     description: t.Nullable(t.String()),
+    type: TypesUnion,
     tag: t.Nullable(Tag),
     cashboxId: t.Number(),
     authorId: t.Number()
@@ -95,7 +94,7 @@ const ResponseTags = t.Object({
 })
 
 const ResponseObject = t.Object({
-    data: t.Nullable(TransactionDetail)
+    data: TransactionDetail
 })
 
 const ResponseObjects = t.Object({
@@ -114,7 +113,6 @@ export type {
     TransactionTag,
     TransactionTypes,
     CreateData,
-    SoftDeleteData,
     ParamsBetween,
     ParamsExternal,
 }

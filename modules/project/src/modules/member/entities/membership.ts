@@ -1,17 +1,29 @@
 import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
-import { MemberRoles } from "../types";
+import { Entity } from "../../../interfaces/Entity";
+import { MemberRole } from "../types";
 
-export class MemberEntity {
-    public id: number
-    public projectId: number
-    public userId: number
-    public user: UserEntity
-    public role: MemberRoles
-    public isDeleted: boolean;
-    public joinedAt: Date
+export class MemberEntity extends Entity {
+    private projectId: number
+    private userId: number
+    private user: UserEntity
+    private role: MemberRole
+    private isDeleted: boolean;
+    private joinedAt: Date
+
+    public getUser() {
+        return this.user
+    }
+
+    public getRole() {
+        return this.role
+    }
+
+    public getIsDeleted() {
+        return this.isDeleted
+    }
 
     constructor(params: any) {
-        this.id = params.id;
+        super(params)
         this.projectId = params.projectId;
         this.userId = params.userId;
         this.user = params.user || undefined;
@@ -21,16 +33,12 @@ export class MemberEntity {
     }
 
     public update(data: any) {
-        this.setRole(data.role);
-
-        return this.toJSON();
+        return {
+            roleId: data.roleId
+        };
     }
 
-    private setRole(role: any) {
-        this.role = role;
-    }
-
-    public toJSON() {
+    public response() {
         return {
             id: this.id,
             projectId: this.projectId,

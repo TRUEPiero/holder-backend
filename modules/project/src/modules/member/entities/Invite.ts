@@ -1,12 +1,13 @@
-export class InviteEntity {
-    public id: number;
+import { Entity } from "../../../interfaces/Entity";
+
+export class InviteEntity extends Entity {
     public email: string;
     public code: string;
     public projectId: number;
     public expiredAt: Date;
 
     constructor(params: any) {
-        this.id = params.id;
+        super(params)
         this.code = params.code;
         this.projectId = params.projectId;
         this.email = params.email;
@@ -25,7 +26,7 @@ export class InviteEntity {
         this.expiredAt = date ?? new Date();
     }
 
-    public toJSON() {
+    public response() {
         return {
             id: this.id,
             email: this.email,

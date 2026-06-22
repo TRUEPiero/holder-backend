@@ -31,7 +31,7 @@ export const AuthController = new Elysia({
     cookieService.setAccess(access)
     cookieService.setRefresh(refresh)
 
-    return { data: user }
+    return { data: user.response() }
 }, schema.login)
 
 .post('/refresh', async ({ jwt, cookie, set }) => {

@@ -26,7 +26,6 @@ export class BotService {
 
     async getChat(chat_id: number) {
         const chat = await this.bot.api.getChat(chat_id);
-
         return chat;
     }
 }

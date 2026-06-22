@@ -1,8 +1,10 @@
-import { MemberRole } from "@prisma/client";
 import { ResponseUser, User } from "../../../../auth/src/common/types/user";
 import { t } from "elysia";
 
-type MemberRoles = MemberRole;
+type MemberRole = {
+    name: string,
+    permissions: any[]
+};
 
 type Member = {
     id: number;
@@ -17,12 +19,10 @@ type SoftDeleteData = {
     isDeleted: boolean
 }
 
-const memberRole = t.Enum(MemberRole)
-
 const ResponseMember = t.Object({
     id: t.Number(),
     projectId: t.Number(),
-    role: t.String(),
+    role: t.Any(),
     user: t.Optional(ResponseUser),
     joinedAt: t.Date()
 })
@@ -37,12 +37,11 @@ const ResponseObjects = t.Object({
 
 export type{
     SoftDeleteData,
-    MemberRoles,
+    MemberRole,
     Member
 }
 
 export {
-    memberRole,
     ResponseMember,
     ResponseObject,
     ResponseObjects

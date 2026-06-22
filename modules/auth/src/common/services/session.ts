@@ -37,7 +37,7 @@ export class SessionService {
     private async setCashe(jti: string, user: UserEntity) {
         await this.cashe.set(
             `refresh:${jti}`,
-            user.id,
+            user.getId(),
             60 * 60 * 24 * 30
         );
     }

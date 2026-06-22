@@ -1,7 +1,6 @@
 import { AccessDeniedError } from "@common/errors";
 import { ProjectEntity } from "../modules/project/entities/Project";
 import { UserEntity } from "../../../auth/src/modules/user/entities/User";
-import { MemberRoles } from "../modules/member/types";
 
 export type ProjectPermission =
   | "project:read"
@@ -11,6 +10,8 @@ export type ProjectPermission =
   | "cashbox:create"
   | "cashbox:update"
   | "cashbox:delete"
+  | "budget:create"
+  | "budget:update"
   | "transaction:read"
   | "transaction:create"
   | "transaction:delete"
@@ -20,69 +21,63 @@ export type ProjectPermission =
   | "settings:read"
   | "settings:update";
 
-type ProjectActorRole = "owner" | MemberRoles;
-
-const permissionsByRole: Record<ProjectActorRole, ProjectPermission[]> = {
-  owner: [
-    "project:read",
-    "project:update",
-    "project:delete",
-    "cashbox:read",
-    "cashbox:create",
-    "cashbox:update",
-    "cashbox:delete",
-    "transaction:read",
-    "transaction:create",
-    "transaction:delete",
-    "member:invite",
-    "member:update",
-    "member:delete",
-    "settings:read",
-    "settings:update",
-  ],
-  editor: [
-    "project:read",
-    "project:update",
-    "cashbox:read",
-    "cashbox:create",
-    "cashbox:update",
-    "cashbox:delete",
-    "transaction:read",
-    "transaction:create",
-    "transaction:delete",
-    "settings:read",
-    "settings:update",
-  ],
-  viewer: [
-    "project:read",
-    "cashbox:read",
-    "transaction:read",
-    "settings:read",
-  ],
+type ProjectActorRole = {
+  name: string,
+  permissions: any[]
 };
 
-export class ProjectPolicy {
-  static getActorRole(project: ProjectEntity, user: UserEntity): ProjectActorRole | null {
-    if (project.ownerId === user.id) return "owner";
+type authorizeMode = 'all' | 'any'
 
-    const member = project.members?.find((m) => {
+export class ProjectPolicy {
+  static getMemberRole(
+    project: ProjectEntity, 
+    user: UserEntity
+  ): ProjectActorRole | null {
+    if (project.getOwner() === user.getId()) {
+      return {
+        name: 'owner',
+        permissions: []
+      };
+    }
+
+    const members = project.getMembers()
+    const member = members?.find((m) => {
       const memberUserId = m.userId ?? m.user?.id;
-      return memberUserId === user.id;
+      return memberUserId === user.getId();
     });
 
     return member?.role ?? null;
   }
 
-  static can(project: ProjectEntity, user: UserEntity, permission: ProjectPermission): boolean {
-    const role = this.getActorRole(project, user);
+  static can(
+    project: ProjectEntity, 
+    user: UserEntity, 
+    permission: ProjectPermission | ProjectPermission[],
+    mode: authorizeMode
+  ): boolean {
+    const role = this.getMemberRole(project, user);
     if (!role) return false;
+    if (role.name === 'owner') return true;
 
-    return permissionsByRole[role].includes(permission);
+    const permissions = Array.isArray(permission) ? permission : [permission];
+    
+    return mode === 'all' 
+      ? permissions.every(permission => role.permissions.includes(permission))
+      : permissions.some(permission => role.permissions.includes(permission))
   }
 
-  static authorize(project: ProjectEntity, user: UserEntity, permission: ProjectPermission): void {
-    if (!this.can(project, user, permission)) {
+  static authorize(
+    project: ProjectEntity, 
+    user: UserEntity, 
+    permission: ProjectPermission | ProjectPermission[],
+    mode: authorizeMode = 'all'
+  ): void {
+    if (!this.can(project, user, permission, mode)) {
       throw new AccessDeniedError();
     }
   }
+}
+
+export type {
+  authorizeMode
 }

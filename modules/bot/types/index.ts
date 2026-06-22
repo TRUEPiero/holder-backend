@@ -1,8 +1,11 @@
-import { MemberRole, TransactionType } from "@prisma/client"
+import { TransactionType } from "@prisma/client"
 
 type EntityType = "project" | "cashbox" | "transaction" | "member"
 type EntityData = any
-type MemberRoles = MemberRole;
+type MemberRoles = {
+    name: string,
+    permissions: any[]
+};
 type TransactionTypes = TransactionType;
 type EntityControllerParams = {
     service: any
@@ -19,8 +22,8 @@ type Step = {
 }
 
 type PaginationItem = {
-    id: number,
-    title:  string,
+    title: string,
+    getId(): number,
     createdAt: Date,
 }
 

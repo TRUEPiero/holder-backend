@@ -18,15 +18,15 @@ export const MembershipController = new Elysia({
 
 .post('/invite/accept', async ({params: {pid}, body: {code}, user}) => {
     const member =  await inviteService.acceptInvite(pid, code, user);
-    return {data: member}
+    return {data: member.response()}
 }, schema.accept)
 
-.patch('/:mid/role', async({params: {pid, mid}, body: {role}, user}) => {
-    const member = await memberService.update(pid, mid, {role}, user); 
-    return {data: member}
+.patch('/:mid/role', async({params: {pid, mid}, body: {roleId}, user}) => {
+    const member = await memberService.update(mid, user, {roleId}, pid); 
+    return {data: member.response()}
 }, schema.updateRole)
 
 .delete('/:mid', async({params: {pid, mid}, user}) => {
-    const member = await memberService.delete(pid, mid, user);
-    return {data: member};
+    const member = await memberService.delete(mid, user, pid);
+    return {data: member.response()};
 }, schema.delete)

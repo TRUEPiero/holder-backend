@@ -9,20 +9,19 @@ type CreateData = {
     type: TransactionTypes,
     itemId?: number,
     description: string,
-    requisites?: string  
+    requisites?: string
 }
 
-const {transactionService, transferService, userService} = container;
+const { transactionService, transferService, userService } = container;
 
 const transactionServiveTg: EntityService<'transaction'> & MoneyTransfer = {
     baseService: transactionService,
-    settingService: null,
     userService: userService,
     transferService: transferService,
 
     async getItem(ctx) {
         const id = ctx.session.transaction_id;
-        
+
         return this.baseService.getById(id)
     },
     getList(filter) {
@@ -31,21 +30,16 @@ const transactionServiveTg: EntityService<'transaction'> & MoneyTransfer = {
     async create(ctx: BotContext) {
 
     },
-    async update(ctx: BotContext){
+    async update(ctx: BotContext) {
 
     },
-    async delete(ctx: BotContext){
-        const project_id = ctx.session.project_id;
+    async delete(ctx: BotContext) {
+        const project_id = ctx.session.project_id
         const cashbox_id = ctx.session.project_id;
         const transaction_id = ctx.session.transaction_id;
         const user = await this.userService.getUser(ctx.session.user_id);
 
-        return await this.baseService.delete(
-            project_id,
-            cashbox_id,
-            transaction_id,
-            user
-        );
+        return await transferService.cancelTransaction(transaction_id,user, cashbox_id, project_id);
     },
     async moneyTransfer(ctx) {
         const createData: CreateData = ctx.session.entityData;
@@ -59,7 +53,7 @@ const transactionServiveTg: EntityService<'transaction'> & MoneyTransfer = {
             type: createData.type,
             amount: createData.amount,
         }
-        const method = createData.itemId 
+        const method = createData.itemId
             ? this.transferService.transferMoneyBetweenCashbox.bind(this.transferService)
             : this.transferService.transferWithExternal.bind(this.transferService)
 
@@ -69,8 +63,8 @@ const transactionServiveTg: EntityService<'transaction'> & MoneyTransfer = {
         const type = data.type;
         const cashboxId = ctx.session.cashbox_id;
 
-        if(type === 'income') {
-            if(data.itemId) {
+        if (type === 'income') {
+            if (data.itemId) {
                 return [data.itemId, cashboxId];
             }
 

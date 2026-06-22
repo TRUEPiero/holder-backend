@@ -1,12 +1,7 @@
 import { InlineKeyboard } from "grammy";
-import { container } from "../../containers";
 import { CommonKeyboard } from "./common";
 import { EntityType } from "../types";
-import { SettingEntity } from "../../project/src/modules/settings/entities/Setting";
-
-const {projectSettingService, cashboxSettingService} = container;
-
-type SettingService = typeof projectSettingService | typeof cashboxSettingService;
+import { SettingEntity } from "../../project/src/modules/setting/entities/Setting";
 
 export class SettingKeyboard {
     static async projectSettings(data: SettingEntity[]) {
@@ -45,7 +40,7 @@ export class SettingKeyboard {
         const keyboard = new InlineKeyboard();
                 
         data.forEach((setting, index) => {
-            const key = keyboard.text(`Edit ${setting.title}`, `${entity}_setting_${setting.id}`)
+            const key = keyboard.text(`Edit ${setting.getTitle()}`, `${entity}_setting_${setting.getId()}`)
 
             if(index++ && index++ % 3 === 0) key.row();
         })

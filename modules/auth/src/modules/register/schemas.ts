@@ -8,6 +8,7 @@ export const schema = {
             name: t.String(),
             email: t.String(),
             password: t.String(),
+            verify_code: t.String()
         }),
         detail: {
             description: 'Регистрация',
@@ -33,6 +34,7 @@ export const schema = {
     },
     checkVerify: {
         body: t.Object({
+            email: t.String(),
             verify_code: t.String()
         }),
         detail: {
@@ -40,7 +42,12 @@ export const schema = {
             tags: ['Регистрация']
         },
         response: {
-            200: t.Boolean(),
+            200: t.Object({
+                data: t.Object({
+                    email: t.String(),
+                    verifyToken: t.String()
+                })
+            }),
             ...errorSchema
         }
     }

@@ -117,6 +117,21 @@ export class BaseService<ModelName extends PrismaModelName> {
         return await (this.model as any).update({where: {id: finded.id}, data}) || []
     }
 
+    public async upsert(
+        filter: any,
+        create: any,
+        update: any,
+        include: any = {}
+    ): Promise<any> {
+        return await (this.model as any).upsert({
+            where: {
+                ...filter
+            },
+            create,
+            update
+        })
+    }
+
     public async deleteItem(id: number): Promise<any | null> {
         return await (this.model as any).delete({where: { id }}) || {}
     }

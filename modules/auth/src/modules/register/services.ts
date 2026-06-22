@@ -3,6 +3,8 @@ import { RegisterRepository } from "./repository";
 import { UserService } from "../user/services";
 import { AlreadyExistError, NotFoundError, NotUpdatedError } from "@common/errors";
 import { getExpiredDate } from "../../../../../src/helpers/expiredDate";
+import { randomUUID } from 'crypto';
+import { registerData } from "./types";
 
 export class RegisterService {
     constructor(
@@ -16,11 +18,27 @@ export class RegisterService {
         return verify;
     }
 
-    public async registerNewUser(data: any) {
-        return await this.userService.create(data);
+    public async registerNewUser(data: registerData) {
+        const {verify_code, ...createData} = data;
+
+        const verify = await this.getVerify({
+            email: createData.email,
+            verifyToken: verify_code,
+        });
+
+        if(!verify?.checked()) throw new NotFoundError('VERIFY');
+
+        const user = await this.userService.create(createData);
+
+        await this.repo.delete({
+            email: createData.email
+        });
+
+        return user;
     }
 
     public async sendVerify(email: string) {
+        await this.userService.exist(email);
 
         const verify = await this.getVerify({email});
         if(verify && verify.isActive()) throw new AlreadyExistError('VERIFY');
@@ -34,24 +52,40 @@ export class RegisterService {
             }
         );
 
-        await this.mailService.send(`Content`, `Header`, {})
+        const params = {
+            intro: 'content'
+        };
+
+        const user = {
+            login: email,
+            name: 'Guest'
+        }
+
+        // await this.mailService.send(params, `Header`, user)
         
         return true
     }
 
-    public async checkVerify(code: string) {
-
-        const verify = await this.getVerify({code});
-        if (!verify || !verify.isActive()) throw new NotFoundError("VERIFY") ;
+    public async checkVerify(email: string, code: string) {
+        const verify = await this.getVerify({email, code});
+        if (!verify || !verify.isActive()) throw new NotFoundError("VERIFY");
 
         verify.setChecked()
+
+        const {isChecked, expiredAt} = verify.response()
+        const token = randomUUID();
+
         const updated = await this.repo.update(
             {code}, 
-            verify.toJSON()
+            {
+                isChecked,
+                expiredAt,
+                verifyToken: token
+            }
         )
         if(!updated) throw new NotUpdatedError("VERIFY");
 
-        return Boolean(updated)
+        return updated;
     }
 
     private generateCode() {

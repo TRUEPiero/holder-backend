@@ -19,7 +19,8 @@ type Setting = {
 type Group = {
     code: string
     title: string
-    description: string
+    description: string,
+    target: 'project' | 'cashbox',
     settings: Setting[]
 }
 
@@ -38,17 +39,18 @@ async function main() {
             data: {
                 code: group.code,
                 title: group.title,
-                description: group.description
+                description: group.description,
+                target: group.target
             }
         })
 
         for(const setting of group.settings) {
-            const createdSetting = await db.settingDefinition.create({
+            await db.settingDefinition.create({
                 data: {
                     code: setting.code,
                     title: setting.title,
                     type: setting.type,
-                    target: 'project',
+                    target: group.target,
                     group: {
                         connect: {
                             id: createdGroup.id

@@ -11,8 +11,8 @@ export class TransactionService {
 
     constructor(
         private repo: TransactionRepository,
-        private cashe: CasheService,
-        private projectService: ProjectService
+        private projectService: ProjectService,
+        private cashe: CasheService
     ) {}
 
     public async getById(id: number) {
@@ -21,11 +21,6 @@ export class TransactionService {
         const transaction = await this.repo.findById(id);
         if (!transaction) throw new NotFoundError("TRANSACTION");
         return transaction;
-    }
-
-    public async getByCashbox(projectId: number, cashboxId: number, user: UserEntity) {
-        await this.projectService.authorize(projectId, user, 'transaction:read');
-        return await this.repo.findByCashbox(projectId, cashboxId)
     }
 
     public async getGroupedByTags(projectId: number, cashboxId: number, user: UserEntity) {
@@ -49,18 +44,18 @@ export class TransactionService {
         }
 
         for(const type of ['income', 'expense'] as const) {
-            const filtered = transactions.filter(i => i.type === type);
+            const filtered = transactions.filter(i => i.getType() === type);
 
             const groupedByTag = Object.groupBy(filtered, item => {
-                return item.tag.title ?? 'other'
+                return item.getTag().title ?? 'other'
             });
 
             result[type] = Object.entries(groupedByTag).map(
                 ([tagTitle, transactions]) => ({
-                    id: transactions?.[0]?.tag?.id ?? null,
-                    title: transactions?.[0]?.tag?.title ?? tagTitle,
+                    id: transactions?.[0]?.getTag()?.id ?? null,
+                    title: transactions?.[0]?.getTag()?.title ?? tagTitle,
                     transactions: transactions ?? [],
-                    amount: transactions?.reduce((summ, transaction) => summ.plus(transaction.amount), new Decimal(0))
+                    amount: transactions?.reduce((summ, transaction) => summ.plus(transaction.getAmount()), new Decimal(0))
                 })
             );
         }
@@ -75,15 +70,17 @@ export class TransactionService {
             cashbox: {
                 projectId
             },
-            tag: {
-                in: query?.tags
+            tagId: query.tag,
+            createdAt: {
+                lte: query.end,
+                gte: query.start
             }
         }
         const include = {
             tag: true
         }
 
-        const transaction = await this.repo.findByFilter(filter, include);
+        const transaction = (await this.repo.findByFilter(filter, include)).map(i => i.response());
         if(!transaction) throw new NotFoundError("TRANSACTION");
 
         return transaction;
@@ -105,23 +102,5 @@ export class TransactionService {
         if(!created) throw new NotCreatedError("TRANSACTION");
 
         return created;
-    }
-
-    public async delete(projectId: number, cashboxId: number, id: number, user: UserEntity) {
-        await this.projectService.authorize(projectId, user, 'transaction:delete');
-
-        const exist = await this.repo.findFirstByFilter({cashboxId, id});
-        if(!exist) throw new NotFoundError("TRANSACTION");
-
-        const deletedData = {
-            isDeleted: true
-        };
-
-        const deleted = await this.repo.softDelete(id, deletedData);
-        if(!deleted) throw new NotDeletedError("TRANSACTION");
-
-        await this.cashe.del(`project:${projectId}`);
-
-        return deleted;
     }
 }

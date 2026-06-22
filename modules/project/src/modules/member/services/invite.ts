@@ -42,17 +42,17 @@ export class ProjectInviteService {
     public async acceptInvite(projectId: number, code: string, user: UserEntity) {
         const invite = await this.getInvite({code, projectId});
         if(!invite || !invite.isActive()) throw new NotFoundError("INVITE");
-        if(invite.getEmail() !== user.email) throw new NotFoundError("INVITE");
+        if(invite.getEmail() !== user.getEmail()) throw new NotFoundError("INVITE");
 
         invite.setChecked();
 
         const updated = await this.inviteRepo.update(
             {code}, 
-            invite.toJSON()
+            invite.response()
         )
         if(!updated) throw new NotUpdatedError("INVITE");
 
-        return await this.memberService.create(projectId, user);
+        return await this.memberService.create(user, {}, projectId);
     }
 
     private generateCode() {

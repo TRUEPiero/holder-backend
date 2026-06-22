@@ -1,7 +1,6 @@
 import { errorSchema } from "@schemas/error";
 import {t} from 'elysia';
 import { ResponseDetailObject, ResponseObject, ResponseObjects } from "./types";
-import { setting } from "@schemas/common";
 
 export const schema = {
     getAll: {
@@ -31,7 +30,6 @@ export const schema = {
         body: t.Partial(
             t.Object({
                 title: t.String(),
-                settings: t.Array(setting)
             })
         ),
         detail: {
@@ -50,7 +48,6 @@ export const schema = {
         body: t.Partial(
             t.Object({
                 title: t.String(),
-                settings: t.Array(setting)
             })
         ),
         detail: {

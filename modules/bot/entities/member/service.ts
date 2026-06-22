@@ -6,7 +6,6 @@ const {memberService, userService} = container;
 
 const memberServiceTg: EntityService<'member'> = {
     baseService: memberService,
-    settingService: null,
     userService: userService,
 
     async getItem(ctx) {
@@ -28,7 +27,7 @@ const memberServiceTg: EntityService<'member'> = {
 
         const projectId = ctx.session.project_id;
 
-        return await this.baseService.create(projectId, user);
+        return await this.baseService.create(user, {}, projectId);
     },
     async update(ctx: BotContext){
         

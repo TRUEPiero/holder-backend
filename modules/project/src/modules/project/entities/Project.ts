@@ -1,47 +1,50 @@
-import { Setting } from "@schemas/common";
 import { UpdateData } from "../types";
 import { Cashbox } from "../../cashbox/types";
 import { DecimalClass as Decimal, DecimalType } from "@shared-types/index.ts";
+import { SettingTarget } from "../../../interfaces/Entity";
 
-export class ProjectEntity {
-    public id: number;
-    public title: string;
-    public balance: DecimalType;
-    public settings: Setting[];
-    public ownerId: number;
-    public members: any[];
-    public cashboxes: Cashbox[];
+export class ProjectEntity extends SettingTarget {
+    private title: string;
+    private balance: DecimalType;
+    private ownerId: number;
+    private members: any[];
+    private cashboxes: Cashbox[];
     
     constructor(params: any) {
-        this.id = params.id;
+        super(params);
         this.title = params.title;
         this.balance = this.calculateTotalSum(params.cashboxes);
-        this.settings = params.settings;
+        this.settings = params.settings || [];
         this.ownerId = params.ownerId;
         this.members = params.members;
         this.cashboxes = params.cashboxes;
     }
-    
 
-    public getSettings() {
-        if(typeof this.settings === 'string') return JSON.parse(this.settings);
-        
-        return this.settings;
+    public getTitle() {
+        return this.title;
+    }
+
+    public getOwner() {
+        return this.ownerId
+    }
+
+    public getMembers() {
+        return this.members.map(member => ({
+            id: member.id,
+            isDeleted: member.isDeleted,
+            userId: member.userId,
+            user: member.user,
+            role: this.formatRole(member)
+        }))
     }
 
     public update(data: UpdateData) {
-        const {settings, ...dataWithoutParams} = data;
-        
-        for(const [key, value] of Object.entries(dataWithoutParams)) {
+        for(const [key, value] of Object.entries(data)) {
             if(value.toString()) (this as any)[key] = value
         }
 
-        this.setParameters(settings);
-
         return {
             title: this.title,
-            ownerId: this.ownerId,
-            settings: this.settings,
         };
     }
 
@@ -53,28 +56,21 @@ export class ProjectEntity {
         return new Decimal(summ);
     }
 
-    private setParameters(newParams: any[] = []) {
-        const map = new Map<string, any>();
-
-        for (const param of this.settings) {
-            map.set(param.code, param);
+    private formatRole(member: any) {
+        return {
+            name: member.role.name,
+            permissions: member.role.permissions.map((perm: {permission: {entity: string, setting: string}}) => `${perm.permission.entity}:${perm.permission.setting}`)
         }
-
-        for (const param of newParams) {
-            map.set(param.code, param);
-        }
-
-        this.settings = Array.from(map.values());
     }
 
-    private formatMembers(members: any[]) {
-        if(!members) return [];
+    private formatMembers() {
+        if(!this.members) return [];
 
-        return members.map((member: any) => {
+        return this.members.map((member: any) => {
             return {
-                ...member.user,
                 memberId: member.id,
-                role: member.role,
+                ...member.user,
+                role: member.role.name,
                 password: undefined
             }
         })
@@ -83,11 +79,11 @@ export class ProjectEntity {
     public response() {
         return {
             id: this.id,
+            ownerId: this.ownerId,
             title: this.title,
             balance: this.balance,
-            settings: this.settings,
-            ownerId: this.ownerId,
-            members: this.formatMembers(this.members),
+            settings: this.formatSettings(),
+            members: this.formatMembers(),
             cashboxes: this.cashboxes,
         }
     }

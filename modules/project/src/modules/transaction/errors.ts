@@ -6,13 +6,13 @@ class SameIdError extends AppError {
     }
 }
 
-class SameProjectError extends AppError {
+class AlreadyCalceledError extends AppError {
     constructor() {
-        super('SAME_ID', 422, 'ERROR');
+        super('TRANSACTIONS_ALREADY_CANCELED', 400, 'transactions already canceled')
     }
 }
 
 export {
     SameIdError,
-    SameProjectError
+    AlreadyCalceledError
 }

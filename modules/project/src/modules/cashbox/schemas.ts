@@ -1,7 +1,6 @@
 import { errorSchema } from "@schemas/error";
-import { setting } from "@schemas/common";
 import { t } from "elysia";
-import { ResponseObject, ResponseObjects } from "./types";
+import { ResponseDetailObject, ResponseObject, ResponseObjects } from "./types";
 
 export const schema = {
     getAll: {
@@ -27,7 +26,7 @@ export const schema = {
             description: 'Получить счет по ID',
         },
         response: {
-            200: ResponseObject,
+            200: ResponseDetailObject,
             ...errorSchema
         }
     },
@@ -56,8 +55,6 @@ export const schema = {
         body: t.Partial(
             t.Object({
                 title: t.String(),
-                settings: t.Array(setting),
-                balance: t.Number(),
                 description: t.String()
             })
         ),

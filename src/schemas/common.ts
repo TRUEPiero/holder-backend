@@ -9,7 +9,7 @@ const settingValue = t.Union([
 type SettingValue = string | boolean | number
 
 type Setting = {
-  code: string,
+  settingId: number,
   value: SettingValue
 }
 

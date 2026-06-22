@@ -4,7 +4,7 @@ import { EntityServiceFactory } from "../lib/entity-factory";
 import { EntitySettingsOwner } from "../interfaces/owner-settings";
 import { render } from "../lib/render";
 import { Step } from "../types";
-import { SettingEntity } from "../../project/src/modules/settings/entities/Setting";
+import { SettingEntity } from "../../project/src/modules/setting/entities/Setting";
 
 const scene = new Scene<BotContext>('editSetting');
 
@@ -30,7 +30,7 @@ scene.step(async(ctx) => {
 scene.label('edit_string').step(async(ctx) => {
     const setting = ctx.session.entityData.setting as SettingEntity;
 
-    await ctx.editMessageText(`Введите новое значение для ${setting.title}:`);
+    await ctx.editMessageText(`Введите новое значение для ${setting.getTitle()}:`);
 })
 
 scene.wait('wait_string').on(['message:text', 'callback_query'], async(ctx) => {
@@ -56,8 +56,38 @@ scene.wait('wait_string').on(['message:text', 'callback_query'], async(ctx) => {
     return;
 })
 
-scene.label('edit_boolean').step(async(ctx) => {})
-scene.label('edit_number').step(async(ctx) => {})
+scene.label('edit_boolean').step(async(ctx) => {
+    
+})
+
+scene.label('edit_number').step(async(ctx) => {
+    const setting = ctx.session.entityData.setting as SettingEntity;
+
+    await ctx.editMessageText(`Введите новое значение для ${setting.getTitle()}:`);
+})
+
+scene.wait('wait_number').on(['message:text', 'callback_query'], async(ctx) => {
+    const choice = ctx.callbackQuery?.data;
+    if(choice && choice === 'create_cancel') {
+        ctx.answerCallbackQuery();
+        await render(ctx, {
+            type: 'page',
+            entity: ctx.session.entityData.entity,
+            id: 1
+        });
+        ctx.scene.exit();
+        return;
+    }
+
+    const value = Number(ctx.message?.text);
+    if(!value) {
+        scene.goto('edit_number')
+    }  
+    
+    ctx.session.entityData.value = value;
+    ctx.scene.goto('confirm_edit');
+    return;
+})
 
 
 scene.label('confirm_edit').step(async(ctx) => {
@@ -71,8 +101,8 @@ scene.label('confirm_edit').step(async(ctx) => {
 
         const step: Step = {
             entity: entity,
-            type: 'item',
-            id: updated.id
+            type: 'settings',
+            id: updated.getId()
         }
 
         await render(ctx, step, true);

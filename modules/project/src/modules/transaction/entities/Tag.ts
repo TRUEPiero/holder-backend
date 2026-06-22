@@ -1,15 +1,16 @@
-export class TransactionTagEntity {
-    private id: number;
+import { Entity } from "../../../interfaces/Entity";
+
+export class TransactionTagEntity extends Entity {
     private title: string;
     private transactions: any[];
 
     constructor(params: any) {
-        this.id = params.id;
+        super(params);
         this.title = params.title;
         this.transactions = params.transactions;
     }
 
-    public toJSON() {
+    public response() {
         return {
             id: this.id,
             title:this.title,

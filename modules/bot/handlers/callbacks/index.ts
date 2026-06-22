@@ -2,7 +2,7 @@ import { Composer } from "grammy";
 import { BotContext } from "../../core/context";
 import { HistoryService } from "../../services/history";
 import { render } from "../../lib/render";
-import { EntityType } from "../../types";
+import { EntityType, Step } from "../../types";
 
 const composer = new Composer<BotContext>();
 
@@ -11,7 +11,7 @@ composer.callbackQuery(/^(project|cashbox|transaction|member)_(\d+)$/, async(ctx
     const entity = ctx.match[1] as EntityType;
     const id = Number(ctx.match[2]);
 
-    const step = {
+    const step: Step = {
         entity, 
         type: 'item',
         id
@@ -25,7 +25,7 @@ composer.callbackQuery(/^(project|cashbox|transaction|member)_page_(\d+)$/, asyn
     const entity = ctx.match[1] as EntityType
     const id = Number(ctx.match[2]);
 
-    const step = {
+    const step: Step = {
         entity, 
         type: 'page',
         id
@@ -39,7 +39,7 @@ composer.callbackQuery(/^(project|cashbox)_settings$/, async(ctx) => {
     const entity = ctx.match[1] as EntityType;
     const id = Number(ctx.match[2]);
 
-    const step = {
+    const step: Step = {
         entity, 
         type: 'settings',
         id
@@ -80,7 +80,7 @@ composer.callbackQuery(/^member_invite$/, async(ctx) => {
 
 composer.callbackQuery(/^back$/, async(ctx) => {
     const history = new HistoryService(ctx);
-    let backstep = history.getPreviosStep();
+    let backstep: any = history.getPreviosStep();
 
     try{
         await render(ctx, backstep)
