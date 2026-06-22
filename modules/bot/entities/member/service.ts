@@ -6,7 +6,6 @@ const {memberService, userService} = container;
 
 const memberServiceTg: EntityService<'member'> = {
     baseService: memberService,
-    settingService: null,
     userService: userService,
 
     async getItem(ctx) {

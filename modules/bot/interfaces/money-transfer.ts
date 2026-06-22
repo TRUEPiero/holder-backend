@@ -1,8 +1,10 @@
-import { TransferService } from "../../project/src/modules/transaction/services/transfer"
 import { BotContext } from "../core/context"
+import { container } from "../../containers"
+
+const { transferService } = container
 
 interface MoneyTransfer {
-    transferService: TransferService
+    transferService: typeof transferService
 
     moneyTransfer(ctx: BotContext): any
     getCorrectCashboxes(ctx: BotContext, data: any): any

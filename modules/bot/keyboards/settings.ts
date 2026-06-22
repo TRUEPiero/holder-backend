@@ -1,12 +1,7 @@
 import { InlineKeyboard } from "grammy";
-import { container } from "../../containers";
 import { CommonKeyboard } from "./common";
 import { EntityType } from "../types";
 import { SettingEntity } from "../../project/src/modules/setting/entities/Setting";
-
-const {projectSettingService, cashboxSettingService} = container;
-
-type SettingService = typeof projectSettingService | typeof cashboxSettingService;
 
 export class SettingKeyboard {
     static async projectSettings(data: SettingEntity[]) {

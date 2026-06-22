@@ -7,14 +7,12 @@ import { CasheService } from "@services/CasheService";
 import { ProjectEntity } from "./entities/Project";
 import { InvalidFieldError, NotCreatedError, NotDeletedError, NotFoundError, NotUpdatedError } from "@common/errors";
 import { authorizeMode, ProjectPermission, ProjectPolicy } from "../../policies/project.policy";
-import { ProjectSettingRepository } from "./repositories/settings";
 import { CRUD } from "../../interfaces/Crud";
 
 export class ProjectService extends CRUD implements SettingsOwner{
 
     constructor(
         private repo: ProjectRepository,
-        private settingRepo: ProjectSettingRepository,
         private cashe: CasheService
     ) {
         super()
@@ -95,38 +93,6 @@ export class ProjectService extends CRUD implements SettingsOwner{
         await this.cashe.del(`project:${id}`)
 
         return deleted;
-    }
-    
-    public async createOrUpdateSetting(id: number, user: UserEntity, data: any[]): Promise<ProjectEntity> {
-        await this.authorize(id, user, ['project:update', 'settings:update']);
-
-        const settings = [];
-        for(const setting of data) {
-            const filter = {
-                projectId_settingId: {
-                    projectId: id,
-                    settingId: setting.id
-                }   
-            }
-
-            const create = {
-                projectId: id,
-                settingId: setting.id,
-                value: setting.value
-            }
-
-            const update = {
-                settingId: setting.id,
-                value: setting.value
-            }
-
-            const res = await this.settingRepo.createOrUpdate(filter, create, update);
-            settings.push(res);
-        }
-
-        await this.cashe.del(`project:${id}`)
-
-        return await this.getById(id);
     }
 
     public getSettingTarget(): SettingTargets {

@@ -20,8 +20,8 @@ type transactionData = {
 export class TransferService {
 
     constructor(
-        private cashe: CasheService,
         private projectService: ProjectService,
+        private cashe: CasheService,
     ) { }
 
     public async transferMoneyBetweenCashbox(projectId: number, cashboxId: number, request: ParamsBetween, user: UserEntity) {

@@ -49,13 +49,13 @@ const projectServiceTg: EntityService<'project'> & EntitySettingsOwner = {
         const user = await this.userService.getUser(ctx.session.user_id);
         const project_id = ctx.session.project_id;
 
-        return this.settingService!.getById(settingId, project_id, user);
+        return this.settingService.getById(settingId, project_id, user);
     },
     async getSettings(ctx) {
         const user = await this.userService.getUser(ctx.session.user_id);
         const id = ctx.session.project_id;
         
-        return this.settingService!.getForTelegram(id, user);
+        return this.settingService.getForTelegram(id, user);
     },
     async updateSetting(ctx) {
         const projectId = ctx.session.project_id;
@@ -71,7 +71,8 @@ const projectServiceTg: EntityService<'project'> & EntitySettingsOwner = {
             }
         ];
 
-        return await this.baseService.createOrUpdateSetting(projectId, user, data);
+        //TODO change method
+        return await this.settingService.update(projectId, user, data);
     }
 }
 

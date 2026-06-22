@@ -16,9 +16,18 @@ import { ProjectService } from "../project/src/modules/project/services";
 import { CashboxRepository } from "../project/src/modules/cashbox/repositories/cashbox";
 import { CashboxService } from "../project/src/modules/cashbox/services";
 
+import { TransactionTagRepository } from "../project/src/modules/transaction/repositories/tag";
+import { TransactionTagService } from "../project/src/modules/transaction/services/tag";
+
 import { TransactionRepository } from "../project/src/modules/transaction/repositories/transaction";
 import { TransactionService } from "../project/src/modules/transaction/services/transaction";
 import { TransferService } from "../project/src/modules/transaction/services/transfer";
+
+import { BudgetRepository } from "../project/src/modules/budget/repository";
+import { BudgetService } from "../project/src/modules/budget/services";
+
+import { MemberRoleService } from "../project/src/modules/member/services/role";
+import { MemberRoleRepository } from "../project/src/modules/member/repositories/role";
 
 import { MembershipRepository } from "../project/src/modules/member/repositories/membership";
 import { MembershipService } from "../project/src/modules/member/services/membership";
@@ -26,20 +35,15 @@ import { MembershipService } from "../project/src/modules/member/services/member
 import { InviteRepository } from "../project/src/modules/member/repositories/invite";
 import { ProjectInviteService } from "../project/src/modules/member/services/invite";
 
+import { ProjectSettingRepository } from "../project/src/modules/setting/repositories/project";
+import { CashboxSettingRepository } from "../project/src/modules/setting/repositories/cashbox";
+import { CashboxSettingValuesService } from "../project/src/modules/setting/services/cashbox";
+
 import { SettingRepository } from "../project/src/modules/setting/repositories/setting";
 import { SettingService } from "../project/src/modules/setting/services/setting";
 import { SettingGroupService } from "../project/src/modules/setting/services/group";
 import { SettingGroupRepository } from "../project/src/modules/setting/repositories/group";
-
-import { TransactionTagRepository } from "../project/src/modules/transaction/repositories/tag";
-import { TransactionTagService } from "../project/src/modules/transaction/services/tag";
-
-import { MemberRoleService } from "../project/src/modules/member/services/role";
-import { MemberRoleRepository } from "../project/src/modules/member/repositories/role";
-import { ProjectSettingRepository } from "../project/src/modules/project/repositories/settings";
-import { CashboxSettingRepository } from "../project/src/modules/cashbox/repositories/settings";
-import { BudgetService } from "../project/src/modules/budget/services";
-import { BudgetRepository } from "../project/src/modules/budget/repository";
+import { ProjectSettingValueService } from "../project/src/modules/setting/services/project";
 
 const mainService = new MailService();
 
@@ -84,17 +88,26 @@ const userService = new UserService(userRepo);
 const authService = new AuthService(userService);
 const registerService = new RegisterService(registerRepo, userService, mainService);
 
-const projectService = new ProjectService(projectRepo, projectSettingRepo, casheService);
+const projectService = new ProjectService(projectRepo, casheService);
+
 const memberRoleService = new MemberRoleService(memberRoleRepo);
 const memberService = new MembershipService(memberRepo, projectService, memberRoleService,casheService);
 const inviteService = new ProjectInviteService(inviteRepo, userService, memberService, projectService)
-const cashboxService = new CashboxService(cashboxRepo, projectService, cashboxSettingRepo, casheService);
-const transactionService = new TransactionService(transactionRepo, casheService, projectService);
+
+const cashboxService = new CashboxService(cashboxRepo, projectService, casheService);
+
+const transactionService = new TransactionService(transactionRepo, projectService, casheService);
 const transactionTagService = new TransactionTagService(transactionTagRepo, projectService);
-const transferService = new TransferService(casheService, projectService);
+const transferService = new TransferService(projectService, casheService);
+
 const budgetService = new BudgetService(budgetRepo, projectService);
-const cashboxSettingService = new SettingService(settingRepo, cashboxService);
-const projectSettingService = new SettingService(settingRepo, projectService);
+
+const cashboxSettingValuesService = new CashboxSettingValuesService(cashboxSettingRepo, projectService, casheService);
+const projectSettingValuesService = new ProjectSettingValueService(projectSettingRepo, projectService, casheService);
+
+const cashboxSettingService = new SettingService(settingRepo, cashboxService, cashboxSettingValuesService);
+const projectSettingService = new SettingService(settingRepo, projectService, projectSettingValuesService);
+
 const projectSettingGroupService = new SettingGroupService(settingGroupRepo, projectService)
 const cashboxSettingGroupService = new SettingGroupService(settingGroupRepo, cashboxService)
 

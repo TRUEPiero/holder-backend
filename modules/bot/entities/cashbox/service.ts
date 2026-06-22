@@ -1,5 +1,4 @@
 import { container } from "../../../containers";
-import { BotContext } from "../../core/context";
 import { EntityService } from "../../interfaces/entity.service";
 import { EntitySettingsOwner } from "../../interfaces/owner-settings";
 
@@ -53,13 +52,13 @@ const cashboxServiceTg: EntityService<'cashbox'> & EntitySettingsOwner = {
         const user = await this.userService.getUser(ctx.session.user_id);
         const project_id = ctx.session.cashbox_id;
 
-        return this.settingService!.getById(settingId, project_id, user);
+        return this.settingService.getById(settingId, project_id, user);
     },
     async getSettings(ctx) {
         const user = await this.userService.getUser(ctx.session.user_id);
         const id = ctx.session.cashbox_id;
 
-        return this.settingService!.getForTelegram(id, user);
+        return this.settingService.getForTelegram(id, user);
     },
     async updateSetting(ctx) {
         const projectId = ctx.session.project_id;
@@ -78,7 +77,8 @@ const cashboxServiceTg: EntityService<'cashbox'> & EntitySettingsOwner = {
             ]
         };
 
-        return await this.baseService.update(cashboxId, user, data, projectId);
+        //TODO change method
+        return await this.settingService.update(cashboxId, user, data, projectId);
     }
 }
 

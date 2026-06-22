@@ -1,6 +1,6 @@
 import { Setting } from "@schemas/common";
 import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
-import { SettingsOwner } from "../../../interfaces/SettingsOwner";
+import { SettingsOwner, SettingsValues } from "../../../interfaces/SettingsOwner";
 import { SettingEntity } from "../entities/Setting";
 import { SettingRepository } from "../repositories/setting";
 import { GetSettingFilter } from "../types";
@@ -8,7 +8,8 @@ import { GetSettingFilter } from "../types";
 export class SettingService {
     constructor(
         private repo: SettingRepository,
-        private entityService: SettingsOwner
+        private entityService: SettingsOwner,
+        private entitySettingsService: SettingsValues
     ) {}
 
     public async getById(id: number, entityId: number, user: UserEntity) {
@@ -37,7 +38,7 @@ export class SettingService {
     }
 
     public async update(entityId: number, user: UserEntity, data: any, parentId?: number) {
-        await this.entityService.createOrUpdateSetting(entityId, user, data, parentId);
+        await this.entitySettingsService.createOrUpdateSetting(entityId, user, data, parentId);
         const settings = await this.mergedSettings(entityId, user, {}, parentId);
         return settings.map(s => s.response())
     }

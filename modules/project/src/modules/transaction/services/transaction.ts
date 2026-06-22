@@ -11,8 +11,8 @@ export class TransactionService {
 
     constructor(
         private repo: TransactionRepository,
-        private cashe: CasheService,
-        private projectService: ProjectService
+        private projectService: ProjectService,
+        private cashe: CasheService
     ) {}
 
     public async getById(id: number) {

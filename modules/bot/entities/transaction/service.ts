@@ -16,7 +16,6 @@ const { transactionService, transferService, userService } = container;
 
 const transactionServiveTg: EntityService<'transaction'> & MoneyTransfer = {
     baseService: transactionService,
-    settingService: null,
     userService: userService,
     transferService: transferService,
 
