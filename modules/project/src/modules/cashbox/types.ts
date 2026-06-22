@@ -1,4 +1,4 @@
-import { setting, Setting } from "@schemas/common";
+import { setting } from "@schemas/common";
 import { t } from "elysia";
 
 type Cashbox = {

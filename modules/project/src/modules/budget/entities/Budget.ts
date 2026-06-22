@@ -43,6 +43,14 @@ export class BudgetEntity extends Entity {
         };
     }
 
+    public getStart() {
+        return this.startDate
+    }
+
+    public getEnd() {
+        return this.endDate
+    }
+
     response() {
         return {
             title: this.title,

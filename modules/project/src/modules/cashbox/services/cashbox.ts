@@ -1,12 +1,12 @@
 import { PaginationParam } from "@shared-types/index.ts";
-import { ProjectService } from "../project/services";
-import { CashboxRepository } from "./repositories/cashbox";
-import { SettingsOwner } from "../../interfaces/SettingsOwner";
+import { ProjectService } from "../../project/services";
+import { CashboxRepository } from "../repositories/cashbox";
+import { SettingsOwner } from "../../../interfaces/SettingsOwner";
 import { SettingTargets } from "@shared-types/index.ts";
 import { InvalidFieldError, NotCreatedError, NotDeletedError, NotFoundError, NotUpdatedError } from "@common/errors";
 import { CasheService } from "@services/CasheService";
-import { UserEntity } from "../../../../auth/src/modules/user/entities/User";
-import { CRUD } from "../../interfaces/Crud";
+import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
+import { CRUD } from "../../../interfaces/Crud";
 
 export class CashboxService extends CRUD implements SettingsOwner{
 

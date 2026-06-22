@@ -31,6 +31,10 @@ export class UserEntity extends Entity{
         return this.telegram
     }
 
+    public getTelegramId() {
+        return this.telegramId
+    }
+
     public getPassword() {
         return this.password;
     }

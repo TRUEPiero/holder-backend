@@ -7,6 +7,7 @@ import { DecimalType, PrismaTxClient } from "@shared-types/index.ts";
 import { ParamsBetween, ParamsExternal, TransactionTag, TransactionTypes } from "../types";
 import { AlreadyCalceledError, SameIdError } from "../errors";
 import { CasheService } from "@services/CasheService";
+import { CashboxMonitoringService } from "../../cashbox/services/monitoring";
 
 type transactionData = {
     cashboxId: number
@@ -21,6 +22,7 @@ export class TransferService {
 
     constructor(
         private projectService: ProjectService,
+        private monitoringService: CashboxMonitoringService,
         private cashe: CasheService,
     ) { }
 
@@ -29,7 +31,7 @@ export class TransferService {
 
         const amount = new Money(request.amount);
 
-        return await this.execute(async (tx) => {
+        const transactions = await this.execute(async (tx) => {
             if (cashboxId === request.to) throw new SameIdError();
 
             await this.decrementCashboxBalance(tx, cashboxId, projectId, amount.get());
@@ -66,6 +68,10 @@ export class TransferService {
 
             return [expense, income];
         })
+
+        await this.monitoringService.checkBalance(cashboxId, user, projectId)
+
+        return transactions;
     }
 
     public async transferWithExternal(projectId: number, cashboxId: number, request: ParamsExternal, user: UserEntity) {
@@ -74,7 +80,7 @@ export class TransferService {
         const amount = new Money(request.amount);
         const transactionType = request.type as TransactionTypes;
 
-        return await this.execute(async (tx) => {
+        const transaction = await this.execute(async (tx) => {
             if (transactionType === 'income')
                 await this.incrementCashboxBalance(tx, cashboxId, projectId, amount.get());
 
@@ -103,6 +109,10 @@ export class TransferService {
 
             return transaction;
         });
+
+        await this.monitoringService.checkBalance(cashboxId, user, projectId);
+
+        return transaction;
     }
 
     public async cancelTransaction(transactionId: number, user: UserEntity, cashboxId: number, projectId: number) {

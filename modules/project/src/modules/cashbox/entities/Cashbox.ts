@@ -28,6 +28,10 @@ export class CashboxEntity extends SettingTarget {
         return this.title
     }
 
+    public getBalance() {
+        return this.balance
+    }
+
     public update(data: UpdateData) {
         const {...dataWithoutParams} = data;
         

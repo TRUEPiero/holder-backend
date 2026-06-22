@@ -1,7 +1,6 @@
 import { errorSchema } from "@schemas/error";
-import { setting } from "@schemas/common";
 import { t } from "elysia";
-import { ResponseDetailCashbox, ResponseDetailObject, ResponseObject, ResponseObjects } from "./types";
+import { ResponseDetailObject, ResponseObject, ResponseObjects } from "./types";
 
 export const schema = {
     getAll: {
