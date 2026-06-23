@@ -1,4 +1,4 @@
-import { DecimalType } from "@shared-types/index.ts";
+import { DecimalType } from "@shared-types/index";
 import { UserEntity } from "../../../../auth/src/modules/user/entities/User";
 import { BotService } from "../../../../bot/services/bot.service";
 import { CashboxEntity } from "../cashbox/entities/Cashbox";

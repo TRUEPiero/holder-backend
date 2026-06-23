@@ -1,5 +1,7 @@
-export class RegisterEntity {
-    private id: number;
+import { Entity } from "../../../../../project/src/interfaces/Entity";
+import { EntityParams } from "../types";
+
+export class RegisterEntity extends Entity {
     private email: string;
     private code: string;
     private isChecked: boolean;
@@ -8,7 +10,8 @@ export class RegisterEntity {
     private createdAt: Date;
     private updatedAt: Date;
 
-    constructor(params: any) {
+    constructor(params: EntityParams) {
+        super(params);
         this.id = params.id;
         this.code = params.code;
         this.verifyToken = params.verifyToken;

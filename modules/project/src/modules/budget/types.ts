@@ -1,5 +1,27 @@
-import { DecimalType } from "@shared-types/index.ts"
+import { DecimalType } from "@shared-types/index"
 import { t } from "elysia"
+import { Cashbox } from "../cashbox/types"
+
+type EntityParams = {
+    title: string
+    description: string
+    amount: DecimalType
+    cashboxId: number
+    cashbox?: Cashbox
+    startDate: Date
+    endDate: Date
+    isActive: boolean
+    createdAt: Date
+    updatedAt: Date
+}
+
+type createBody = {
+    title?: string
+    description?: string
+    amount: number
+    startDate: Date
+    endDate: Date
+}
 
 type createData = {
     title?: string
@@ -8,21 +30,30 @@ type createData = {
     amount: DecimalType
     startDate: Date
     endDate: Date
-    isActive?: boolean  
+    isActive?: boolean
 }
 
 type updateData = {
     title?: string
     description?: string
-    amount?: DecimalType
+    amount?: DecimalType | number
     startDate?: Date
     endDate?: Date
-    isActive?: boolean 
+    isActive?: boolean
+}
+
+type updateDataRepo = {
+    title: string;
+    description: string;
+    amount: DecimalType;
+    startDate: Date;
+    endDate: Date;
+    isActive: boolean;
 }
 
 const ResponseBudget = t.Object({
     title: t.String(),
-    desciption: t.String(),
+    description: t.String(),
     amount: t.Number(),
     cashboxId: t.Number(),
     startDate: t.Date(),
@@ -43,8 +74,11 @@ const ResponseObjects = t.Object({
 })
 
 export type {
+    EntityParams,
     createData,
-    updateData
+    createBody,
+    updateData,
+    updateDataRepo
 }
 
 export {

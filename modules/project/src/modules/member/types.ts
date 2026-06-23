@@ -10,6 +10,7 @@ type Member = {
     id: number;
     projectId: number;
     userId: number;
+    isDeleted: boolean,
     user: User,
     role: MemberRole
     joinedAt: Date

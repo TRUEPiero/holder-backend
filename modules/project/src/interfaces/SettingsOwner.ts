@@ -1,5 +1,5 @@
 import { UserEntity } from "../../../auth/src/modules/user/entities/User";
-import { SettingTargets } from "@shared-types/index.ts";
+import { SettingTargets } from "@shared-types/index";
 import { SettingTarget } from "./Entity";
 
 export interface SettingsOwner {

@@ -2,8 +2,8 @@ import { AlreadyExistError, InvalidFieldError, NotCreatedError, NotFoundError, N
 import { UserEntity } from "../../../../auth/src/modules/user/entities/User";
 import { BudgetRepository } from "./repository";
 import { ProjectService } from "../project/services";
-import { createData } from "./types";
-import { DecimalClass as Decimal } from "@shared-types/index.ts";
+import { createBody, createData, updateData } from "./types";
+import { DecimalClass as Decimal } from "@shared-types/index";
 
 export class BudgetService {
     constructor (
@@ -64,7 +64,7 @@ export class BudgetService {
         return budgets.map(i => i.response())
     }
 
-    public async create(user: UserEntity, data: any, cashboxId: number, projectId: number) {
+    public async create(user: UserEntity, data: createBody, cashboxId: number, projectId: number) {
         await this.projectService.authorize(projectId, user, ["cashbox:read", 'budget:create'], "all");
         
         const { title, description, amount, startDate, endDate } = data;
@@ -98,7 +98,7 @@ export class BudgetService {
         return budget;
     }
 
-    public async update(id: number, user: UserEntity, data: any, cashboxId: number, projectId: number) {
+    public async update(id: number, user: UserEntity, data: updateData, cashboxId: number, projectId: number) {
         await this.projectService.authorize(projectId, user, ['cashbox:read', 'budget:update'], 'all')
 
         const budget = await this.getById(id, user, cashboxId, projectId);

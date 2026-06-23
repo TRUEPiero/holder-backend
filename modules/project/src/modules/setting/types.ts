@@ -1,5 +1,5 @@
 import { Prisma, SettingType } from "@prisma/client"
-import { SettingTargets } from "@shared-types/index.ts"
+import { SettingTargets } from "@shared-types/index"
 import { t } from "elysia"
 
 type SettingTypes  = SettingType

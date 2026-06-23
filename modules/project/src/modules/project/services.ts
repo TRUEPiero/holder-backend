@@ -1,13 +1,14 @@
-import { PaginationParam, PaginationResult } from "@shared-types/index.ts";
+import { PaginationParam, PaginationResult } from "@shared-types/index";
 import { UserEntity } from "../../../../auth/src/modules/user/entities/User";
 import { ProjectRepository } from "./repositories/project";
 import { SettingsOwner } from "../../interfaces/SettingsOwner";
-import { SettingTargets } from "@shared-types/index.ts";
+import { SettingTargets } from "@shared-types/index";
 import { CasheService } from "@services/CasheService";
 import { ProjectEntity } from "./entities/Project";
 import { InvalidFieldError, NotCreatedError, NotDeletedError, NotFoundError, NotUpdatedError } from "@common/errors";
 import { authorizeMode, ProjectPermission, ProjectPolicy } from "../../policies/project.policy";
 import { CRUD } from "../../interfaces/Crud";
+import { EntityParams } from "./types";
 
 export class ProjectService extends CRUD implements SettingsOwner{
 
@@ -36,7 +37,7 @@ export class ProjectService extends CRUD implements SettingsOwner{
 
         let project: ProjectEntity | null = null;
         
-        const cashed = await this.cashe.get(`project:${id}`)
+        const cashed: EntityParams | null = await this.cashe.get(`project:${id}`)
         if(cashed) {
             project = new ProjectEntity(cashed);
         } else {

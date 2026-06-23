@@ -1,5 +1,6 @@
 import { DirectoryService } from "@services/DirectoryService";
 import { UserEntity } from "./entities/User";
+import { CreateData, UpdateDataRepo } from "./types";
 
 export class UserRepository {
     constructor(private base: DirectoryService<'user'>) {}
@@ -14,12 +15,12 @@ export class UserRepository {
         return data ? new UserEntity(data) : null;
     }
 
-    public async create(data: any) {
+    public async create(data: CreateData) {
         const created = await this.base.createItem(data);
         return new UserEntity(created);
     }
 
-    public async update(id: number, data: any) {
+    public async update(id: number, data: UpdateDataRepo) {
         const updated = await this.base.updateItem(id, data);
         return new UserEntity(updated);
     }

@@ -1,20 +1,21 @@
-import { DecimalType } from "@shared-types/index.ts";
+import { DecimalType } from "@shared-types/index";
 import { Entity } from "../../../interfaces/Entity";
-import { updateData } from "../types";
+import { EntityParams, updateData } from "../types";
+import { Cashbox } from "../../cashbox/types";
 
 export class BudgetEntity extends Entity {
     private title: string
     private description: string
     private amount: DecimalType
     private cashboxId: number
-    private cashbox: any
+    private cashbox?: Cashbox
     private startDate: Date
     private endDate: Date
     private isActive: boolean
     private createdAt: Date
     private updatedAt: Date
 
-    constructor(params: any){
+    constructor(params: EntityParams){
         super(params)
         this.title = params.title || ''
         this.description = params.description || ''

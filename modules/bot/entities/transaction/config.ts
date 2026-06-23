@@ -1,6 +1,6 @@
 import { formatDate } from "../../lib/formatter";
 import { EntityConfig } from "../../interfaces/entity.config";
-import { DecimalClass as Decimal } from "@shared-types/index.ts";
+import { DecimalClass as Decimal } from "@shared-types/index";
 
 const transactionConfig: EntityConfig<any> = {
     fields: [

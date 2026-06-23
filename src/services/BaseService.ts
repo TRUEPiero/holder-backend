@@ -1,4 +1,4 @@
-import type { PaginationParam, PrismaModelName, PrismaTxClient, QueryParam } from "../types/index.ts.js";
+import type { PaginationParam, PrismaModelName, PrismaTxClient, QueryParam } from "../types/index";
 import { FilterBuilder } from "../builders/FilterBuilder.js";
 import db from "@common/prisma";
 

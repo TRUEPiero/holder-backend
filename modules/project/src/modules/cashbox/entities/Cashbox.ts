@@ -1,7 +1,7 @@
 import { SettingTarget } from "../../../interfaces/Entity";
 import { Transaction } from "../../transaction/types";
 import { UpdateData } from "../types";
-import { DecimalClass as Decimal, DecimalType } from "@shared-types/index.ts";
+import { DecimalClass as Decimal, DecimalType } from "@shared-types/index";
 
 export class CashboxEntity extends SettingTarget {
     private title: string;

@@ -38,7 +38,7 @@ export const schema = {
         }),
         body: t.Object({
             title: t.Optional(t.String()),
-            desciption: t.Optional(t.String()),
+            description: t.Optional(t.String()),
             startDate: t.Date(),
             endDate: t.Date(),
             amount: t.Number(),
@@ -60,7 +60,7 @@ export const schema = {
         }),
         body: t.Partial(t.Object({
             title: t.String(),
-            desciption: t.String(),
+            description: t.String(),
             startDate: t.Date(),
             endDate: t.Date(),
             amount: t.Number(),

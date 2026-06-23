@@ -20,11 +20,11 @@ export class BotService {
         return BotService.instance;
     }
 
-    async sendMessage(chat_id: number, text: string, options?: any) {
+    async sendMessage(chat_id: number | string, text: string, options?: any) {
         await this.bot.api.sendMessage(chat_id, text, options);
     }
 
-    async getChat(chat_id: number) {
+    async getChat(chat_id: number | string) {
         const chat = await this.bot.api.getChat(chat_id);
         return chat;
     }

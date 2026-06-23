@@ -1,7 +1,8 @@
-import {t} from 'elysia';
-import { ResponseCashbox } from '../cashbox/types';
+import { t } from 'elysia';
+import { Cashbox, ResponseCashbox } from '../cashbox/types';
 import { setting } from '@schemas/common';
-import { MemberRole } from '@prisma/client';
+import { DecimalType } from '@shared-types/index';
+import { Member } from '../member/types';
 
 type Project = {
     id: number,
@@ -12,6 +13,16 @@ type Project = {
     updatedAt: Date,
     members: any,
     cashboxes: any,
+}
+
+type EntityParams = {
+    id: number
+    title: string
+    balance: DecimalType
+    ownerId: number
+    settings: any[]
+    members: Member[]
+    cashboxes: Cashbox[]
 }
 
 type UpdateData = {
@@ -49,7 +60,7 @@ const ResponseObjects = t.Object({
 })
 
 export type {
-    MemberRole,
+    EntityParams,
     UpdateData,
     Project
 }

@@ -1,6 +1,6 @@
 import { DirectoryService } from "@services/DirectoryService";
 import { BudgetEntity } from "./entities/Budget";
-import { createData } from "./types";
+import { createData, updateDataRepo } from "./types";
 
 export class BudgetRepository {
     constructor(
@@ -17,9 +17,6 @@ export class BudgetRepository {
     public async findDetailed(filter: any): Promise<BudgetEntity | null> {
         const data = await this.base.getFirstByFields(
             filter,
-            {
-                cashbox: true
-            }
         )
 
         if (!data) return null;
@@ -38,7 +35,7 @@ export class BudgetRepository {
         return new BudgetEntity(created);
     }
 
-    async update(id: number, data: any): Promise<BudgetEntity | null> {
+    async update(id: number, data: updateDataRepo): Promise<BudgetEntity | null> {
         const updated = await this.base.updateItem(id, data);
         if (!updated) return null;
         return new BudgetEntity(updated);

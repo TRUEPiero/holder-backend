@@ -1,7 +1,7 @@
 import { DirectoryService } from "@services/DirectoryService";
 import { ProjectEntity } from "../entities/Project";
 import { Project } from "../types";
-import { PaginationParam } from "@shared-types/index.ts";
+import { PaginationParam } from "@shared-types/index";
 
 export class ProjectRepository {
 

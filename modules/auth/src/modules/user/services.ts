@@ -2,6 +2,7 @@ import { AlreadyExistError, NotCreatedError, NotFoundError, NotUpdatedError } fr
 import { UserRepository } from "./repository";
 import { UserEntity } from "./entities/User";
 import { hashPassword } from "../../lib/password";
+import { CreateData, UpdateData } from "./types";
 
 type TelegramFilter = {
     telegramId?: number | string,
@@ -53,7 +54,7 @@ export class UserService{
         return user;
     }
 
-    public async create(data: any) {
+    public async create(data: CreateData) {
         const createData = {
             ...data,
             password: await hashPassword(data.password)
@@ -65,15 +66,10 @@ export class UserService{
         return created;
     }
 
-    public async update(user: UserEntity, data: any) {
-        user.update(data)
-
-        const updateData = {
-            ...user.response()
-        }
+    public async update(user: UserEntity, data: UpdateData) {
+        const updateData = await user.update(data)
 
         const updated = await this.repo.update(user.getId(), updateData);
-        
         if(!updated) throw new NotUpdatedError('USER');
 
         return updated;
