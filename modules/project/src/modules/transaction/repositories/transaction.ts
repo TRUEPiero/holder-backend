@@ -1,7 +1,7 @@
 import { DirectoryService } from "@services/DirectoryService";
 import { TransactionEntity } from "../entities/Transaction";
 import { Transaction } from "../types";
-import { PaginationParam } from "@shared-types/index.ts";
+import { PaginationParam } from "@shared-types/index";
 
 export class TransactionRepository {
     constructor(private base: DirectoryService<"transaction">) {}

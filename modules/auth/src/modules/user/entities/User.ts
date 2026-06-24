@@ -1,15 +1,16 @@
 import { Entity } from "../../../../../project/src/interfaces/Entity";
 import { hashPassword } from "../../../lib/password";
+import { EntityParams, UpdateData, UpdateDataRepo } from "../types";
 
 export class UserEntity extends Entity{
     private name: string;   
     private password: string;
     private status: string;   
     private email: string; 
-    private telegram: any;
-    private telegramId: any;
+    private telegram: string;
+    private telegramId: string;
 
-    constructor(params: any) {
+    constructor(params: EntityParams) {
         super(params)
         this.name = params.name
         this.password = params.password
@@ -39,11 +40,18 @@ export class UserEntity extends Entity{
         return this.password;
     }
 
-    public async update(data: any) {
+    public async update(data: UpdateData): Promise<UpdateDataRepo> {
         if(data.name) this.name = data.name;
         if(data.telegramId) this.telegramId = data.telegramId;
         if(data.telegram) this.telegram = data.telegram;
         if(data.password) this.password = await hashPassword(data.password);
+
+        return {
+            name: this.name,
+            telegram: this.telegram,
+            telegramId: this.telegramId,
+            password: this.password,
+        }
     }
 
     public response() {

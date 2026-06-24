@@ -19,7 +19,7 @@ export abstract class SettingTarget extends Entity {
 
     constructor(params: any) {
         super(params)
-        this.settings = params.id
+        this.settings = params.settings
     }
 
     getSettings(): Setting[] {

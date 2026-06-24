@@ -1,6 +1,6 @@
 import db from "@common/prisma";
 import { BaseService } from "./BaseService";
-import type { PrismaModelName, PrismaTxClient } from "../types/index.ts";
+import type { PrismaModelName, PrismaTxClient } from "../types/index";
 
 export class DirectoryService<modelName extends PrismaModelName> extends BaseService<modelName> {
 
@@ -11,7 +11,7 @@ export class DirectoryService<modelName extends PrismaModelName> extends BaseSer
         public columns: string[],
         public client?: typeof db | PrismaTxClient
     ) {
-        super(Model);
+        super(Model, client);
         this.ColumnsToConnect.push(...columns);
     }
 

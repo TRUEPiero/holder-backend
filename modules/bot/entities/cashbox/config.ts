@@ -1,4 +1,4 @@
-import { DecimalClass } from "@shared-types/index.ts";
+import { DecimalClass } from "@shared-types/index";
 import { EntityConfig } from "../../interfaces/entity.config";
 
 const cashboxConfig: EntityConfig<any> = {   

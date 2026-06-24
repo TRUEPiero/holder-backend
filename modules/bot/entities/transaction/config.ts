@@ -1,6 +1,6 @@
 import { formatDate } from "../../lib/formatter";
 import { EntityConfig } from "../../interfaces/entity.config";
-import { DecimalClass as Decimal } from "@shared-types/index.ts";
+import { DecimalClass as Decimal } from "@shared-types/index";
 
 const transactionConfig: EntityConfig<any> = {
     fields: [
@@ -23,7 +23,7 @@ const transactionConfig: EntityConfig<any> = {
         return ctx.session.transaction_id
     },
     getFilter(ctx) {
-      return { cashboxId: ctx.session.cashbox_id, isDeleted: false };  
+      return { cashboxId: ctx.session.cashbox_id};  
     },
 }
 

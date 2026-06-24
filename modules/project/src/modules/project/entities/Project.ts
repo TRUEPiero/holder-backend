@@ -1,16 +1,17 @@
-import { UpdateData } from "../types";
+import { EntityParams, UpdateData } from "../types";
 import { Cashbox } from "../../cashbox/types";
-import { DecimalClass as Decimal, DecimalType } from "@shared-types/index.ts";
+import { DecimalClass as Decimal, DecimalType } from "@shared-types/index";
 import { SettingTarget } from "../../../interfaces/Entity";
+import { Member } from "../../member/types";
 
 export class ProjectEntity extends SettingTarget {
     private title: string;
     private balance: DecimalType;
     private ownerId: number;
-    private members: any[];
+    private members: Member[];
     private cashboxes: Cashbox[];
     
-    constructor(params: any) {
+    constructor(params: EntityParams) {
         super(params);
         this.title = params.title;
         this.balance = this.calculateTotalSum(params.cashboxes);
@@ -48,7 +49,7 @@ export class ProjectEntity extends SettingTarget {
         };
     }
 
-    private calculateTotalSum(cashboxes: any[]) {
+    private calculateTotalSum(cashboxes: Cashbox[]) {
         if(!cashboxes || !cashboxes.length) return new Decimal(0);
 
         const summ = cashboxes.reduce((summ, cashbox) => summ.plus(cashbox.balance), new Decimal(0));
@@ -56,7 +57,7 @@ export class ProjectEntity extends SettingTarget {
         return new Decimal(summ);
     }
 
-    private formatRole(member: any) {
+    private formatRole(member: Member) {
         return {
             name: member.role.name,
             permissions: member.role.permissions.map((perm: {permission: {entity: string, setting: string}}) => `${perm.permission.entity}:${perm.permission.setting}`)
@@ -66,7 +67,7 @@ export class ProjectEntity extends SettingTarget {
     private formatMembers() {
         if(!this.members) return [];
 
-        return this.members.map((member: any) => {
+        return this.members.map((member) => {
             return {
                 memberId: member.id,
                 ...member.user,

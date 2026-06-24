@@ -1,5 +1,5 @@
 import { Prisma, SettingType } from "@prisma/client"
-import { SettingTargets } from "@shared-types/index.ts"
+import { SettingTargets } from "@shared-types/index"
 import { t } from "elysia"
 
 type SettingTypes  = SettingType
@@ -18,6 +18,11 @@ type Setting = {
     isDisabled: boolean
     isTelegram: boolean
     createdAt: Date
+}
+
+type updateData = {
+    id: number,
+    value: any
 }
 
 const group = t.Object({
@@ -66,7 +71,8 @@ const ResponseObjects = t.Object({
 export type {
     Setting,
     SettingTypes,
-    GetSettingFilter
+    GetSettingFilter,
+    updateData
 }
 
 export {

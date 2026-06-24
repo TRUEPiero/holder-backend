@@ -1,11 +1,14 @@
-import {t} from 'elysia';
-import { ResponseCashbox } from '../cashbox/types';
+import { t } from 'elysia';
+import { Cashbox, ResponseCashbox } from '../cashbox/types';
 import { setting } from '@schemas/common';
-import { MemberRole } from '@prisma/client';
+import { DecimalType } from '@shared-types/index';
+import { Member } from '../member/types';
+import { ProjectEntity } from './entities/Project';
 
 type Project = {
     id: number,
     title: string,
+    balance: DecimalType
     settings: typeof setting[],
     ownerId: number,
     createdAt: Date,
@@ -14,9 +17,29 @@ type Project = {
     cashboxes: any,
 }
 
+type EntityParams = {
+    id: number
+    title: string
+    balance: DecimalType
+    ownerId: number
+    settings: any[]
+    members: Member[]
+    cashboxes: Cashbox[]
+}
+
 type UpdateData = {
     title?: string,
     settings?: typeof setting[],
+}
+
+type PaginationResult = {
+    items: ProjectEntity[],
+    pagination: {
+        currentPage: any;
+        totalPages?: number;
+        totalItems: any;
+        hasNextPage?: boolean;
+    };
 }
 
 const ResponseDetailProject = t.Object({
@@ -33,7 +56,7 @@ const ResponseProject = t.Object({
     id: t.Number(),
     title: t.String(),
     ownerId: t.Number(),
-    settings: t.Array(setting),
+    balance: t.Any(),
 })
 
 const ResponseDetailObject = t.Object({
@@ -48,10 +71,21 @@ const ResponseObjects = t.Object({
     data: t.Array(ResponseProject)
 })
 
+const ResponseWithPagination = t.Object({
+    items: t.Array(ResponseProject),
+    pagination: t.Object({
+        currentPage: t.Number(),
+        totalPages: t.Number(),
+        totalItems: t.Number(),
+        hasNextPage: t.Boolean()
+    })
+})
+
 export type {
-    MemberRole,
+    EntityParams,
     UpdateData,
-    Project
+    Project,
+    PaginationResult
 }
 
 export {
@@ -59,5 +93,6 @@ export {
     ResponseDetailProject,
     ResponseObject,
     ResponseDetailObject,
-    ResponseObjects
+    ResponseObjects,
+    ResponseWithPagination
 }

@@ -6,12 +6,14 @@ import { app as authApp } from "../modules/auth/src/app";
 import { app as projectApp } from "../modules/project/src/app";
 import { initRedis } from "@common/redis";
 import { errorHandler } from "@plugins/errorHandler";
+import { initCron } from "@common/cron";
 
 const PORT = process.env.SERVER_PORT;
 
 if(!PORT) throw new Error("SERVER_PORT is not defined");
 
 await initRedis();
+await initCron();
 await BotController.start();
 
 const app = new Elysia()

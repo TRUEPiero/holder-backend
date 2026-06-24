@@ -1,6 +1,6 @@
 import { errorSchema } from "@schemas/error";
 import {t} from 'elysia';
-import { ResponseDetailObject, ResponseObject, ResponseObjects } from "./types";
+import { ResponseObject, ResponseObjects } from "./types";
 
 export const schema = {
     getAll: {
@@ -22,7 +22,7 @@ export const schema = {
             description: 'Получить проект по ID',
         },
         response: {
-            200: ResponseDetailObject,
+            200: ResponseObject,
             ...errorSchema
         }
     },

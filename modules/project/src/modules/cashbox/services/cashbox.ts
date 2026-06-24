@@ -1,8 +1,8 @@
-import { PaginationParam } from "@shared-types/index.ts";
+import { PaginationParam } from "@shared-types/index";
 import { ProjectService } from "../../project/services";
 import { CashboxRepository } from "../repositories/cashbox";
 import { SettingsOwner } from "../../../interfaces/SettingsOwner";
-import { SettingTargets } from "@shared-types/index.ts";
+import { SettingTargets } from "@shared-types/index";
 import { InvalidFieldError, NotCreatedError, NotDeletedError, NotFoundError, NotUpdatedError } from "@common/errors";
 import { CasheService } from "@services/CasheService";
 import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
@@ -46,7 +46,7 @@ export class CashboxService extends CRUD implements SettingsOwner{
         const createData = { 
             projectId, 
             ...body,
-            description: body.desciption ?? '',
+            description: body.description ?? '',
         };
 
         const created = await this.repo.create(createData);

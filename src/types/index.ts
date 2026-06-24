@@ -5,6 +5,7 @@ import { SettingTarget } from "@prisma/client";
 
 type PrismaModelName = keyof typeof db;
 type PrismaTxClient = Omit<typeof db, "$connect" | "$disconnect" | "$on" | "$transaction" | "$extends">;
+
 type DecimalType = Decimal;
 const DecimalClass = Decimal
 

@@ -18,6 +18,7 @@ export const schema = {
             t.Object({
                 name: t.String(),
                 telegram: t.String(),
+                telegramId: t.String(),
                 password: t.String()
             })
         ),

@@ -3,7 +3,7 @@ import { NotCreatedError, NotFoundError } from "@common/errors";
 import { Money } from "../../cashbox/entities/Money";
 import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
 import { ProjectService } from "../../project/services";
-import { DecimalType, PrismaTxClient } from "@shared-types/index.ts";
+import { DecimalType, PrismaTxClient } from "@shared-types/index";
 import { ParamsBetween, ParamsExternal, TransactionTag, TransactionTypes } from "../types";
 import { AlreadyCalceledError, SameIdError } from "../errors";
 import { CasheService } from "@services/CasheService";

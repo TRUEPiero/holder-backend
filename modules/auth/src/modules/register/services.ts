@@ -4,7 +4,7 @@ import { UserService } from "../user/services";
 import { AlreadyExistError, NotFoundError, NotUpdatedError } from "@common/errors";
 import { getExpiredDate } from "../../../../../src/helpers/expiredDate";
 import { randomUUID } from 'crypto';
-import { registerData } from "./types";
+import { GetFilter, RegisterData } from "./types";
 
 export class RegisterService {
     constructor(
@@ -13,12 +13,12 @@ export class RegisterService {
         private mailService: MailService
     ) {}
 
-    public async getVerify(filter: any) {
+    public async getVerify(filter: GetFilter) {
         const verify = await this.repo.getByFilter(filter);
         return verify;
     }
 
-    public async registerNewUser(data: registerData) {
+    public async registerNewUser(data: RegisterData) {
         const {verify_code, ...createData} = data;
 
         const verify = await this.getVerify({
@@ -30,9 +30,7 @@ export class RegisterService {
 
         const user = await this.userService.create(createData);
 
-        await this.repo.delete({
-            email: createData.email
-        });
+        await this.repo.delete(verify.getId());
 
         return user;
     }
@@ -45,7 +43,8 @@ export class RegisterService {
 
         const code = this.generateCode();
 
-        await this.repo.create({
+        await this.repo.create(
+            {
                 email,
                 code,
                 expiredAt: getExpiredDate(),

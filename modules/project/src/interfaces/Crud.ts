@@ -1,4 +1,4 @@
-import { PaginationParam, PaginationResult } from "@shared-types/index.ts";
+import { PaginationParam, PaginationResult } from "@shared-types/index";
 import { UserEntity } from "../../../auth/src/modules/user/entities/User";
 import { Entity } from "./Entity";
 

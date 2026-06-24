@@ -12,6 +12,7 @@
         "transaction:read",
         "transaction:create",
         "transaction:delete",
+        "member:read",
         "member:invite",
         "member:update",
         "member:delete",
@@ -32,6 +33,7 @@
             "transaction:read",
             "transaction:create",
             "transaction:delete",
+            "member:read",
             "member:invite",
             "member:update",
             "member:delete",
@@ -49,12 +51,14 @@
             "transaction:read",
             "transaction:create",
             "settings:read",
-            "settings:update"
+            "settings:update",
+            "member:read"
         ],
         "viewer": [
             "project:read",
             "cashbox:read",
             "transaction:read",
+            "member:read",
             "settings:read"
         ]
     }
