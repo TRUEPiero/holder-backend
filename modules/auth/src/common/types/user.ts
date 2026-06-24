@@ -5,8 +5,8 @@ export type User = {
     name: string
     email: string
     status: string
-    telegram?: string
-    telegramId?: number
+    telegram: string | null
+    telegramId: string | null
 }
 
 export const ResponseUser = t.Object({

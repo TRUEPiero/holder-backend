@@ -23,6 +23,13 @@ export class MembershipService extends CRUD{
         return member;
     }
 
+    public async getByProject(projectId: number, user: UserEntity) {
+        await this.projectService.authorize(projectId, user, 'member:read');
+
+        const members = await this.repo.findByProjectId(projectId);
+        return members.map(i => i.response())
+    }
+
     public async getByUser(user: UserEntity) {
         const member = await this.repo.findByFilter({userId: user.getId()});
         if(!member) throw new NotFoundError("MEMBER");

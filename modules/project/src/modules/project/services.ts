@@ -1,4 +1,4 @@
-import { PaginationParam, PaginationResult } from "@shared-types/index";
+import { PaginationParam } from "@shared-types/index";
 import { UserEntity } from "../../../../auth/src/modules/user/entities/User";
 import { ProjectRepository } from "./repositories/project";
 import { SettingsOwner } from "../../interfaces/SettingsOwner";
@@ -8,7 +8,7 @@ import { ProjectEntity } from "./entities/Project";
 import { InvalidFieldError, NotCreatedError, NotDeletedError, NotFoundError, NotUpdatedError } from "@common/errors";
 import { authorizeMode, ProjectPermission, ProjectPolicy } from "../../policies/project.policy";
 import { CRUD } from "../../interfaces/Crud";
-import { EntityParams } from "./types";
+import { EntityParams, PaginationResult } from "./types";
 
 export class ProjectService extends CRUD implements SettingsOwner{
 
@@ -57,7 +57,7 @@ export class ProjectService extends CRUD implements SettingsOwner{
         return projects.map(i => i.response())
     }
 
-    public async getWithPagination(parameters: PaginationParam): Promise<PaginationResult> {
+    public async getWithPagination(parameters: PaginationParam) {
         return await this.repo.findWithPagination(parameters);
     }
 

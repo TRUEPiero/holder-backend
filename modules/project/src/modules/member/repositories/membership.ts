@@ -14,6 +14,20 @@ export class MembershipRepository {
         return new MemberEntity(data);        
     }
 
+    public async findByProjectId(projectId: number) {
+        const filter = {
+            projectId
+        };
+
+        const include = {
+            user: true,
+            role: true
+        }
+
+        const data = await this.base.getByFields(filter, include);
+        return data.map(i => new MemberEntity(i));
+    }
+
     public async findByFilter(filter: any) {
         const data = await this.base.getFirstByFields(filter);
         if(!data) return null;

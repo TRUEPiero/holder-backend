@@ -15,6 +15,7 @@ export type ProjectPermission =
   | "transaction:read"
   | "transaction:create"
   | "transaction:delete"
+  | "member:read"
   | "member:invite"
   | "member:update"
   | "member:delete"

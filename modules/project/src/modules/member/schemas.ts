@@ -1,8 +1,21 @@
 import { errorSchema } from "@schemas/error";
 import {t} from 'elysia';
-import { ResponseObject } from "./types";
+import { ResponseObject, ResponseObjects } from "./types";
 
 export const schema = {
+    getByProject: {
+        params: t.Object({
+            pid: t.Number()
+        }),
+        response: {
+            200: ResponseObjects,
+            ...errorSchema
+        },
+        detail: {
+            tags: ['Участники'],
+            desctiprion: 'Получить участников проекта'
+        }
+    },
     invite: {    
         params: t.Object({
             pid: t.Number()

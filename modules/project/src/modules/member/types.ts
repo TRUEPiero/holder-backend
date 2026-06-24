@@ -25,6 +25,7 @@ const ResponseMember = t.Object({
     projectId: t.Number(),
     role: t.Any(),
     user: t.Optional(ResponseUser),
+    userId: t.Number(),
     joinedAt: t.Date()
 })
 
@@ -39,7 +40,8 @@ const ResponseObjects = t.Object({
 export type{
     SoftDeleteData,
     MemberRole,
-    Member
+    Member,
+    User
 }
 
 export {

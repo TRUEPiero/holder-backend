@@ -14,8 +14,8 @@ export class ProjectInviteService {
         private projectService: ProjectService
     ) {}
 
-    public async getInvite(filter: any) {
-        return await this.inviteRepo.getByFilter(filter);
+    public async getByFilter(filter: any) {
+        return await this.inviteRepo.findByFields(filter);
     }
 
     public async sendInviteToUser(projectId: number, email: string, user: UserEntity) { 
@@ -23,7 +23,7 @@ export class ProjectInviteService {
 
         await this.userService.getUserByEmail(email);
 
-        const invite = await this.getInvite({email, projectId});
+        const invite = await this.getByFilter({email, projectId});
         if(invite && invite.isActive()) throw new AlreadyExistError("INVITE");
 
         const code = this.generateCode();
@@ -40,7 +40,7 @@ export class ProjectInviteService {
     }
 
     public async acceptInvite(projectId: number, code: string, user: UserEntity) {
-        const invite = await this.getInvite({code, projectId});
+        const invite = await this.getByFilter({code, projectId});
         if(!invite || !invite.isActive()) throw new NotFoundError("INVITE");
         if(invite.getEmail() !== user.getEmail()) throw new NotFoundError("INVITE");
 
