@@ -5,7 +5,7 @@ import { container } from '../../../../containers';
 import { Project } from './types';
 import { ProjectEntity } from './entities/Project';
 
-const {projectService} = container;
+const {projectService, transactionTagService} = container;
 
 export const ProjectController = new Elysia({
     prefix: '/project'
@@ -21,6 +21,11 @@ export const ProjectController = new Elysia({
     const project = await projectService.authorize(pid, user, 'project:read');
     return {data: project.response()}
 }, schema.detail)
+
+.get('/:pid/tags', async({params: {pid}, user}) => {
+    const tags = await transactionTagService.getByProject(pid, user);
+    return {data: tags};
+}, schema.tags)
 
 .post('/', async({user, body}) => {
     const project =  await projectService.create(user, body)

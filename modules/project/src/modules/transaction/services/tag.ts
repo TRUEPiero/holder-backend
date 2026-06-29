@@ -8,6 +8,13 @@ export class TransactionTagService {
         private projectService: ProjectService
     ) {}
 
+    public async getByProject(projectId: number, user: UserEntity) {
+        await this.projectService.authorize(projectId, user, 'transaction:read');
+
+        const tags = await this.repo.findByProject(projectId);
+        return tags.map(i => i.response());
+    }   
+
     public async getByCashbox(projectId: number, cashboxId: number, user: UserEntity) {
         await this.projectService.authorize(projectId, user, 'transaction:read');
         

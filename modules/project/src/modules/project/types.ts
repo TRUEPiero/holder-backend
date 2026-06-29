@@ -59,6 +59,10 @@ const ResponseProject = t.Object({
     balance: t.Any(),
 })
 
+const ResponseTags = t.Object({
+    data: t.Array(t.Any())
+})
+
 const ResponseDetailObject = t.Object({
     data: ResponseDetailProject
 })

@@ -26,6 +26,19 @@ export const schema = {
             ...errorSchema
         }
     },
+    tags: {
+        params: t.Object({
+            pid: t.Number()
+        }),
+        detail: {
+            tags: ['Проект'],
+            description: 'Получить проект по ID',
+        },
+        response: {
+            200: t.Any(),
+            ...errorSchema
+        }
+    },
     create: {
         body: t.Partial(
             t.Object({
