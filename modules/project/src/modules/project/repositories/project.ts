@@ -26,7 +26,9 @@ export class ProjectRepository {
             ]
         }
 
-        const data = await this.base.getByFields(filter);
+        const include = { cashboxes: true }
+
+        const data = await this.base.getByFields(filter, include);
         return data.map((p: Project) => new ProjectEntity(p));
     }
 
