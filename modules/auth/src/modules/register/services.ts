@@ -5,6 +5,7 @@ import { AlreadyExistError, NotFoundError, NotUpdatedError } from "@common/error
 import { getExpiredDate } from "../../../../../src/helpers/expiredDate";
 import { randomUUID } from 'crypto';
 import { GetFilter, RegisterData } from "./types";
+import { AlreadyCheckedError } from "./errors";
 
 export class RegisterService {
     constructor(
@@ -40,6 +41,7 @@ export class RegisterService {
 
         const verify = await this.getVerify({email});
         if(verify && verify.isActive()) throw new AlreadyExistError('VERIFY');
+        if(verify && verify.checked()) throw new AlreadyCheckedError();
 
         const code = this.generateCode();
 

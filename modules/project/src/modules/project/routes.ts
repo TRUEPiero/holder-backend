@@ -2,8 +2,6 @@ import {Elysia} from 'elysia';
 import { deriveUser } from '@plugins/deriveUser';
 import { schema } from './schemas';
 import { container } from '../../../../containers';
-import { Project } from './types';
-import { ProjectEntity } from './entities/Project';
 
 const {projectService, transactionTagService} = container;
 

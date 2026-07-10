@@ -74,4 +74,12 @@ export class UserService{
 
         return updated;
     }
+
+    public async sendResetPassword() {
+        
+    }
+
+    public async checkResetPassword() {
+        
+    }
 }

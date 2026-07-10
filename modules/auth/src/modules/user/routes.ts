@@ -18,3 +18,11 @@ export const UserController = new Elysia({
     const entity = await userService.update(user, body);
     return {data: entity.response()}
 }, schema.updateUser)
+
+.post('/password/reset/send', async() => {
+    return await userService.sendResetPassword();
+}, schema.resetPassword)
+
+.post('/password/reset/check', async() => {
+    return await userService.checkResetPassword();
+}, schema.resetPassword)
