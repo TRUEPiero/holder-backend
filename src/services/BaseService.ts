@@ -64,7 +64,7 @@ export class BaseService<ModelName extends PrismaModelName> {
 
         if (isLimitsNotValid) {
             const items = await this.getAllWithQuery({where, orderBy});
-            return {items}
+            return {items, currentPage: page, totalPages: 0, totalItems: 0, hasNextPage: false}
         }
 
         if (page < 1 || limit < 1) {

@@ -52,9 +52,33 @@ export class ProjectService extends CRUD implements SettingsOwner{
         return project;
     }
 
-    public async getByUser(user: UserEntity): Promise<any[]> {
-        const projects = await this.repo.findUserProjects(user.getId());
-        return projects.map(i => i.response())
+    public async getByUser(user: UserEntity, page: number = 1, limit: number = 20) {
+        const userId = user.getId()
+        const filter = {
+            OR: [
+                {ownerId: userId},
+                {members: {
+                    some: {
+                        userId
+                    }
+                }}
+            ]
+        };
+        const include = { cashboxes: true };
+
+        const params: PaginationParam = {
+            page,
+            limit,
+            fieldFilter: filter,
+            include: include
+        };
+
+        const projects = await this.getWithPagination(params);
+
+        return {
+            items: projects.items.map(project => project.response()),
+            pagination: projects.pagination
+        }
     }
 
     public async getWithPagination(parameters: PaginationParam) {

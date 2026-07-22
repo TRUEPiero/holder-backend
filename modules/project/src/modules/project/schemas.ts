@@ -1,15 +1,19 @@
 import { errorSchema } from "@schemas/error";
 import {t} from 'elysia';
-import { ResponseObject, ResponseObjects } from "./types";
+import { ResponseObject, ResponseObjects, ResponseWithPagination } from "./types";
 
 export const schema = {
     getAll: {
+        query: t.Partial(t.Object({
+            page: t.Number(),
+            limit: t.Number()
+        })),
         detail: {
             tags: ['Проект'],
             description: 'Получить все проекты',
         },
         response: {
-            200: ResponseObjects,
+            200: ResponseWithPagination,
             ...errorSchema
         }
     },

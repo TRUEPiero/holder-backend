@@ -84,7 +84,9 @@ export const AuthController = new Elysia({
         }
     }
 
-    new AuthCookieService(cookie).clear();
+    const cookieService = new AuthCookieService(cookie);
+    cookieService.clear();
+
     return true;
 }, schema.logout)
 

@@ -1,6 +1,7 @@
 import { CasheService } from "@services/CasheService";
 import { AuthTokenService } from "./token";
 import { UserEntity } from "../../modules/user/entities/User";
+import { UnautorizedError } from "@common/errors";
 
 export class SessionService {
     constructor(
@@ -20,8 +21,12 @@ export class SessionService {
     } 
 
     public async refresh(oldJti: string, user: UserEntity) {
-        await this.cashe.getDel(`refresh:${oldJti}`);
+        const userId = await this.cashe.getDel(`refresh:${oldJti}`);
 
+        if (!userId) {
+            throw new UnautorizedError();
+        }
+        
         const newJti = crypto.randomUUID();
         const access = await this.tokenService.generateAccess(user);
         const refresh = await this.tokenService.generateRefresh(user, newJti);

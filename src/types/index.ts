@@ -20,12 +20,12 @@ type QueryParam = {
 type PaginationParam = {
     page?: number | string, 
     limit?: number | string, 
-    name?: string, 
-    sortBy?: string, 
-    sortOrder?: string, 
-    include?: string, 
-    textCheck?: string, 
-    fieldIn?: string,
+    name?: any, 
+    sortBy?: any, 
+    sortOrder?: any, 
+    include?: any, 
+    textCheck?: any, 
+    fieldIn?: any,
     fieldFilter?: any 
 }
 

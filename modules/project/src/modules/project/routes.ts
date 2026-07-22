@@ -10,8 +10,8 @@ export const ProjectController = new Elysia({
 })
 .derive(deriveUser)
 
-.get('/', async({user}) => {
-    const projects = await projectService.getByUser(user);
+.get('/', async({user, query: {page, limit}}) => {
+    const projects = await projectService.getByUser(user, page, limit);
     return {data: projects}
 }, schema.getAll)
 

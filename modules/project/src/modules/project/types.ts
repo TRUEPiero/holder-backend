@@ -76,12 +76,14 @@ const ResponseObjects = t.Object({
 })
 
 const ResponseWithPagination = t.Object({
-    items: t.Array(ResponseProject),
-    pagination: t.Object({
-        currentPage: t.Number(),
-        totalPages: t.Number(),
-        totalItems: t.Number(),
-        hasNextPage: t.Boolean()
+    data: t.Object({
+        items: t.Array(ResponseProject),
+        pagination: t.Object({
+            currentPage: t.Number(),
+            totalPages: t.Number(),
+            totalItems: t.Number(),
+            hasNextPage: t.Boolean()
+        })
     })
 })
 

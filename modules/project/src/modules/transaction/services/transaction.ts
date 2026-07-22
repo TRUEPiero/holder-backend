@@ -23,7 +23,7 @@ export class TransactionService {
         return transaction;
     }
 
-    public async getGroupedByTags(projectId: number, cashboxId: number, user: UserEntity) {
+    public async getGroupedByTags(projectId: number, cashboxId: number, query: Query, user: UserEntity) {
         await this.projectService.authorize(projectId, user, 'transaction:read');
         
         const filter = {
@@ -31,6 +31,10 @@ export class TransactionService {
             cashbox: {
                 projectId
             },
+            createdAt: {
+                lte: query.end,
+                gte: query.start
+            }
         };
         const include = {
             tag: true
@@ -47,12 +51,12 @@ export class TransactionService {
             const filtered = transactions.filter(i => i.getType() === type);
 
             const groupedByTag = Object.groupBy(filtered, item => {
-                return item.getTag().title ?? 'other'
+                return item.getTag()?.title ?? 'other'
             });
 
             result[type] = Object.entries(groupedByTag).map(
                 ([tagTitle, transactions]) => ({
-                    id: transactions?.[0]?.getTag()?.id ?? null,
+                    id: transactions?.[0]?.getTag()?.id ?? undefined,
                     title: transactions?.[0]?.getTag()?.title ?? tagTitle,
                     transactions: transactions ?? [],
                     amount: transactions?.reduce((summ, transaction) => summ.plus(transaction.getAmount()), new Decimal(0))
