@@ -1,6 +1,6 @@
 import { AccessDeniedError } from "@common/errors";
 import { ProjectEntity } from "../modules/project/entities/Project";
-import { UserEntity } from "../../../auth/src/modules/user/entities/User";
+import { UserEntity } from "../../../user/src/modules/user/entities/User";
 
 export type ProjectPermission =
   | "project:read"

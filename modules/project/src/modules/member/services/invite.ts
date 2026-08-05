@@ -1,9 +1,9 @@
 import { AlreadyExistError, NotCreatedError, NotFoundError, NotUpdatedError } from "@common/errors";
-import { UserService } from "../../../../../auth/src/modules/user/services";
+import { UserService } from "../../../../../user/src/modules/user/services";
 import { InviteRepository } from "../repositories/invite";
 import { MembershipService } from "./membership";
 import { getExpiredDate } from "../../../../../../src/helpers/expiredDate";
-import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
+import { UserEntity } from "../../../../../user/src/modules/user/entities/User";
 import { ProjectService } from "../../project/services";
 
 export class ProjectInviteService {

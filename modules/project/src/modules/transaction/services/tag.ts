@@ -1,4 +1,4 @@
-import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
+import { UserEntity } from "../../../../../user/src/modules/user/entities/User";
 import { ProjectService } from "../../project/services";
 import { TransactionTagRepository } from "../repositories/tag";
 

@@ -1,5 +1,5 @@
 import { PaginationParam } from "@shared-types/index";
-import { UserEntity } from "../../../../auth/src/modules/user/entities/User";
+import { UserEntity } from "../../../../user/src/modules/user/entities/User";
 import { ProjectRepository } from "./repositories/project";
 import { SettingsOwner } from "../../interfaces/SettingsOwner";
 import { SettingTargets } from "@shared-types/index";

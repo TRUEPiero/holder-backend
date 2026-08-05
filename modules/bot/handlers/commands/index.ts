@@ -8,7 +8,7 @@ const {userService, casheService} = container;
 const composer = new Composer<BotContext>();
 
 composer.command('start', async (ctx) => {
-    const chatId = ctx.from?.id;
+    const chatId = ctx.from?.id?.toString();
     if(!chatId) return;
 
     const username = ctx.from?.username;
@@ -17,7 +17,7 @@ composer.command('start', async (ctx) => {
     if(hasCashe) return await render(ctx, {type: 'start'}, true);
 
     const filter = {
-        telegramId: chatId.toString()
+        telegramId: chatId
     }
 
     let user = await userService.getTelegramUser(filter)

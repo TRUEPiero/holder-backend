@@ -1,14 +1,14 @@
 import { DirectoryService } from "@services/DirectoryService";
 
-import { MailService } from "../auth/src/lib/mail";
+import { MailService } from "../user/src/lib/mail";
 import { CasheService } from "@services/CasheService";
 
 // auth
-import { UserRepository } from "../auth/src/modules/user/repository";
-import { UserService } from "../auth/src/modules/user/services";
-import { AuthService } from "../auth/src/modules/auth/services";
-import { RegisterRepository } from "../auth/src/modules/register/repository";
-import { RegisterService } from "../auth/src/modules/register/services";
+import { UserRepository } from "../user/src/modules/user/repository";
+import { UserService } from "../user/src/modules/user/services";
+import { AuthService } from "../user/src/modules/auth/services";
+import { RegisterRepository } from "../user/src/modules/register/repository";
+import { RegisterService } from "../user/src/modules/register/services";
 // project
 import { ProjectRepository } from "../project/src/modules/project/repositories/project";
 import { ProjectService } from "../project/src/modules/project/services";

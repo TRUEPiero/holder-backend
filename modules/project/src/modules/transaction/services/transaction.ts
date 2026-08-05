@@ -3,7 +3,7 @@ import { ProjectService } from "../../project/services";
 import { TransactionRepository } from "../repositories/transaction";
 import { CreateData, Query } from "../types";
 import { InvalidFieldError, NotCreatedError, NotDeletedError, NotFoundError } from "@common/errors";
-import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
+import { UserEntity } from "../../../../../user/src/modules/user/entities/User";
 import { DecimalClass as Decimal } from "@shared-types/index";
 import { CasheService } from "@services/CasheService";
 

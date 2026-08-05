@@ -1,5 +1,5 @@
 import { CasheService } from "@services/CasheService";
-import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
+import { UserEntity } from "../../../../../user/src/modules/user/entities/User";
 import { ProjectService } from "../../project/services";
 import { ProjectSettingRepository } from "../repositories/project";
 

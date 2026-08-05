@@ -1,12 +1,15 @@
 import { Elysia } from "elysia";
 import { corsPlugin } from "@plugins/cors";
 import { swaggerPlugin } from "@plugins/swagger";
+
 import { BotController } from "../modules/bot";
-import { app as authApp } from "../modules/auth/src/app";
+import { app as authApp } from "../modules/user/src/app";
 import { app as projectApp } from "../modules/project/src/app";
+
 import { initRedis } from "@common/redis";
-import { errorHandler } from "@plugins/errorHandler";
 import { initCron } from "@common/cron";
+
+import { errorHandler } from "@plugins/errorHandler";
 
 const PORT = process.env.SERVER_PORT;
 

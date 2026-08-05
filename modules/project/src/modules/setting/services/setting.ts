@@ -1,5 +1,5 @@
 import { Setting } from "@schemas/common";
-import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
+import { UserEntity } from "../../../../../user/src/modules/user/entities/User";
 import { SettingsOwner, SettingsValues } from "../../../interfaces/SettingsOwner";
 import { SettingEntity } from "../entities/Setting";
 import { SettingRepository } from "../repositories/setting";

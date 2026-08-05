@@ -1,5 +1,5 @@
 import { AlreadyExistError, InvalidFieldError, NotCreatedError, NotFoundError, NotUpdatedError } from "@common/errors";
-import { UserEntity } from "../../../../auth/src/modules/user/entities/User";
+import { UserEntity } from "../../../../user/src/modules/user/entities/User";
 import { BudgetRepository } from "./repository";
 import { ProjectService } from "../project/services";
 import { createBody, createData, updateData } from "./types";
