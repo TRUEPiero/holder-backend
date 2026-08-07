@@ -109,4 +109,24 @@ export class BudgetService {
 
         return updated;
     }
+
+    public async deactivateExpired() {
+        const now = new Date();
+
+        const filter = {
+            isActive: true,
+            startDate: { lt: now },
+            endDate: { lt: now }
+        }
+        
+        const budgets = await this.repo.findByFilter(filter);
+        const expIds = budgets.map(budget => budget.getId());
+
+        const data = {
+            isActive: false
+        }
+
+        const updated = await this.repo.updateMany(expIds, data);
+        return updated;
+    }
 }

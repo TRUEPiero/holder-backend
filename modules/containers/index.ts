@@ -46,6 +46,8 @@ import { SettingGroupRepository } from "../project/src/modules/setting/repositor
 import { ProjectSettingValueService } from "../project/src/modules/setting/services/project";
 import { CashboxMonitoringService } from "../project/src/modules/cashbox/services/monitoring";
 import { NotificationService } from "../project/src/modules/notification/service";
+import { EventService } from "../events/service";
+import { EventRepository } from "../events/repository";
 
 const mainService = new MailService();
 
@@ -66,6 +68,8 @@ const cashboxSettingBase = new DirectoryService<'cashboxSettings'>('cashboxSetti
 const transactionBase = new DirectoryService<'transaction'>('transaction', ['cashbox', 'author', 'tag']);
 const transactionTagBase = new DirectoryService<'transactionTag'>('transactionTag', []);
 
+const eventBase = new DirectoryService<'events'>('events', []);
+
 // repos
 const userRepo = new UserRepository(userBase);
 const registerRepo = new RegisterRepository(registerBase);
@@ -82,6 +86,8 @@ const settingRepo = new SettingRepository(settingBase);
 const settingGroupRepo = new SettingGroupRepository(settingGroupBase)
 const transactionRepo = new TransactionRepository(transactionBase);
 const transactionTagRepo = new TransactionTagRepository(transactionTagBase);
+
+const eventRepository = new EventRepository(eventBase);
 
 // services
 const casheService = new CasheService();
@@ -116,6 +122,8 @@ const transactionService = new TransactionService(transactionRepo, projectServic
 const transactionTagService = new TransactionTagService(transactionTagRepo, projectService);
 const transferService = new TransferService(projectService, monitoringService, casheService);
 
+const eventService = new EventService(eventRepository);
+
 export const container = {
     casheService,
 
@@ -133,5 +141,7 @@ export const container = {
     projectSettingService,
     cashboxSettingService,
     projectSettingGroupService,
-    cashboxSettingGroupService
+    cashboxSettingGroupService,
+    
+    eventService
 };

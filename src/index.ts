@@ -7,7 +7,7 @@ import { app as authApp } from "../modules/user/src/app";
 import { app as projectApp } from "../modules/project/src/app";
 
 import { initRedis } from "@common/redis";
-import { initCron } from "@common/cron";
+import { initCron } from '../modules/events/cron';
 
 import { errorHandler } from "@plugins/errorHandler";
 

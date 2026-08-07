@@ -40,4 +40,14 @@ export class BudgetRepository {
         if (!updated) return null;
         return new BudgetEntity(updated);
     }
+
+    async updateMany(ids: number[], data: updateDataRepo ): Promise<BudgetEntity[]> {
+        
+        const filter = {
+            id: {in: ids}
+        }
+
+        const update = await this.base.updateByFields(filter, data);
+        return update.map(i => new BudgetEntity(i));
+    }
 }
