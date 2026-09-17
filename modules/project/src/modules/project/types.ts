@@ -59,6 +59,10 @@ const ResponseProject = t.Object({
     balance: t.Any(),
 })
 
+const ResponseTags = t.Object({
+    data: t.Array(t.Any())
+})
+
 const ResponseDetailObject = t.Object({
     data: ResponseDetailProject
 })
@@ -72,12 +76,14 @@ const ResponseObjects = t.Object({
 })
 
 const ResponseWithPagination = t.Object({
-    items: t.Array(ResponseProject),
-    pagination: t.Object({
-        currentPage: t.Number(),
-        totalPages: t.Number(),
-        totalItems: t.Number(),
-        hasNextPage: t.Boolean()
+    data: t.Object({
+        items: t.Array(ResponseProject),
+        pagination: t.Object({
+            currentPage: t.Number(),
+            totalPages: t.Number(),
+            totalItems: t.Number(),
+            hasNextPage: t.Boolean()
+        })
     })
 })
 

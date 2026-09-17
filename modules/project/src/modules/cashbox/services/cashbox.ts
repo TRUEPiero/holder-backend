@@ -5,7 +5,7 @@ import { SettingsOwner } from "../../../interfaces/SettingsOwner";
 import { SettingTargets } from "@shared-types/index";
 import { InvalidFieldError, NotCreatedError, NotDeletedError, NotFoundError, NotUpdatedError } from "@common/errors";
 import { CasheService } from "@services/CasheService";
-import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
+import { UserEntity } from "../../../../../user/src/modules/user/entities/User";
 import { CRUD } from "../../../interfaces/Crud";
 
 export class CashboxService extends CRUD implements SettingsOwner{

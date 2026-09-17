@@ -43,12 +43,12 @@ type updateData = {
 }
 
 type updateDataRepo = {
-    title: string;
-    description: string;
-    amount: DecimalType;
-    startDate: Date;
-    endDate: Date;
-    isActive: boolean;
+    title?: string;
+    description?: string;
+    amount?: DecimalType;
+    startDate?: Date;
+    endDate?: Date;
+    isActive?: boolean;
 }
 
 const ResponseBudget = t.Object({

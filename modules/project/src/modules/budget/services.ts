@@ -1,5 +1,5 @@
 import { AlreadyExistError, InvalidFieldError, NotCreatedError, NotFoundError, NotUpdatedError } from "@common/errors";
-import { UserEntity } from "../../../../auth/src/modules/user/entities/User";
+import { UserEntity } from "../../../../user/src/modules/user/entities/User";
 import { BudgetRepository } from "./repository";
 import { ProjectService } from "../project/services";
 import { createBody, createData, updateData } from "./types";
@@ -107,6 +107,26 @@ export class BudgetService {
         const updated = await this.repo.update(id, updateData);
         if(!updated) throw new NotUpdatedError("BUDGET");
 
+        return updated;
+    }
+
+    public async deactivateExpired() {
+        const now = new Date();
+
+        const filter = {
+            isActive: true,
+            startDate: { lt: now },
+            endDate: { lt: now }
+        }
+        
+        const budgets = await this.repo.findByFilter(filter);
+        const expIds = budgets.map(budget => budget.getId());
+
+        const data = {
+            isActive: false
+        }
+
+        const updated = await this.repo.updateMany(expIds, data);
         return updated;
     }
 }

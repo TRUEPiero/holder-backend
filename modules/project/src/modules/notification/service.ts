@@ -1,5 +1,5 @@
 import { DecimalType } from "@shared-types/index";
-import { UserEntity } from "../../../../auth/src/modules/user/entities/User";
+import { UserEntity } from "../../../../user/src/modules/user/entities/User";
 import { BotService } from "../../../../bot/services/bot.service";
 import { CashboxEntity } from "../cashbox/entities/Cashbox";
 

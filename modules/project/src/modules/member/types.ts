@@ -1,4 +1,4 @@
-import { ResponseUser, User } from "../../../../auth/src/common/types/user";
+import { ResponseUser, User } from "../../../../user/src/common/types/user";
 import { t } from "elysia";
 
 type MemberRole = {

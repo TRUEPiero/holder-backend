@@ -1,5 +1,5 @@
-import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
-import { UserService } from "../../../../../auth/src/modules/user/services";
+import { UserEntity } from "../../../../../user/src/modules/user/entities/User";
+import { UserService } from "../../../../../user/src/modules/user/services";
 import { BudgetService } from "../../budget/services";
 import { NotificationService } from "../../notification/service";
 import { ProjectService } from "../../project/services";

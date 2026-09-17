@@ -24,7 +24,7 @@ export class AuthCookieService {
     }
 
     clear() {
-        this.cookie['access_token'].set({ value: '', maxAge: 0, path: '/' });
-        this.cookie['refresh_token'].set({ value: '', maxAge: 0, path: '/auth/refresh' });
+        this.cookie['access_token'].remove();
+        this.cookie['refresh_token'].remove();
     }
 }

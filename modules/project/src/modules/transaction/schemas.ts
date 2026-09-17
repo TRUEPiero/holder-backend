@@ -27,6 +27,10 @@ export const schema = {
             pid: t.Number(),
             cid: t.Number()
         }),
+        query: t.Partial(t.Object({
+            start: t.Date(),
+            end: t.Date()
+        })),
         response: {
             200: ResponseGrouped,
             ...errorSchema

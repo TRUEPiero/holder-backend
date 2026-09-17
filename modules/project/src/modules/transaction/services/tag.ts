@@ -1,4 +1,4 @@
-import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
+import { UserEntity } from "../../../../../user/src/modules/user/entities/User";
 import { ProjectService } from "../../project/services";
 import { TransactionTagRepository } from "../repositories/tag";
 
@@ -7,6 +7,13 @@ export class TransactionTagService {
         private repo: TransactionTagRepository,
         private projectService: ProjectService
     ) {}
+
+    public async getByProject(projectId: number, user: UserEntity) {
+        await this.projectService.authorize(projectId, user, 'transaction:read');
+
+        const tags = await this.repo.findByProject(projectId);
+        return tags.map(i => i.response());
+    }   
 
     public async getByCashbox(projectId: number, cashboxId: number, user: UserEntity) {
         await this.projectService.authorize(projectId, user, 'transaction:read');

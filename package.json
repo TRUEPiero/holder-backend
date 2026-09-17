@@ -7,9 +7,10 @@
     "bot:start": "bun run --watch modules/bot/index.ts",
     "prisma:generate": "bunx prisma generate",
     "prisma:push": "bunx prisma db push --force-reset",
-    "migrate:auth": "bun run modules/auth/migrations/user.ts",
+    "migrate:events": "bun run modules/events/migrations/events.ts",
+    "migrate:auth": "bun run modules/user/migrations/user.ts",
     "migrate:project": "bun run modules/project/migrations/project_seed.ts && bun run modules/project/migrations/project_settings.ts && bun run modules/project/migrations/permissions.ts",
-    "migrate:all": "bun run migrate:auth && bun run migrate:project",
+    "migrate:all": "bun run migrate:auth && bun run migrate:project && bun run migrate:events",
     "gpm": "bun run prisma:generate && bun run prisma:push && bun run migrate:all"
   },
   "dependencies": {

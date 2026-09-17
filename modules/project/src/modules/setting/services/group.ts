@@ -1,4 +1,4 @@
-import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
+import { UserEntity } from "../../../../../user/src/modules/user/entities/User";
 import { SettingsOwner } from "../../../interfaces/SettingsOwner";
 import { SettingGroupRepository } from "../repositories/group";
 

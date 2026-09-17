@@ -30,5 +30,15 @@ export const schema = {
             200: ResponseObject, 
             ...errorSchema
         }
+    },
+    resetPassword: {
+        detail: {
+            description: 'Сбросить пароль',
+            tags: ['Пользователи']
+        },
+        response: {
+            200: t.Any(), 
+            ...errorSchema
+        }
     }
 }

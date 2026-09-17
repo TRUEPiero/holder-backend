@@ -1,0 +1,23 @@
+[
+    {
+        "active": true,
+        "schelude": "*/5 * * * *",
+        "entity": "budget",
+        "action": "deactivateExpired",
+        "priority": 0
+    },
+    {
+        "active": true,
+        "schelude": "* * * * *",
+        "entity": "budget",
+        "action": "test",
+        "priority": 0
+    },
+    {
+        "active": false,
+        "schelude": "*/5 * * * *",
+        "entity": "test",
+        "action": "test",
+        "priority": 0
+    }
+]

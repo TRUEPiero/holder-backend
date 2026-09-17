@@ -1,6 +1,6 @@
 import { cors } from '@elysiajs/cors'
 
 export const corsPlugin = cors({
-    origin: process.env.FRONTEND_ORIGIN,
+    origin: 'http://localhost:3050',
     credentials: true
 });

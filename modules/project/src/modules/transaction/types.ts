@@ -61,7 +61,7 @@ const transaction = t.Object({
     id: t.Number(),
     amount: t.Any(),
     description: t.Nullable(t.String()),
-    tagId: t.Number(),
+    tagId: t.Nullable(t.Number()),
 })
 
 const Tag = t.Object({

@@ -370,3 +370,18 @@ model CashboxSettings {
 
   @@id([cashboxId, settingId])
 }
+
+model Events {
+  id Int @id @default(autoincrement())
+
+  active Boolean
+
+  schelude String
+  entity String
+  action String
+
+  priority Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

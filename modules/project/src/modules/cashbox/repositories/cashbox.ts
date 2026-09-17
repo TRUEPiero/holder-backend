@@ -14,7 +14,11 @@ export class CashboxRepository {
     }
 
     async findByProject(projectId: number): Promise<CashboxEntity[]> {
-        const data = await this.base.getByFields({ projectId });
+        const orderBy = {
+            id: 'asc'
+        }
+
+        const data = await this.base.getByFields({ projectId }, {}, orderBy);
         return data.map((p: Cashbox) => new CashboxEntity(p));
     }
 

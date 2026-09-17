@@ -2,18 +2,16 @@ import {Elysia} from 'elysia';
 import { deriveUser } from '@plugins/deriveUser';
 import { schema } from './schemas';
 import { container } from '../../../../containers';
-import { Project } from './types';
-import { ProjectEntity } from './entities/Project';
 
-const {projectService} = container;
+const {projectService, transactionTagService} = container;
 
 export const ProjectController = new Elysia({
     prefix: '/project'
 })
 .derive(deriveUser)
 
-.get('/', async({user}) => {
-    const projects = await projectService.getByUser(user);
+.get('/', async({user, query: {page, limit}}) => {
+    const projects = await projectService.getByUser(user, page, limit);
     return {data: projects}
 }, schema.getAll)
 
@@ -21,6 +19,11 @@ export const ProjectController = new Elysia({
     const project = await projectService.authorize(pid, user, 'project:read');
     return {data: project.response()}
 }, schema.detail)
+
+.get('/:pid/tags', async({params: {pid}, user}) => {
+    const tags = await transactionTagService.getByProject(pid, user);
+    return {data: tags};
+}, schema.tags)
 
 .post('/', async({user, body}) => {
     const project =  await projectService.create(user, body)

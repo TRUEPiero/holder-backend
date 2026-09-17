@@ -15,8 +15,8 @@ export const TransactionController = new Elysia({
     return {data: transactions}
 }, schema.getByCashbox)
 
-.get('/tags', async({params: {pid, cid}, user}) => {
-    const transactionTags = await transactionService.getGroupedByTags(pid, cid, user);
+.get('/tags', async({params: {pid, cid}, query, user}) => {
+    const transactionTags = await transactionService.getGroupedByTags(pid, cid, query, user);
     return {data: transactionTags}
 },schema.getTags)
 

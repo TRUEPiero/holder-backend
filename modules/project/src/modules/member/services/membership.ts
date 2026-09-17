@@ -1,5 +1,5 @@
 import { AlreadyExistError, NotCreatedError, NotDeletedError, NotFoundError, NotUpdatedError } from "@common/errors";
-import { UserEntity } from "../../../../../auth/src/modules/user/entities/User";
+import { UserEntity } from "../../../../../user/src/modules/user/entities/User";
 import { ProjectService } from "../../project/services";
 import { MembershipRepository } from "../repositories/membership";
 import { CasheService } from "@services/CasheService";
