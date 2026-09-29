@@ -146,7 +146,7 @@ scene.wait('wait_amount').on(['message:text', 'callback_query'], async(ctx) => {
 })
 
 scene.label('create_transfer').step(async(ctx) => {
-    const service = EntityServiceFactory.create('transaction') as EntityService<'transaction'> & MoneyTransfer;;
+    const service = EntityServiceFactory.create('transaction') as EntityService<'transaction'> & MoneyTransfer;
 
     try {
         const res = await service.moneyTransfer(ctx);
