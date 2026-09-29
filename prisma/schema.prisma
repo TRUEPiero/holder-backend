@@ -24,6 +24,7 @@ enum SettingType {
 enum SettingTarget {
   project
   cashbox
+  user
 }
 
 enum TransactionType {
@@ -61,6 +62,8 @@ model User {
   OwnedProjects Project[]       @relation("ProjectOwner")
   projects      ProjectMember[]
   transactions  Transaction[]
+
+  settings UserSettings[]
 
   createdAt DateTime @default(now())
   updateAt  DateTime @updatedAt
@@ -233,14 +236,6 @@ model CashboxBudget {
   @@map("cashbox_budget")
 }
 
-model CashboxField {
-  id    Int    @id @default(autoincrement())
-  title String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 model Transaction {
   id          Int     @id @default(autoincrement())
   amount      Decimal
@@ -319,12 +314,13 @@ model SettingGroup {
 
 model SettingDefinition {
   id   Int         @id @default(autoincrement())
-  code String      @unique
+  code String      
   type SettingType
 
   title       String
   description String?
 
+  users UserSettings[]
   projects ProjectSettings[]
   cashboxes CashboxSettings[]
 
@@ -345,6 +341,18 @@ model SettingDefinition {
 
   @@unique([code, target])
   @@map("setting")
+}
+
+model UserSettings {
+  userId Int
+  settingId Int
+
+  value Json?
+
+  user User @relation(fields: [userId], references: [id])
+  setting SettingDefinition @relation(fields: [settingId], references: [id])
+
+  @@id([userId, settingId])
 }
 
 model ProjectSettings {
@@ -384,4 +392,6 @@ model Events {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@map("events")
 }

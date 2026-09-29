@@ -1,12 +1,12 @@
 import { UserEntity } from "../../../../../user/src/modules/user/entities/User";
 import { UserService } from "../../../../../user/src/modules/user/services";
 import { BudgetService } from "../../budget/services";
-import { NotificationService } from "../../notification/service";
+import { NotificationService } from "./notify";
 import { ProjectService } from "../../project/services";
 import { SettingService } from "../../setting/services/setting";
-import { CashboxService } from "./cashbox";
+import { CashboxService } from "../../cashbox/services/cashbox";
 
-export class CashboxMonitoringService {
+export class MonitoringService {
     constructor (
         private userService: UserService,
         private projectService: ProjectService,
@@ -34,7 +34,7 @@ export class CashboxMonitoringService {
         ) return;
 
         const cashboxSettings = await this.cashboxSettingService.getAll(cashboxId, user, projectId);
-        const doNotify = cashboxSettings.find(i => i.code  === 'notification1');
+        const doNotify = cashboxSettings.find(i => i.code  === 'notification');
         const notifyAmount = cashboxSettings.find(i => i.code  === 'notification_amount');
 
         if(
@@ -45,7 +45,7 @@ export class CashboxMonitoringService {
         ) return;
         
         const project = await this.projectService.getById(projectId);
-        const projectOwner = await this.userService.getUser(project.getOwner());
+        const projectOwner = await this.userService.getById(project.getOwner());
 
         if(curBalance.lt(0)) {
             await this.notificationService.notifyAboutNegativeBalance(projectOwner, cashbox);

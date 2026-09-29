@@ -37,14 +37,14 @@ const transactionServiveTg: EntityService<'transaction'> & MoneyTransfer = {
         const project_id = ctx.session.project_id
         const cashbox_id = ctx.session.project_id;
         const transaction_id = ctx.session.transaction_id;
-        const user = await this.userService.getUser(ctx.session.user_id);
+        const user = await this.userService.getById(ctx.session.user_id);
 
         return await transferService.cancelTransaction(transaction_id,user, cashbox_id, project_id);
     },
     async moneyTransfer(ctx) {
         const createData: CreateData = ctx.session.entityData;
 
-        const user = await this.userService.getUser(ctx.session.user_id);
+        const user = await this.userService.getById(ctx.session.user_id);
         const projectId = ctx.session.project_id;
         const [current, linked] = this.getCorrectCashboxes(ctx, createData);
 

@@ -44,7 +44,7 @@
         "target": "cashbox",
         "settings": [
             {
-                "code": "notification1",
+                "code": "notification",
                 "title": "Уведомления",
                 "type": "boolean",
                 "value": false,
@@ -59,6 +59,34 @@
                 "type": "number",
                 "value": null,
                 "description": "Присылать уведомления когда баланс приближается к значению:",
+                "isDisable": false,
+                "isRequired": false,
+                "telegram": true
+            }
+        ]
+    },
+    {
+        "code": "main",
+        "title": "Главные",
+        "description": "",
+        "target": "user",
+        "settings": [
+            {
+                "code": "locale",
+                "title": "Язык",
+                "type": "enum",
+                "value": "ru",
+                "description": "Выберите язык интерфейса:",
+                "values": [
+                    {
+                        "code": "ru",
+                        "title": "Русский"
+                    },
+                    {
+                        "code": "en",
+                        "title": "English"
+                    }
+                ],
                 "isDisable": false,
                 "isRequired": false,
                 "telegram": true

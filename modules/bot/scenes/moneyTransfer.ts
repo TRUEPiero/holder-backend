@@ -2,7 +2,7 @@ import { InlineKeyboard } from "grammy";
 import { Scene } from "grammy-scenes";
 import { BotContext } from "../core/context";
 import { CommonKeyboard } from "../keyboards/common";
-import { render, renderListForChoice } from "../lib/render";
+import { render } from "../lib/render";
 import { Step, TransactionTypes } from "../types";
 import { MoneyTransfer } from "../interfaces/money-transfer";
 import { EntityService } from "../interfaces/entity.service";
@@ -43,10 +43,14 @@ scene.label('choice_cashbox').step(async(ctx) => {
     const page = ctx.session.entityData.page ?? 1;
     const cashboxId = ctx.session.cashbox_id;
 
-    await ctx.editMessageText('Выберите счет', {
-        reply_markup: (await renderListForChoice(ctx, page, cashboxId))
-            .append(CommonKeyboard.cancelCreate())
-    })
+    const step: Step = {
+        entity: 'cashbox',
+        type: 'listForChoice',
+        id: page,
+        currentId: cashboxId
+    }
+
+    await render(ctx, step);
 })
 
 scene.wait('wait_cashbox').on(['callback_query'], async(ctx) => {

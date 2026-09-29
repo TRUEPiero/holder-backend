@@ -50,7 +50,7 @@ export const AuthController = new Elysia({
 
     if (!payload || !payload.sub || !payload.jti) throw new UnautorizedError();
 
-    const user = await userService.getUser(Number(payload.sub));
+    const user = await userService.getById(Number(payload.sub));
     const tokenService = new AuthTokenService(jwt);
     const sessionService = new SessionService(casheService, tokenService);
 

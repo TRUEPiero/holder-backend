@@ -10,6 +10,7 @@ type SettingValue = string | boolean | number
 
 type Setting = {
   settingId: number,
+  code: string,
   value: SettingValue
 }
 

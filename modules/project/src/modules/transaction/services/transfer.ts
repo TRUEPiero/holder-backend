@@ -7,7 +7,7 @@ import { DecimalType, PrismaTxClient } from "@shared-types/index";
 import { ParamsBetween, ParamsExternal, TransactionTag, TransactionTypes } from "../types";
 import { AlreadyCalceledError, SameIdError } from "../errors";
 import { CasheService } from "@services/CasheService";
-import { CashboxMonitoringService } from "../../cashbox/services/monitoring";
+import { MonitoringService } from "../../notification/services/monitoring";
 
 type transactionData = {
     cashboxId: number
@@ -22,7 +22,7 @@ export class TransferService {
 
     constructor(
         private projectService: ProjectService,
-        private monitoringService: CashboxMonitoringService,
+        private monitoringService: MonitoringService,
         private cashe: CasheService,
     ) { }
 
@@ -57,12 +57,9 @@ export class TransferService {
             }
             const income = await this.createTransaction(tx, incomeData);
 
-            await tx.transfer.create({
-                data: {
-                    expenseId: expense.id,
-                    incomeId: income.id
-                }
-            })
+            const expenseId = expense.id;
+            const incomeId = income.id;
+            await this.createTransfer(tx, expenseId, incomeId);
 
             await this.cashe.del(`project:${projectId}`)
 
@@ -98,12 +95,9 @@ export class TransferService {
             }
             const transaction = await this.createTransaction(tx, data);
 
-            await tx.transfer.create({
-                data: {
-                    expenseId: transaction.type === 'expense' ? transaction.id : null,
-                    incomeId: transaction.type === 'income' ? transaction.id : null
-                }
-            })
+            const expenseId = transactionType === 'expense' ? transaction.id : null;
+            const incomeId = transactionType === 'income' ? transaction.id : null;
+            await this.createTransfer(tx, expenseId, incomeId);
 
             await this.cashe.del(`project:${projectId}`)
 
@@ -227,6 +221,17 @@ export class TransferService {
         if (!transaction) throw new NotCreatedError('TRANSACTION');
 
         return transaction;
+    }
+
+    private async createTransfer(tx: PrismaTxClient, expenseId: number | null, incomeId: number | null) {
+        const transfer = await tx.transfer.create({
+            data: {
+                expenseId,
+                incomeId
+            }
+        })
+        if (!transfer) throw new NotCreatedError('TRANSFER');
+        return transfer;
     }
 
     private async checkCashboxExist(tx: PrismaTxClient, id: number, projectId: number) {

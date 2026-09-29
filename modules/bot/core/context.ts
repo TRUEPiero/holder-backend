@@ -1,6 +1,7 @@
 import {Context, SessionFlavor} from 'grammy';
 import type { ScenesFlavor, ScenesSessionData } from 'grammy-scenes';
 import { EntityData, Step } from '../types';
+import { I18nFlavor } from '@grammyjs/i18n';
 
 type SessionData = {
     user_id: number
@@ -12,4 +13,4 @@ type SessionData = {
     entityData: EntityData
 } & ScenesSessionData
 
-export type BotContext = Context & SessionFlavor<SessionData> & ScenesFlavor;
+export type BotContext = Context & SessionFlavor<SessionData> & ScenesFlavor & I18nFlavor;

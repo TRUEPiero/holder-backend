@@ -6,6 +6,7 @@ type EntityParams = {
     email: string;
     telegram: string;
     telegramId: string;
+    settings: any[];
 }
 
 type UpdateData = {

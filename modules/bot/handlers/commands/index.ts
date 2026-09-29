@@ -27,7 +27,7 @@ composer.command('start', async (ctx) => {
         if(!userId) return await ctx.reply(`К сожалению, нам не удалось найти вас в системе. 
 Для использования данного бота зарегистрируйтесь на сайте holder.com`);
 
-        const finded = await userService.getUser(Number(userId));
+        const finded = await userService.getById(Number(userId));
         if(!finded) {
             await ctx.reply('Ошибка. Обратитесь в сл. под.')
             return;

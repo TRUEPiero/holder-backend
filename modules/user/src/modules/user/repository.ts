@@ -5,8 +5,12 @@ import { CreateData, UpdateDataRepo } from "./types";
 export class UserRepository {
     constructor(private base: DirectoryService<'user'>) {}
 
-    public async findById(id: number) {
-        const data = await this.base.getById(id);
+    public async findDetailed(id: number) {
+        const data = await this.base.getFirstByFields(
+            { id },
+            { settings: true }
+        );
+        
         return data ? new UserEntity(data) : null;
     }
 

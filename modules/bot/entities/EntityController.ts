@@ -16,6 +16,7 @@ class EntityController {
         page: this.renderList.bind(this),
         item: this.renderItem.bind(this),
         settings: this.renderSettings.bind(this),
+        listForChoice: this.renderListForChoice.bind(this),
         start: null
     }
 
@@ -28,13 +29,14 @@ class EntityController {
     public async render(ctx: BotContext, step: Step, isCommand: boolean) {
         const type = step.type;
         const id = Number(step.id);
+        const currentid = Number(step.currentId);
 
         if(type === 'item') ctx.session[`${step.entity!}_id`] = id;
 
         const method = this.methods[type];
         if(!method) return;
         
-        await method(ctx, id, isCommand);
+        await method(ctx, id, isCommand, currentid);
     }
 
     private async renderItem(ctx: BotContext, id: number, isCommand: boolean) {
@@ -65,6 +67,35 @@ class EntityController {
         await methodPage("Список:", {
             reply_markup: await this.keyboard.list(data),
         });
+    }
+
+    private async renderListForChoice(ctx: BotContext, id: number, isCommand: boolean, currentId: number) {
+        const methodPage = replyOrEdit(ctx, isCommand);
+
+        const filter = this.config.getFilter(ctx);
+        filter.id = {not: currentId};
+
+        const params = {
+            page: id, 
+            limit: 5,
+            fieldFilter: filter
+        }
+
+        const flags = {
+            withBackButton: false,
+            isChoice: true
+        };
+    
+        const data = await this.service.getList(params)
+        
+        data.items.forEach((i: PaginationItem) => {
+            i.title = this.config.getTitleKey(i);
+        });
+
+        await methodPage("Выберите счет:", {
+            reply_markup: await this.keyboard.list(data, flags),
+        });
+
     }
 
     private async renderSettings(ctx: BotContext, id: number, isCommand: boolean) {

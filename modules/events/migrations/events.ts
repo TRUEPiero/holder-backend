@@ -1,7 +1,7 @@
 import db from "@common/prisma";
 import fs from 'fs';
-import { HandlersRegister } from "../register";
-import { register } from "../cron";
+import { HandlersRegister } from "../src/register";
+import { register } from "../src/cron";
 
 type Event = {
     active: boolean,
@@ -33,7 +33,7 @@ export async function main() {
         const handler = handlres.get(`${created.entity}.${created.action}`);
         if(!handler) continue;
 
-        register(created.schelude, handler)
+        await register(created.schelude, handler)
     }
 }
 

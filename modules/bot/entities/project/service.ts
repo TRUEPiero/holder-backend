@@ -10,7 +10,7 @@ const projectServiceTg: EntityService<'project'> & EntitySettingsOwner = {
     userService: userService,
 
     async getItem(ctx) {
-        const user = await this.userService.getUser(ctx.session.user_id);
+        const user = await this.userService.getById(ctx.session.user_id);
         const id = ctx.session.project_id;
 
         return this.baseService.authorize(id, user, 'project:read')
@@ -20,7 +20,7 @@ const projectServiceTg: EntityService<'project'> & EntitySettingsOwner = {
     },
 
     async create(ctx) {
-        const user = await this.userService.getUser(ctx.session.user_id);
+        const user = await this.userService.getById(ctx.session.user_id);
         const createData = ctx.session.entityData;
         const data = {
             title: createData.title
@@ -30,7 +30,7 @@ const projectServiceTg: EntityService<'project'> & EntitySettingsOwner = {
     },
     async update(ctx){
         const projectId = ctx.session.project_id;
-        const user = await this.userService.getUser(ctx.session.user_id);
+        const user = await this.userService.getById(ctx.session.user_id);
         const updateData = ctx.session.entityData;
         const data = {
             title: updateData.title
@@ -40,26 +40,26 @@ const projectServiceTg: EntityService<'project'> & EntitySettingsOwner = {
     },
     async delete(ctx){
         const projectId = ctx.session.project_id;
-        const user = await this.userService.getUser(ctx.session.user_id);
+        const user = await this.userService.getById(ctx.session.user_id);
 
         return await this.baseService.delete(projectId, user);
     },
 
     async getSetting(ctx, settingId) {
-        const user = await this.userService.getUser(ctx.session.user_id);
+        const user = await this.userService.getById(ctx.session.user_id);
         const project_id = ctx.session.project_id;
 
         return this.settingService.getById(settingId, project_id, user);
     },
     async getSettings(ctx) {
-        const user = await this.userService.getUser(ctx.session.user_id);
+        const user = await this.userService.getById(ctx.session.user_id);
         const id = ctx.session.project_id;
         
         return this.settingService.getForTelegram(id, user);
     },
     async updateSetting(ctx) {
         const projectId = ctx.session.project_id;
-        const user = await this.userService.getUser(ctx.session.user_id);
+        const user = await this.userService.getById(ctx.session.user_id);
 
         const setting = ctx.session.entityData.setting;
         const value = ctx.session.entityData.value;

@@ -1,5 +1,5 @@
 import { cron } from "bun";
-import { container } from "../containers";
+import { container } from "../../containers";
 import { HandlersRegister } from "./register";
 import { EventHandler } from "./interfaces";
 
@@ -8,9 +8,11 @@ const { eventService } = container;
 const handlers = new HandlersRegister();
 
 export async function initCron() {
+
     try {
         const events = await eventService.getActive();
-
+        let registed = 0;
+        
         for(const event of events) {
             const schelude = event.getSchelude();
             const key = event.getKey();
@@ -21,10 +23,11 @@ export async function initCron() {
                 continue;
             }
 
-            register(schelude, handler);
+            await register(schelude, handler);
+            registed++;
         }
 
-        console.log(`[Cron] trigged ${events.length} event`);
+        console.log(`[Cron] trigged ${registed} event`);
 
     } catch (error) {
          console.error('[Cron] error:', error);

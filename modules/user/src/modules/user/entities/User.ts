@@ -1,8 +1,8 @@
-import { Entity } from "../../../../../project/src/interfaces/Entity";
+import { Entity, SettingTarget } from "../../../../../project/src/interfaces/Entity";
 import { hashPassword } from "../../../lib/password";
 import { EntityParams, UpdateData, UpdateDataRepo } from "../types";
 
-export class UserEntity extends Entity{
+export class UserEntity extends SettingTarget {
     private name: string;   
     private password: string;
     private status: string;   
@@ -18,6 +18,7 @@ export class UserEntity extends Entity{
         this.email = params.email
         this.telegram = params.telegram
         this.telegramId = params.telegramId
+        this.settings = params.settings || []
     }
 
     public getName() {
@@ -38,6 +39,11 @@ export class UserEntity extends Entity{
 
     public getPassword() {
         return this.password;
+    }
+
+    public getLocale() {
+        const localeSetting = this.getSettingByCode('locale');
+        return localeSetting ? localeSetting.value : 'ru';
     }
 
     public async update(data: UpdateData): Promise<UpdateDataRepo> {
@@ -63,6 +69,7 @@ export class UserEntity extends Entity{
             password: this.password,
             telegram: this.telegram,
             telegramId: this.telegramId,
+            settings: this.formatSettings()
         }
     }
 }

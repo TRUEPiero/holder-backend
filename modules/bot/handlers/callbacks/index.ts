@@ -64,18 +64,18 @@ composer.callbackQuery(/^(project|cashbox|transaction|member)_delete$/, async(ct
 })
 
 composer.callbackQuery(/^cashbox_transaction_(income|expense)$/, async(ctx) => {
-    ctx.scenes.enter('moneyTransfer');
-    ctx.answerCallbackQuery();
+    await ctx.scenes.enter('moneyTransfer');
+    await ctx.answerCallbackQuery();
 })
 
 composer.callbackQuery(/^(project|cashbox)_setting_(\d+)$/, async(ctx) => {
-    ctx.scenes.enter('editSetting');
-    ctx.answerCallbackQuery();
+    await ctx.scenes.enter('editSetting');
+    await ctx.answerCallbackQuery();
 })
 
 composer.callbackQuery(/^member_invite$/, async(ctx) => {
-    ctx.scenes.enter('inviteMember');
-    ctx.answerCallbackQuery();
+    await ctx.scenes.enter('inviteMember');
+    await ctx.answerCallbackQuery();
 })
 
 composer.callbackQuery(/^back$/, async(ctx) => {

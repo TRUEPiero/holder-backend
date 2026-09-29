@@ -16,6 +16,6 @@ export const deriveUser = async ({cookie, jwt}: any) => {
     }
     if (!payload?.sub) throw new UnautorizedError();
 
-    const user = await userService.getUser(Number(payload.sub));
+    const user = await userService.getById(Number(payload.sub));
     return { user };
 }

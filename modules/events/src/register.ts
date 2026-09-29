@@ -1,5 +1,4 @@
 import { EventHandler } from "./interfaces";
-import { testEvent } from "./actions/budget/test";
 import { deactivateExpiredEvent } from "./actions/budget/deactivateExpired";
 
 export class HandlersRegister {
@@ -9,7 +8,6 @@ export class HandlersRegister {
     constructor() {
         this.register([
             {key: 'budget.deactivateExpired',  handler: new deactivateExpiredEvent()},
-            {key: 'budget.test',  handler: new testEvent()},
         ])
     }
     

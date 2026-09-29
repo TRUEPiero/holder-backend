@@ -26,6 +26,10 @@ export abstract class SettingTarget extends Entity {
         return this.settings
     }
 
+    getSettingByCode(code: string): Setting | undefined {
+        return this.settings.find(setting => setting.code === code)
+    }
+
     formatSettings() {
         if (!this.settings) return [];
 

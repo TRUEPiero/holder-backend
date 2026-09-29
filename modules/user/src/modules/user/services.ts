@@ -3,18 +3,20 @@ import { UserRepository } from "./repository";
 import { UserEntity } from "./entities/User";
 import { hashPassword } from "../../lib/password";
 import { CreateData, UpdateData } from "./types";
+import { SettingsOwner } from "../../../../project/src/interfaces/SettingsOwner";
+import { SettingTargets } from "@shared-types/index";
 
 type TelegramFilter = {
     telegramId?: number | string,
     telegram?: string
 }
 
-export class UserService{
+export class UserService implements SettingsOwner {
     
     constructor(private repo: UserRepository) {}
 
-    public async getUser(id: number) {
-        const user = await this.repo.findById(id);
+    public async getById(id: number) {
+        const user = await this.repo.findDetailed(id);
         if(!user) throw new NotFoundError('USER')
         return user;
     }
@@ -81,5 +83,9 @@ export class UserService{
 
     public async checkResetPassword() {
         
+    }
+
+    public getSettingTarget(): SettingTargets {
+        return 'user';
     }
 }
