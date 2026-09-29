@@ -4,7 +4,7 @@ import { EntitySettingsOwner } from "../../interfaces/owner-settings";
 
 const {projectService, projectSettingService, userService} = container
 
-const projectServiceTg: EntityService<'project'> & EntitySettingsOwner = {
+const projectServiceTg: EntityService<'project'> & EntitySettingsOwner<'project'> = {
     baseService: projectService,
     settingService: projectSettingService,
     userService: userService,

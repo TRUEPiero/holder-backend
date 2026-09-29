@@ -41,9 +41,9 @@ export class UserEntity extends SettingTarget {
         return this.password;
     }
 
-    public getLocale() {
+    public getLocale(): string {
         const localeSetting = this.getSettingByCode('locale');
-        return localeSetting ? localeSetting.value : 'ru';
+        return localeSetting ? localeSetting.value as string : 'ru';
     }
 
     public async update(data: UpdateData): Promise<UpdateDataRepo> {

@@ -3,15 +3,19 @@ import { container } from "../../containers";
 
 const {userService, projectService, cashboxService, memberService, transactionService} = container
 
-type ServiceMap = {
+export type ServiceMap = {
   project: typeof projectService;
   cashbox: typeof cashboxService;
   member: typeof memberService;
   transaction: typeof transactionService;
+  user: typeof userService;
 };
 
-interface EntityService<K extends keyof ServiceMap> {
+interface BaseService<K extends keyof ServiceMap> {
     baseService: ServiceMap[K];
+}
+
+interface EntityService<K extends keyof ServiceMap> extends BaseService<K> {
     userService: typeof userService
     getItem(ctx: BotContext): Promise<any>
     getList(filter: any): Promise<any>
@@ -21,5 +25,6 @@ interface EntityService<K extends keyof ServiceMap> {
 }
 
 export {
+    BaseService,
     EntityService
 }

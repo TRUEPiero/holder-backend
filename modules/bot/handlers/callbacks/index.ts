@@ -35,7 +35,7 @@ composer.callbackQuery(/^(project|cashbox|transaction|member)_page_(\d+)$/, asyn
     await ctx.answerCallbackQuery();
 })
 
-composer.callbackQuery(/^(project|cashbox)_settings$/, async(ctx) => {
+composer.callbackQuery(/^(project|cashbox|user)_settings$/, async(ctx) => {
     const entity = ctx.match[1] as EntityType;
     const id = Number(ctx.match[2]);
 

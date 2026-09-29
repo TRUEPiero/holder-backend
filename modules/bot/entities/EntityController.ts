@@ -5,12 +5,12 @@ import { EntityControllerParams, PaginationItem, Step } from "../types";
 import { EntityConfig } from "../interfaces/entity.config";
 import { EntityKeyboard } from "../interfaces/entity.keyboard";
 import { EntityService } from "../interfaces/entity.service";
-import { EntitySettingsOwner } from "../interfaces/owner-settings";
+import { EntitySettingKeyboard, EntitySettingsOwner } from "../interfaces/owner-settings";
 
 class EntityController {
-    private service: EntityService<any> & EntitySettingsOwner;
+    private service: EntityService<any> & EntitySettingsOwner<any>;
     private config: EntityConfig<any>
-    private keyboard: EntityKeyboard
+    private keyboard: EntityKeyboard & EntitySettingKeyboard
 
     private methods = {
         page: this.renderList.bind(this),

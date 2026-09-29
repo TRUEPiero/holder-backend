@@ -28,11 +28,7 @@ export class SettingKeyboard {
         return InlineKeyboard.from(keyboard)
     }
 
-    static async transactionSettings() {
-        return new InlineKeyboard();
-    }
-
-    static async memberSettings() {
+    static async userSettings(data: SettingEntity[]) {
         return new InlineKeyboard();
     }
 

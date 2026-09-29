@@ -11,7 +11,10 @@ import { projectServiceTg } from "../entities/project/service";
 import { transactionConfig } from "../entities/transaction/config";
 import { transactionKeyboard } from "../entities/transaction/keyboard";
 import { transactionServiveTg } from "../entities/transaction/service";
+import { userServiceTg } from "../entities/user/service";
 import { EntityType } from "../types";
+import { userConfig } from "../entities/user/config";
+import { userKeyboard } from "../entities/user/keyboard";
 
 const config = {
     project: {
@@ -33,6 +36,11 @@ const config = {
         config: memberConfig,
         service: memberServiceTg,
         keyboard: memberKeyboard
+    },
+    user: {
+        config: userConfig,
+        service: userServiceTg,
+        keyboard: userKeyboard,
     }
 }
 

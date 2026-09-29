@@ -24,12 +24,11 @@ composer.command('start', async (ctx) => {
 
     if(!user) {
         const userId = ctx.match;
-        if(!userId) return await ctx.reply(`К сожалению, нам не удалось найти вас в системе. 
-Для использования данного бота зарегистрируйтесь на сайте holder.com`);
+        if(!userId) return await ctx.reply(ctx.t('user-empty'));
 
         const finded = await userService.getById(Number(userId));
         if(!finded) {
-            await ctx.reply('Ошибка. Обратитесь в сл. под.')
+            await ctx.reply(ctx.t('support'))
             return;
         };
 
@@ -42,6 +41,14 @@ composer.command('start', async (ctx) => {
     }
 
     ctx.session.user_id = user.getId();
+
+    const curLocale = ctx.from?.language_code;
+    const locale = user.getLocale();
+
+    if( curLocale !== locale) {
+        await ctx.i18n.setLocale(locale);
+    }
+
     await casheService.set(`tgUser:${chatId}`, user);
     await render(ctx, {type: 'start'}, true);
 })

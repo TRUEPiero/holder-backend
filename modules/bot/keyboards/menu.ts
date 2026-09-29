@@ -6,6 +6,7 @@ export class MenuKeyboard {
         return new InlineKeyboard()
             .text('Список проектов','project_page_1')
             .row()
+            .text('Настройки', 'user_settings')
     }
 
     static projectMenu() {

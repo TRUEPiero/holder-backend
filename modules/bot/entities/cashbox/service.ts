@@ -4,7 +4,7 @@ import { EntitySettingsOwner } from "../../interfaces/owner-settings";
 
 const { cashboxService, userService, cashboxSettingService } = container
 
-const cashboxServiceTg: EntityService<'cashbox'> & EntitySettingsOwner = {
+const cashboxServiceTg: EntityService<'cashbox'> & EntitySettingsOwner<'cashbox'> = {
     baseService: cashboxService,
     settingService: cashboxSettingService,
     userService: userService,

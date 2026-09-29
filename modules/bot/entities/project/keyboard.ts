@@ -3,8 +3,9 @@ import { MenuKeyboard } from "../../keyboards/menu";
 import { SettingKeyboard } from "../../keyboards/settings";
 import { EntityKeyboard } from "../../interfaces/entity.keyboard";
 import { EntityListFlags } from "../../types";
+import { EntitySettingKeyboard } from "../../interfaces/owner-settings";
 
-const projectKeyboard: EntityKeyboard = {
+const projectKeyboard: EntityKeyboard & EntitySettingKeyboard = {
     item() {
         return MenuKeyboard.projectMenu();
     },

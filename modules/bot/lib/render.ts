@@ -12,7 +12,7 @@ export async function render(ctx: BotContext, step: Step, isCommand = false) {
     if(!entity) {
         history.setStartStep();
 
-        const welcomeMsg = 'Начало';
+        const welcomeMsg = ctx.t('start');
         const options = {
             reply_markup: MenuKeyboard.mainMenu(),
         }
