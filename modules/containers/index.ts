@@ -2,6 +2,7 @@ import { DirectoryService } from "@services/DirectoryService";
 
 import { MailService } from "../user/src/lib/mail";
 import { CasheService } from "@services/CasheService";
+import { TelegramLinkService } from "../user/src/common/services/telegramLink";
 
 // auth
 import { UserRepository } from "../user/src/modules/user/repository";
@@ -99,6 +100,7 @@ const casheService = new CasheService();
 const notificationService = new NotificationService();
 
 const userService = new UserService(userRepo);
+const telegramLinkService = new TelegramLinkService(casheService, userRepo);
 const authService = new AuthService(userService);
 const registerService = new RegisterService(registerRepo, userService, mainService);
 
@@ -110,9 +112,9 @@ const inviteService = new ProjectInviteService(inviteRepo, userService, memberSe
 
 const cashboxService = new CashboxService(cashboxRepo, projectService, casheService);
 
-const budgetService = new BudgetService(budgetRepo, projectService);
+const budgetService = new BudgetService(budgetRepo, projectService, cashboxRepo);
 
-const cashboxSettingValuesService = new CashboxSettingValuesService(cashboxSettingRepo, projectService, casheService);
+const cashboxSettingValuesService = new CashboxSettingValuesService(cashboxSettingRepo, projectService, casheService, cashboxRepo);
 const projectSettingValuesService = new ProjectSettingValueService(projectSettingRepo, projectService, casheService);
 const userSettingValuesService = new UserSettingValuesService(userSettingRepo);
 
@@ -136,6 +138,7 @@ export const container = {
     casheService,
 
     userService,
+    telegramLinkService,
     authService,
     registerService,
     projectService,

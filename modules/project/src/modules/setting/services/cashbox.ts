@@ -2,16 +2,19 @@ import { CasheService } from "@services/CasheService";
 import { CashboxSettingRepository } from "../repositories/cashbox";
 import { ProjectService } from "../../project/services";
 import { UserEntity } from "../../../../../user/src/modules/user/entities/User";
+import type { CashboxRepository } from "../../cashbox/repositories/cashbox";
 
 export class CashboxSettingValuesService {
     constructor(
         private repo: CashboxSettingRepository,
         private projectService: ProjectService,
-        private cashe: CasheService
+        private cashe: CasheService,
+        private cashboxes: Pick<CashboxRepository, 'requireInProject'>,
     ) { }
 
     public async createOrUpdateSetting(id: number, user: UserEntity, data: any[], parentId: number): Promise<any[]> {
         await this.projectService.authorize(parentId, user, ['cashbox:update', 'settings:update']);
+        await this.cashboxes.requireInProject(id, parentId);
 
         const settings = [];
         for (const setting of data) {

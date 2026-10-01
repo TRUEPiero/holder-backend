@@ -1,5 +1,6 @@
 import { container } from "../../modules/containers";
 import { UnautorizedError } from "@common/errors";
+import { requireTokenPurpose } from "../../modules/user/src/common/services/token";
 
 const { userService } = container;
 
@@ -14,8 +15,8 @@ export const deriveUser = async ({cookie, jwt}: any) => {
         console.error(error);
         throw new UnautorizedError();
     }
-    if (!payload?.sub) throw new UnautorizedError();
+    const { userId } = requireTokenPurpose(payload, 'access');
 
-    const user = await userService.getById(Number(payload.sub));
+    const user = await userService.getById(userId);
     return { user };
 }

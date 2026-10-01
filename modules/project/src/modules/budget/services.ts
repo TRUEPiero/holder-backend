@@ -4,11 +4,13 @@ import { BudgetRepository } from "./repository";
 import { ProjectService } from "../project/services";
 import { createBody, createData, updateData } from "./types";
 import { DecimalClass as Decimal } from "@shared-types/index";
+import type { CashboxRepository } from "../cashbox/repositories/cashbox";
 
 export class BudgetService {
     constructor (
         private repo: BudgetRepository,
-        private projectService: ProjectService
+        private projectService: ProjectService,
+        private cashboxes: Pick<CashboxRepository, 'requireInProject'>,
     ) {}
 
     public async getById(id: number, user: UserEntity, cashboxId: number, projectId: number) {
@@ -66,6 +68,7 @@ export class BudgetService {
 
     public async create(user: UserEntity, data: createBody, cashboxId: number, projectId: number) {
         await this.projectService.authorize(projectId, user, ["cashbox:read", 'budget:create'], "all");
+        await this.cashboxes.requireInProject(cashboxId, projectId);
         
         const { title, description, amount, startDate, endDate } = data;
 

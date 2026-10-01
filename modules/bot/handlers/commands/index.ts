@@ -3,7 +3,7 @@ import { BotContext } from "../../core/context";
 import { render } from "../../lib/render";
 import { container } from "../../../containers";
 
-const {userService, casheService} = container;
+const {userService, telegramLinkService} = container;
 
 const composer = new Composer<BotContext>();
 
@@ -13,9 +13,6 @@ composer.command('start', async (ctx) => {
 
     const username = ctx.from?.username;
 
-    const hasCashe = await casheService.exists(`tgUser:${chatId}`);
-    if(hasCashe) return await render(ctx, {type: 'start'}, true);
-
     const filter = {
         telegramId: chatId
     }
@@ -23,21 +20,9 @@ composer.command('start', async (ctx) => {
     let user = await userService.getTelegramUser(filter)
 
     if(!user) {
-        const userId = ctx.match;
-        if(!userId) return await ctx.reply(ctx.t('user-empty'));
-
-        const finded = await userService.getById(Number(userId));
-        if(!finded) {
-            await ctx.reply(ctx.t('support'))
-            return;
-        };
-
-        const updateData = {
-            telegramId: chatId,
-            telegram: username,
-        };
-
-        user = await userService.update(finded, updateData);
+        const token = ctx.match.trim();
+        if(!token) return await ctx.reply(ctx.t('user-empty'));
+        user = await telegramLinkService.consume(token, chatId, username);
     }
 
     ctx.session.user_id = user.getId();
@@ -49,7 +34,6 @@ composer.command('start', async (ctx) => {
         await ctx.i18n.setLocale(locale);
     }
 
-    await casheService.set(`tgUser:${chatId}`, user);
     await render(ctx, {type: 'start'}, true);
 })
 

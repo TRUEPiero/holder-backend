@@ -48,14 +48,10 @@ export class UserEntity extends SettingTarget {
 
     public async update(data: UpdateData): Promise<UpdateDataRepo> {
         if(data.name) this.name = data.name;
-        if(data.telegramId) this.telegramId = data.telegramId;
-        if(data.telegram) this.telegram = data.telegram;
         if(data.password) this.password = await hashPassword(data.password);
 
         return {
             name: this.name,
-            telegram: this.telegram,
-            telegramId: this.telegramId,
             password: this.password,
         }
     }

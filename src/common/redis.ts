@@ -31,9 +31,6 @@ export function getRedis(): RedisClientType {
     return client;
 }
 
-export async function initRedis() {
-    const redis = getRedis();
-
+export async function initRedis(redis: Pick<RedisClientType, 'isOpen' | 'connect'> = getRedis()) {
     if(!redis.isOpen) await redis.connect();
-    await redis.flushAll();
 }

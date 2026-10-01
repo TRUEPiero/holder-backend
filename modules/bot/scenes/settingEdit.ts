@@ -12,7 +12,7 @@ scene.step(async(ctx) => {
     const entity = ctx.match![1] as 'project' | 'cashbox';
     const settingId = Number(ctx.match![2]);
 
-    const service = EntityServiceFactory.create(entity) as EntitySettingsOwner;
+    const service = EntityServiceFactory.create(entity) as EntitySettingsOwner<'project' | 'cashbox'>;
 
     const setting = await service.getSetting(ctx, settingId);
     const settingType = setting.getType();
@@ -73,7 +73,7 @@ scene.label('confirm_edit').step(async(ctx) => {
     const entity = ctx.session.entityData.entity;
     const settingId = ctx.session.entityData.settingId;
 
-    const service = EntityServiceFactory.create(entity) as EntitySettingsOwner;
+    const service = EntityServiceFactory.create(entity) as EntitySettingsOwner<'project' | 'cashbox'>;
 
     try{
         const updated = await service.updateSetting(ctx);

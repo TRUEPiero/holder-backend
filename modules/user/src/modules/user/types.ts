@@ -11,15 +11,11 @@ type EntityParams = {
 
 type UpdateData = {
     name?: string,
-    telegram?: string,
-    telegramId?: string,
     password?: string
 }
 
 type UpdateDataRepo = {
     name: string,
-    telegram: string,
-    telegramId: string,
     password: string
 }
 

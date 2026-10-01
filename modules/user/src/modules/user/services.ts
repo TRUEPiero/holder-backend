@@ -34,13 +34,8 @@ export class UserService implements SettingsOwner {
     public async getTelegramUser(params: TelegramFilter) {
         const {telegramId, telegram} = params;
 
-        const filter = {
-            OR: [
-                {telegramId},
-                {telegram}
-            ],
-            
-        }
+        if (!telegramId && !telegram) return null;
+        const filter = telegramId ? { telegramId: String(telegramId) } : { telegram };
 
         const user = await this.repo.findByFilter(filter);
         return user

@@ -1,6 +1,6 @@
 import { Elysia } from 'elysia'
 import { schema } from './schemas';
-import { AuthTokenService } from '../../common/services/token';
+import { AuthTokenService, requireTokenPurpose } from '../../common/services/token';
 import { AuthCookieService } from '../../common/services/cookie';
 import { container } from '../../../../containers';
 import { jwtPlugin } from '@plugins/jwt';
@@ -48,13 +48,13 @@ export const AuthController = new Elysia({
         throw new UnautorizedError();
     }
 
-    if (!payload || !payload.sub || !payload.jti) throw new UnautorizedError();
+    const { userId, jti } = requireTokenPurpose(payload, 'refresh');
 
-    const user = await userService.getById(Number(payload.sub));
+    const user = await userService.getById(userId);
     const tokenService = new AuthTokenService(jwt);
     const sessionService = new SessionService(casheService, tokenService);
 
-    const { access, refresh } = await sessionService.refresh(payload.jti, user);
+    const { access, refresh } = await sessionService.refresh(jti, user);
 
     const cookieService = new AuthCookieService(cookie);
     cookieService.setAccess(access);
@@ -77,11 +77,10 @@ export const AuthController = new Elysia({
             throw new UnautorizedError();
         }
 
-        if (payload && payload?.jti) {
-            const tokenService = new AuthTokenService(jwt);
-            const sessionService = new SessionService(casheService, tokenService);
-            await sessionService.revoke(payload.jti);
-        }
+        const { jti } = requireTokenPurpose(payload, 'refresh');
+        const tokenService = new AuthTokenService(jwt);
+        const sessionService = new SessionService(casheService, tokenService);
+        await sessionService.revoke(jti);
     }
 
     const cookieService = new AuthCookieService(cookie);

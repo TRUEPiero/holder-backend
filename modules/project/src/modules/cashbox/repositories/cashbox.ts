@@ -2,10 +2,16 @@ import { DirectoryService } from "@services/DirectoryService";
 import { CashboxEntity } from "../entities/Cashbox";
 import type { Cashbox } from "../types";
 import { PaginationParam } from "@shared-types/index";
+import { NotFoundError } from "@common/errors";
 
 
 export class CashboxRepository {
     constructor(private base: DirectoryService<'cashbox'>) {}
+
+    async requireInProject(id: number, projectId: number): Promise<void> {
+        const cashbox = await this.base.getFirstByFields({ id, projectId });
+        if (!cashbox) throw new NotFoundError('CASHBOX');
+    }
 
     async findById(id: number): Promise<CashboxEntity | null> {
         const data = await this.base.getById(id);

@@ -23,7 +23,7 @@ export class SessionService {
     public async refresh(oldJti: string, user: UserEntity) {
         const userId = await this.cashe.getDel(`refresh:${oldJti}`);
 
-        if (!userId) {
+        if (userId !== user.getId()) {
             throw new UnautorizedError();
         }
         

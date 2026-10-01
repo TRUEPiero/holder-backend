@@ -1,6 +1,7 @@
 import { DirectoryService } from "@services/DirectoryService";
 import { UserEntity } from "./entities/User";
 import { CreateData, UpdateDataRepo } from "./types";
+import { AlreadyExistError } from "@common/errors";
 
 export class UserRepository {
     constructor(private base: DirectoryService<'user'>) {}
@@ -27,5 +28,20 @@ export class UserRepository {
     public async update(id: number, data: UpdateDataRepo) {
         const updated = await this.base.updateItem(id, data);
         return new UserEntity(updated);
+    }
+
+    public async linkTelegramIfUnlinked(id: number, telegramId: string, telegram?: string) {
+        try {
+            const users = await this.base.client!.user.updateManyAndReturn({
+                where: { id, telegramId: null },
+                data: { telegramId, telegram: telegram ?? null },
+            });
+            return users.length ? this.findDetailed(id) : null;
+        } catch (error) {
+            if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
+                throw new AlreadyExistError('TELEGRAM_LINK');
+            }
+            throw error;
+        }
     }
 }
